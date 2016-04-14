@@ -1,0 +1,103 @@
+\documentclass{article}
+
+\author{\ }
+\title{Optional Type Classes}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+This paper explores an approach for allowing type classes to be
+optionally declared by programmers, i.e. for allowing programmers to
+overload symbols without having to declare the types of these symbols
+in type classes.
+
+The idea is baseds on defining the type of un-anottated overloaded
+symbol as the anti-unification of instance types defined for the
+symbol in a module, by automatically creating a type class with a
+single overloaded name. This depends on a modularization of instance
+visibility (as well as on a redefintion of Haskell's ambiguity rule).
+The paper presents the modifications to Haskell's module system that
+are necessary for allowing instances to have a modular scope (based on
+previous work published by one of the authors). The definition of the
+type of overloaded symbols as the anti-unification of available
+instance types and the redefined ambiguity rule is also based on
+previous works by the authors. 
+
+The added flexibility to Haskell-style of overloading is illustrated
+by defining a type system and a type inference algorithm that allows
+overloaded record fields. 
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+The {\em version\/} of Haskell supported by GHC --- the prevailing
+Haskell compiler --- is becoming complex, to the point of affecting
+the view of Haskell as being the best choice for general-purpose
+software development. A critical issue in this regard is the need of
+extending the language to allow multiple parameter type classes
+(MPTCs). Unfortunately, this extension is thought to require
+additional mechanisms, such as functional dependencies or type
+families. In another paper
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown how
+MPTCs can be introduced in the language without the need of additional
+mechanisms. A simplifying change is sufficient, in Haskell's ambiguity
+rule. Interested readers are referred to
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}, but a summary is
+included below.
+
+....
+
+
+In conformance with this change, ... aqui vem texto relativo a
+controle modular da visibilidade de instâncias...
+
+Also in conformance with this change is the possibility, explored in
+this paper, of allowing type classes to be optionally declared by
+programmers, i.e. for allowing programmers to overload symbols without
+having to declare the types of these symbols in type classes.
+
+The idea is baseds on defining the type of un-anottated overloaded
+symbol as the anti-unification of instance types defined for the
+symbol in a module, by automatically creating a type class with a
+single overloaded name. This depends on a modularization of instance
+visibility (as well as on a redefintion of Haskell's ambiguity rule).
+The paper presents the modifications to Haskell's module system that
+are necessary for allowing instances to have a modular scope (based on
+previous work published by one of the authors). The definition of the
+type of overloaded symbols as the anti-unification of available
+instance types and the redefined ambiguity rule is also based on
+previous works by the authors. 
+
+\section{Modularization of Instances}
+\label{sec:modular-instances}
+
+Let the instance type of a non-overloaded variable be the variable's
+type. Unless the type of a variable is explicitly annotated, either in
+a type class or in a type annotation, a variable's type is the
+anti-unification of instance types defined for the variable in a
+module.
+
+Consider, for example, ...
+
+\section{Ambiguity Rule}
+\label{sec:ambig}
+
+\section{Anti-unification of instance types}
+\label{sec:anti-unif}
+
+\section{Records with overloaded record fields}
+\label{sec:overloaded-record-fields}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\bibliographystyle{plain}
+\bibliography{main}
+
+\end{document}
