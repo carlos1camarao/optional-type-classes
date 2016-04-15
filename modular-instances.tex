@@ -25,20 +25,20 @@ current module; otherwise, it is the annotated type.
 
 Consider, for example:
 
-\proga{xx\=\instance\ \=\member\=\kill
+\proga{xx\=\instance\ \=\member\ $a$ \=($b$:$x$) \=\kill\\
 \module\ $L$ \where\+\\
   \ldots\ \ldots\ \\
-  \>\instance\ \empty\  = []\\
-  \>\instance\ \insert\ = (:)\\
-  \>\instance\ \>\member\> $a$ [] = \False\\
-               \>\member\> $a$ ($b$:$x$) = ($a$==$b$) || \member\ $a$ $x$ 
+  \instance\ \eempty\  = []\\
+  \instance\ \iinsert\ = (:)\\
+  \instance\ \>\member\ $a$ \>[]        \>= \False\\
+             \>\member\ $a$ \>($b$:$x$) \>= ($a$==$b$) || \member\ $a$ $x$ 
 }
 
 
+\proga{xx\=\instance\ \=\member\ $a$ \=($b$:$x$) \=\kill\\
+\module\ $T$ \where ...
+}
             
-
-\newcommand{\M1}{{\it M1\/}}
-
 Modularization of instance definitions is allowed in a simple way by
 means of the importation and exportion of instances as shown in
 \cite{Controlling-scope-instances}. Essentially, import and export
@@ -46,13 +46,13 @@ clauses can specify, instead of just names, occurrences of {\tt
   instance $T$ $D$}, where $T$ is a type and $D$ is a class name.
 We have: 
 
-  \[ \text{\tt module \M1\ (instance $T$ $D$)} \]
+  \[ \text{\module\ $M$ (\instance\ $T$ $D$ \where\ \ldots)} \]
 specifies that the instance of type $T$ for class $D$ is exported in
-module \M1. 
+module $M$. 
 
-  \[ \text{\tt import \M1\ (instance $T$ $D$)} \]
+  \[ \text{\import\ $M$ (\instance\ $T$ $D$)} \]
 specifies that the instance of type $T$ for class $D$ is imported from
-\M1, in the module where the import clause occurs. 
+$M$, in the module where the import clause occurs.
 
 Alternatively could simply give a name to an instance, in an instance
 declaration, and use that name in import and export clauses (see

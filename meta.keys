@@ -108,7 +108,6 @@
 \newcommand{\Term}{\text{\it Term\/}}
 
 \newcommand{\eval}{\text{\it eval\/}}
-\newcommand{\iinsert}{\text{\it insert\/}}
 
 \newcommand{\MMo}{{\tt MMo}}
 
@@ -136,8 +135,19 @@
 \newcommand{\alt}{\text{\tt alt}}
 \newcommand{\alts}{\text{\tt alts}}
 
+\newcommand{\module}{\text{\tt module}}
+\newcommand{\import}{\text{\tt import}}
 \newcommand{\instance}{\text{\tt instance}}
 \newcommand{\where}{\text{\tt where}}
 \newcommand{\member}{\text{\it member\/}}
-\newcommand{\insert}{\text{\it insert\/}}
-\newcommand{\empty}{\text{\it empty\/}}
+\newcommand{\iinsert}{\text{\it insert\/}}
+\newcommand{\eempty}{\text{\it empty\/}}
+\newcommand{\Either}{\text{\it Either\/}}
+\newcommand{\Monad}{\text{\it Monad\/}}
+\newcommand{\mtl}{\text{\it mtl\/}}
+\newcommand{\transformers}{\text{\it transformers\/}}
+\newcommand{\Data}{\text{\it Data\/}}
+\newcommand{\List}{\text{\it List\/}}
+\newcommand{\sortBy}{\text{\it sortBy\/}}
+
+\newcommand{\Mum}{\text{\it M1\/}}
