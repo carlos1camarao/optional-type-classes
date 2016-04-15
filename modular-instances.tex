@@ -9,21 +9,88 @@ enabling type classes to be optionally declared by programmers.
 
 We essentially follow the work of Marco Gontijo and Carlos Camarão
 \cite{Controlling-scope-instances}, summarized below. The main idea is
-to have the following additional rule for allowing type classes to be
-optionally specified.
+to include an additional rule, given the possibility of type classes
+to be declared or not:
 
-\begin{definition}[Type of overloaded variables]
+\begin{definition}[Type of overloaded variable]
 
-If the type of an overloaded variable (i.e.~a variable that is defined
-in an instance definition) is not explicitly annotated in a type class
-declaration, then the variable's type is the anti-unification of
-instance types defined for the variable in the current module;
-otherwise, it is the annotated type.
+If the type of an overloaded variable (i.e.~a variable that is
+introduced in an instance definition) is not explicitly annotated in a
+type class declaration, then the variable's type is the
+anti-unification of instance types defined for the variable in the
+current module; otherwise, it is the annotated type.
 
 \label{overloaded-variable-type}
 \end{definition}
 
-Consider, for example, ...
+Consider, for example:
+
+\prog{xx\=\instance\ \=\member\=\kill
+\module\ $L$ \where\+\\
+  \ldots\ \ldots\ \\
+  \>\instance\ \empty\  = []\\
+  \>\instance\ \insert\ = (:)\\
+  \>\instance\ \>\member\> $a$ [] = \False\\
+               \>\member\> $a$ ($b$:$x$) = ($a$==$b$) || \member\ $a$ $x$\-\\ \\
+
+\instance\ 
+}
+
+
+            
+
+\newcommand{\M1}{{\it M1\/}}
+
+Modularization of instance definitions is allowed in a simple way by
+means of the importation and exportion of instances as shown in
+\cite{Controlling-scope-instances}. Essentially, import and export
+clauses can specify, instead of just names, occurrences of {\tt
+  instance $T$ $D$}, where $T$ is a type and $D$ is a class name.
+We have: 
+
+  \[ \text{\tt module \M1\ (instance $T$ $D$)} \]
+specifies that the instance of type $T$ for class $D$ is exported in
+module \M1. 
+
+  \[ \text{\tt import \M1\ (instance $T$ $D$)} \]
+specifies that the instance of type $T$ for class $D$ is imported from
+\M1, in the module where the import clause occurs. 
+
+Alternatively could simply give a name to an instance, in an instance
+declaration, and use that name in import and export clauses (see
+\cite{Controlling-scope-instances}).
+
+Among the advantages of this simple change, we cite (following
+\cite{Controlling-scope-instances}):
+
+\begin{itemize}
+
+  \item programmers have better control of which entities are
+    necessary and should be in the scope of each module in a program;
+
+  \item it is possible to define and use more than one instance for
+    the same type in a program;
+
+  \item problems with orphan instances (i.e.~instances defined in a
+    module where neither the definition of the data type nor the
+    definition of the type class) do not occur (for example, distinct
+    instances of \Either\ for class \Monad, say one from package
+    \mtl\ and another from \transformers, can be used in a program);
+
+  \item the introduction of newtypes, as well as the use of functions
+    that include additional (-by) parameters (such as e.g.~\sortBy\ in
+    module \Data.\List) can be avoided.
+
+\end{itemize}
+
+With instance modularization, programmers need to be aware of which
+entities are exported and imported (i.e.~which entities are visible in
+the scope of a module). A simple change, like a type annotation in a
+module ($A$), can lead to a change in the scope of another module
+($B$), and thus of the semantics of entities used in this module
+($B$). For example, ....
+
+
 
 
 
