@@ -1,11 +1,27 @@
 \section{Modularization of Instances}
 \label{sec:modular-instances}
 
-Let the instance type of a non-overloaded variable be the variable's
-type. Unless the type of a variable is explicitly annotated, either in
-a type class or in a type annotation, a variable's type is the
-anti-unification of instance types defined for the variable in a
-module.
+This paper does not attempt to discuss any major revision to Haskell's
+module system. Our objective here is simply to allow modular instance
+definitions, which enable type classes to be optionally declared by
+programmers.
+
+We essentially follow the work of Marco Gontijo and Carlos Camarão
+\cite{...}, summarized below, but with the following rule for allowing
+type classes to be optionally specified.
+
+\begin{definition}[Type of overloaded variables]
+
+If the type of an overloaded variable (i.e.~a variable that is defined
+in an instance definition) is not explicitly annotated in a type class
+declaration, then the variable's type is the anti-unification of
+instance types defined for the variable in the current module;
+otherwise, it is the annotated type.
+
+\label{overloaded-variable-type}
+\end{definition}
 
 Consider, for example, ...
+
+
 
