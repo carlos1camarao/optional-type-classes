@@ -11,7 +11,7 @@ additional mechanisms, such as functional dependencies or type
 families. In another paper
 \cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown how
 MPTCs can be introduced in the language without the need of additional
-mechanisms. A simplifying change is sufficient, in Haskell's ambiguity
+mechanisms. A simplifying change is sufficient, to Haskell's ambiguity
 rule. Interested readers are referred to
 \cite{JBCS-Ambiguity-and-constrained-polymorphism}; a brief summary is
 included below.
@@ -33,14 +33,14 @@ similar unique determination specified via type families). Notation $b
 \mapsto c$ is used, instead of $b \rightarrow c$, to avoid confusion
 with the notation used to denote functional types.
 
-Our definition of ambiguity uses a similar property, of variable
-reachability, that is independent of functional dependencies or type
-families: a type variable $a$ that occurs in a constraint $\pi \in C$
-is reachable from the set of type variables in $\tau$ if it occurs in
-$\tau$ or there exists a type variable $b$ in the same constraint
-($\pi$) where $a$ occurs that is reachable. For example, in $C
-\Rightarrow b$, where $C = (D\: a\: b, E a)$, type variable $a$ is
-reachable from the set of type variables in $b$.
+A new definition, called {\em expression ambiguity\/}, uses a similar
+property, of variable reachability, that is independent of functional
+dependencies or type families: a type variable $a$ that occurs in a
+constraint $\pi \in C$ is reachable from the set of type variables in
+$\tau$ if it occurs in $\tau$ or there exists a type variable $b$ in
+the same constraint ($\pi$) where $a$ occurs that is reachable. For
+example, in $C \Rightarrow b$, where $C = (D\: a\: b, E a)$, type
+variable $a$ is reachable from the set of type variables in $b$.
 
 The presence of unreachable variables in a constraint $pi\in C$
 characterizes overloading resolution: it characterizes that there is
@@ -93,14 +93,14 @@ type of an expression.
 
 The possibility of a modular control of the visibility of instance
 definitions is in conformance with this simplifying change. This is
-the subject of section \ref{sec:modular-instances}.
+the subject of Section \ref{sec:modular-instances}.
 
 Also in conformance with this change is the possibility, explored in
 this paper, of allowing type classes to be optionally declared by
 programmers, i.e. for allowing programmers to overload symbols without
 having to declare the types of these symbols in type classes. A type
 system and a type inference algorithm for a core-Haskell language
-where type classes can be optionally declared is presented in section
+where type classes can be optionally declared is presented in Section
 \ref{Optional-type-classes}.  The idea is based on defining the type
 of un-anottated overloaded symbol as the anti-unification of instance
 types defined for the symbol in a module, by automatically creating a
@@ -113,5 +113,11 @@ authors). The definition of the type of overloaded symbols as the
 anti-unification of available instance types and the redefined
 ambiguity rule is also based on previous works by the authors.
 
-
+The added flexibility to Haskell-style of overloading is illustrated
+by defining a type system and a type inference algorithm that allows
+overloaded record fields (Section
+\ref{sec:overloaded-record-fields}). The redefinition of Haskell's
+ambiguity rule can also be used to address some of the issues related
+to type directed name resolution (Section
+\ref{sec:type-directed-name-resolution}).
 

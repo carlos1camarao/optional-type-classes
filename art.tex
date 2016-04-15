@@ -15,21 +15,23 @@ optionally declared by programmers, i.e. for allowing programmers to
 overload symbols without having to declare the types of these symbols
 in type classes.
 
-The idea is based on defining the type of un-anottated overloaded
-symbol as the anti-unification of instance types defined for the
-symbol in a module, by automatically creating a type class with a
-single overloaded name. This depends on a modularization of instance
-visibility (as well as on a redefintion of Haskell's ambiguity rule).
+The idea is based on defining the type of unanotated overloaded symbol
+as the anti-unification of instance types defined for the symbol in a
+module, by automatically creating a type class with a single
+overloaded name. This depends on a modularization of instance
+visibility (as well as on a redefinition of Haskell's ambiguity rule).
 The paper presents the modifications to Haskell's module system that
 are necessary for allowing instances to have a modular scope (based on
 previous work published by one of the authors). The definition of the
 type of overloaded symbols as the anti-unification of available
 instance types and the redefined ambiguity rule is also based on
-previous works by the authors. 
+previous works by the authors.
 
 The added flexibility to Haskell-style of overloading is illustrated
 by defining a type system and a type inference algorithm that allows
-overloaded record fields. 
+overloaded record fields. The redefinition of Haskell's ambiguity rule
+can also be used to address some of the issues related to type
+directed name resolution.
 
 \end{abstract}
 
@@ -39,11 +41,13 @@ overloaded record fields.
 
 \input{modular-instances}
 
-\input{ambiguity}
+% \input{ambiguity}
 
 \input{optional-type-classes}
 
 \input{records-with-overloaded-fields}
+
+\input{type-directed-named-resolution}
 
 \input{conclusion}
 
