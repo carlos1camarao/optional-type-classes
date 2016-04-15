@@ -2,13 +2,15 @@
 \label{sec:modular-instances}
 
 This paper does not attempt to discuss any major revision to Haskell's
-module system. Our objective here is simply to allow modular instance
-definitions, which enable type classes to be optionally declared by
-programmers.
+module system. Our aim here is to briefly summarize a modification,
+presented in \cite{...}, that allows a modular control of the
+visibility of instance definitions. This has the additional benefit of
+enabling type classes to be optionally declared by programmers.
 
 We essentially follow the work of Marco Gontijo and Carlos Camarão
-\cite{...}, summarized below, but with the following rule for allowing
-type classes to be optionally specified.
+\cite{Controlling-scope-instances}, summarized below. The main idea is
+to have the following additional rule for allowing type classes to be
+optionally specified.
 
 \begin{definition}[Type of overloaded variables]
 
