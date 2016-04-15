@@ -1,12 +1,40 @@
-\documentclass{article}
+\documentclass{llncs}
+\usepackage{amsmath,amssymb,proof}
+\usepackage{makeidx}  % allows for indexgeneration
+%
 
-\author{\ }
-\title{Optional Type Classes}
-\date{\today}
+\usepackage[american]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{fancyhdr}
 
 \begin{document}
 
-\maketitle
+%\input{commands.tex}
+
+%\input{meta.keys}
+
+%
+\mainmatter              % start of the contributions
+
+\title{Optional Type Classes for Haskell}
+
+%
+\author{Rodrigo Ribeiro \inst{1} \and Carlos Camar\~ao\inst{2} \and Luc\'ilia
+Figueiredo\inst{3} \and Cristiano Vasconcellos\inst{4}}
+\institute{DECSI, Universidade Federal de Ouro Preto (UFOP), João Monlevade\\
+\email{rodrigo@decsi.ufop.br} \and
+DCC, Universidade Federal de Minas Gerais (UFMG), Belo Horizonte\\
+\email{camarao@dcc.ufmg.br} \and
+DECOM, Universidade Federal de Ouro Preto (UFOP), Ouro Preto\\
+\email{luciliacf@gmail.com} \and
+DCC, Universidade do Estado de Santa Catarina (UDESC), Joinville\\
+\email{cristiano.vasconcellos@udesc.br}
+}
+\maketitle              % typeset the title of the contribution
 
 \begin{abstract}
 
@@ -29,7 +57,7 @@ previous works by the authors.
 
 The added flexibility to Haskell-style of overloading is illustrated
 by defining a type system and a type inference algorithm that allows
-overloaded record fields. 
+overloaded record fields.
 
 % The redefinition of Haskell's ambiguity rule can also be used to
 % address some of the issues related to type directed name resolution.
