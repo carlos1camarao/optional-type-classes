@@ -25,15 +25,13 @@ current module; otherwise, it is the annotated type.
 
 Consider, for example:
 
-\prog{xx\=\instance\ \=\member\=\kill
+\proga{xx\=\instance\ \=\member\=\kill
 \module\ $L$ \where\+\\
   \ldots\ \ldots\ \\
   \>\instance\ \empty\  = []\\
   \>\instance\ \insert\ = (:)\\
   \>\instance\ \>\member\> $a$ [] = \False\\
-               \>\member\> $a$ ($b$:$x$) = ($a$==$b$) || \member\ $a$ $x$\-\\ \\
-
-\instance\ 
+               \>\member\> $a$ ($b$:$x$) = ($a$==$b$) || \member\ $a$ $x$ 
 }
 
 
