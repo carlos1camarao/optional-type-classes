@@ -1,20 +1,19 @@
 \section{Introduction}
 \label{sec:intro}
 
-The versions of Haskell supported by GHC --- the prevailing Haskell
-compiler --- are becoming complex, to the point of affecting the view
-of Haskell as the best choice for general-purpose software
-development. A critical issue in this regard is the need of extending
-the language to allow multiple parameter type classes
-(MPTCs). Unfortunately, this extension is thought to require
-additional mechanisms, such as functional dependencies or type
-families. In another paper
-\cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown how
-MPTCs can be introduced in the language without the need of additional
-mechanisms. A simplifying change is sufficient, to Haskell's ambiguity
-rule. Interested readers are referred to
-\cite{JBCS-Ambiguity-and-constrained-polymorphism}; a brief summary is
-included below.
+The versions of Haskell supported by GHC \cite{GHC} --- the prevailing
+Haskell compiler --- are becoming complex, to the point of affecting
+the view of Haskell as the best choice for general-purpose software
+development. A basic issue in this regard is the need of extending the
+language to allow multiple parameter type classes (MPTCs). This
+extension is thought to require additional mechanisms, such as
+functional dependencies or type families. In another paper
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown that
+the introduction of MPTCs in the language can and should be done
+without the need of additional mechanisms: a simplifying change is
+sufficient, to Haskell's ambiguity rule. Interested readers are
+referred to \cite{JBCS-Ambiguity-and-constrained-polymorphism}. The
+main ideas are summarized below.
 
 Haskell with MPTCs uses constrained types of the form $\forall
 \overline{a}.\,C \Rightarrow \tau$, where $C$ is a set of constraints
@@ -33,22 +32,27 @@ similar unique determination specified via type families). Notation $b
 \mapsto c$ is used, instead of $b \rightarrow c$, to avoid confusion
 with the notation used to denote functional types.
 
-A new definition, called {\em expression ambiguity\/}, uses a similar
+A new definition, which we prefer to call here {\em expression
+  ambiguity\/} (in \cite{JBCS-Ambiguity-and-constrained-polymorphism}
+it is called {\em delayed closure ambiguity\/}), uses a similar
 property, of variable reachability, that is independent of functional
-dependencies or type families: a type variable $a$ that occurs in a
-constraint $\pi \in C$ is reachable from the set of type variables in
+dependencies and type families: a type variable $a$ that occurs in a
+set of constraints is reachable from the set of type variables in
 $\tau$ if it occurs in $\tau$ or there exists a type variable $b$ in
-the same constraint ($\pi$) where $a$ occurs that is reachable. For
-example, in $C \Rightarrow b$, where $C = (D\: a\: b, E a)$, type
-variable $a$ is reachable from the set of type variables in $b$.
+$C$ that is reachable. For example, in $C \Rightarrow b$, where
+$C=(D\: a\: b, E a)$, type variable $a$ is reachable from the set of
+type variables in $b$.
 
 The presence of unreachable variables in a constraint $pi\in C$
-characterizes overloading resolution: it characterizes that there is
-no context in which an expression with such a type could be placed
-that could instantiate such unreachable variables. It does not
-necessarily imply ambiguity. Ambiguity is a property of an expression,
-and it depends on the context in which the expression occurs, and on
-entailment (or satisfiability) of constraints.
+characterizes overloading resolution, or, in other words, that
+overloading is resolved for $\pi$: it characterizes that there is no
+context in which an expression with such a type could be placed that
+could instantiate such unreachable variables.
+
+The presence of unreachable variables does not necessarily imply
+ambiguity. Ambiguity is a property of an expression, and it depends on
+the context in which the expression occurs, and on entailment (or
+satisfiability) of constraints.
 
 Entailment of constraints and its algorithmic (functional) counterpart
 are well-known in the Haskell world (see
@@ -57,15 +61,19 @@ e.g.~\cite{MarkJones94a,TheoryOfOverloading,JBCS-Ambiguity-and-constrained-polym
 Informally, a set of constraints $C$ is entailed (or satisfied) in a
 program $P$ if there exists a substitution $\phi$ such that $\phi(C)$
 is contained in the set of instance declarations of $P$, or is implied
-by the transitivity implied by the set of class declarations occuring
-in $P$. For a formal definition, see
+by the transitivity implied by the set of class and instance
+declarations occuring in $P$. For a formal definition, see
 e.g.~\cite{MarkJones94a,JBCS-Ambiguity-and-constrained-polymorphism}. In
-this case we say that $C$ is entailed by $\phi(C)$. For example, ...
+this case we say that $C$ is entailed by $\phi(C)$. 
+
+For example, {\tt \Eq\ [[\Integer]]} is entailed if we have instances
+{\tt \Eq\ \Integer} and {\tt \Eq\ $a$ => \Eq\ [$a$]} visible in the
+context where an expression whose type has a constraint {\tt Eq
+  [[Integer]]} occurs.
 
 If overloading is resolved for a constraint $C$ occurring in a type
 $\sigma = C,D \Rightarrow \tau$ then exactly one of the following
 holds:
-
 \begin{itemize}
 
 \item $C$ is entailed by a single instance; in this case a type
@@ -81,19 +89,19 @@ holds:
 \end{itemize}
 
 Note that variables in a single constraint are either all reachable or
-all unreachable. If they are unrechable, either the constraint can be
+all unreachable. If they are unreachable, either the constraint can be
 removed, in the case of single entailment, or there is a type error
 (either ambiguity, in the case of two or more entailments, or
 unsatisfiability, in the case of no entaiment).
 
-Neither functional dependencies nor type families are needed. Instead,
-ambiguity depends on the existence of (two or more) instances in a
-program context, when overloading is resolved for a constraint on the
-type of an expression.
+Instead of being dependent on the specification or not of functional
+dependencies or type families, ambiguity depends on the existence of
+(two or more) instances in a program context when overloading is
+resolved for a constraint on the type of an expression.
 
 The possibility of a modular control of the visibility of instance
-definitions is in conformance with this simplifying change. This is
-the subject of Section \ref{sec:modular-instances}.
+definitions conforms to this simplifying change. This is the subject
+of Section \ref{sec:modular-instances}.
 
 Also in conformance with this change is the possibility, explored in
 this paper, of allowing type classes to be optionally declared by
@@ -102,13 +110,13 @@ having to declare the types of these symbols in type classes. A type
 system and a type inference algorithm for a core-Haskell language
 where type classes can be optionally declared is presented in Section
 \ref{Optional-type-classes}.  The idea is based on defining the type
-of un-anottated overloaded symbol as the anti-unification of instance
+of unanottated overloaded symbol as the anti-unification of instance
 types defined for the symbol in a module, by automatically creating a
 type class with a single overloaded name. This depends on a
 modularization of instance visibility (as well as on a redefintion of
 Haskell's ambiguity rule).  The paper presents the modifications to
-Haskell's module system that are necessary for allowing instances to
-have a modular scope (based on previous work published by one of the
+Haskell's module system that are necessary to allow instances to have
+a modular scope (based on previous work published by one of the
 authors). The definition of the type of overloaded symbols as the
 anti-unification of available instance types and the redefined
 ambiguity rule is also based on previous works by the authors.
