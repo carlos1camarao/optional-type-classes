@@ -17,9 +17,8 @@ summarized below.
 
 Haskell with MPTCs uses constrained types of the form $\forall
 \overline{a}.\,C \Rightarrow \tau$, where $C$ is a set of constraints
-and $\tau$ is the well-known simple (unconstrained, unquantified)
-type; a constraint is a class name followed by a sequence of type
-variables.
+and $\tau$ is a simple (unconstrained, unquantified) type; a
+constraint is a class name followed by a sequence of type variables.
 
 In (GHC) Haskell, ambiguity is a property of a type: a type $\forall
 \overline{a}.\,C \Rightarrow \tau$ is ambiguous if there exists a type
