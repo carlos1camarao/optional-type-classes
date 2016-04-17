@@ -2,14 +2,13 @@
 \label{sec:modular-instances}
 
 This paper does not attempt to discuss any major revision to Haskell's
-module system. Our aim here is to briefly summarize a modification,
-presented in \cite{Controlling-scope-instances}, that allows a modular
-control of the visibility of instance definitions. This has the
-additional benefit of enabling type classes to be optionally declared
-by programmers. We essentially follow the work of Marco Gontijo and
-Carlos Camarão \cite{Controlling-scope-instances}, summarized
-below. The main idea is to introduce an additional rule, to account
-for the possibility of type classes to be declared or not:
+module system. We summarize in subsection
+\ref{subsec:instance-visibility-control} the work, presented in
+\cite{Controlling-scope-instances}, that allows a modular control of
+the visibility of instance definitions. This has the additional
+benefit of enabling type classes to be optionally declared by
+programmers, by the introduction of a single additional rule (to
+account for the possibility of type classes to be declared or not):
 
 \begin{definition}[Type of overloaded variable]
 
@@ -22,28 +21,47 @@ current module; otherwise, it is the annotated type.
 \label{overloaded-variable-type}
 \end{definition}
 
-Consider, for example:
+Instance modularization and the rule of expression ambiguity, that
+considers the context where an expression occurs to detect whether an
+expression is ambiguous or not, has profound consequences. Consider,
+for example:
 
-\proga{xx\=\instance\ \=\member\ $a$ \=($b$:$x$) \=\kill\\
-\module\ $L$ \where\+\\
-  \ldots\ \ldots\ \\
-  \instance\ \eempty\  = []\\
-  \instance\ \iinsert\ = (:)\\
-  \instance\ \>\member\ $a$ \>[]        \>= \False\\
-             \>\member\ $a$ \>($b$:$x$) \>= ($a$==$b$) || \member\ $a$ $x$ 
+\proga{xx\=\kill
+\module\ $A$ where\+\\
+  \class\ \SShow\ $t$ \ldots\\
+  \class\ \RRead\ $t$ \ldots\\
+  \instance\ \SShow\ \Int\ \ldots\\
+  \instance\ \RRead\ \Int\ \ldots\\
+  $f$ = \sshow $\:$.$\:$\rread\-\\ \\
+
+\module\ $B$ \where\+\\
+  \import\ $A$\\
+  \instance\ \RRead\ \Bool\ \ldots\\
+  \instance\ \SShow\ \Bool\ \ldots\\
+  $g$ = $f$ "True"
 }
 
+The definition of $f$ in module $A$ is well-typed, because constraints
+(\SShow\ $a$, \RRead\ $a$) can be removed; this occurs because there
+exists a single instance, in module $A$, for each constraint, that
+entails it. As a result, $f$ has type \String $\rightarrow$
+\String. Its use in module $B$ is (then) also well-typed.
 
-\proga{xx\=\instance\ \=\member\ $a$ \=($b$:$x$) \=\kill\\
-\module\ $T$ \where ...
-}
-            
-Modularization of instance definitions is allowed in a simple way by
-means of the importation and exportion of instances as shown in
+That means: $f$'s semantics is a function that receives a value of
+type \String\ and returns a value of type \String, according to the
+definition of $f$ given in module $A$. The semantics of an expression
+involves passing a (dictionary) value that is given in the context of
+usage if, {\em and only if}, the expression has a constrained type.
+
+\subsection{Instance visibility control: a summary}
+\label{subsec:instance-visibility-control}
+
+Modularization of instance definitions is allowed by means of the
+importation and exportion of instances as shown in
 \cite{Controlling-scope-instances}. Essentially, import and export
 clauses can specify, instead of just names, occurrences of {\tt
-  instance $T$ $D$}, where $T$ is a type and $D$ is a class name.
-We have: 
+  instance $T$ $D$}, where $T$ is a type and $D$ is a class name.  We
+have:
 
   \[ \text{\module\ $M$ (\instance\ $T$ $D$ \where\ \ldots)} \]
 specifies that the instance of type $T$ for class $D$ is exported in
@@ -56,6 +74,8 @@ $M$, in the module where the import clause occurs.
 Alternatively could simply give a name to an instance, in an instance
 declaration, and use that name in import and export clauses (see
 \cite{Controlling-scope-instances}).
+
+\subsection{Pros and Cons of Instance Modularization}
 
 Among the advantages of this simple change, we cite (following
 \cite{Controlling-scope-instances}):
@@ -82,15 +102,12 @@ Among the advantages of this simple change, we cite (following
 
 With instance modularization, programmers need to be aware of which
 entities are exported and imported (i.e.~which entities are visible in
-the scope of a module) and their types, i.e.~in particular if it is an
-overloaded name or not. 
+the scope of a module) and their types, in particular if they are
+overloaded or not.
 
-A simple change, like a type annotation for a variable ($x$) in a
-module ($A$), can lead to a change in the scope of another module
-($B$), which can thus lead to a change of the semantics of using this
-variable in this module ($B$). Consider the following example:
-
-.... 
+A simple change like a type annotation for a variable exported from a
+module, can lead to a change in the semantics of using this variable
+in another module.
 
 % The change is very significant if the type annotation instantiates
 % the type of $x$ so that overloading of $x$ is resolved in $A$, since

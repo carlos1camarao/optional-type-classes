@@ -137,6 +137,7 @@
 
 \newcommand{\module}{\text{\tt module}}
 \newcommand{\import}{\text{\tt import}}
+\newcommand{\class}{\text{\tt class}}
 \newcommand{\instance}{\text{\tt instance}}
 \newcommand{\where}{\text{\tt where}}
 \newcommand{\member}{\text{\it member\/}}
@@ -148,6 +149,16 @@
 \newcommand{\transformers}{\text{\it transformers\/}}
 \newcommand{\Data}{\text{\it Data\/}}
 \newcommand{\List}{\text{\it List\/}}
+\newcommand{\Tree}{\text{\it Tree\/}}
 \newcommand{\sortBy}{\text{\it sortBy\/}}
 
 \newcommand{\Mum}{\text{\it M1\/}}
+\newcommand{\SShow}{\text{\it Show\/}}
+\newcommand{\ShowInt}{\text{\it ShowInt\/}}
+\newcommand{\RRead}{\text{\it Read\/}}
+\newcommand{\sshow}{\text{\it show\/}}
+\newcommand{\rread}{\text{\it read\/}}
+\newcommand{\String}{\text{\it String\/}}
+
+\newcommand{\Collection}{\text{\it Collection\/}}
+
