@@ -46,12 +46,11 @@ The presence of unreachable variables in a constraint $\pi\in C$
 characterizes overloading resolution, or, in other words, that
 overloading is resolved for $\pi$: it characterizes that there is no
 context in which an expression with such a type could be placed that
-could instantiate such unreachable variables.
-
-The presence of unreachable variables does not necessarily imply
-ambiguity. Ambiguity is a property of an expression, and it depends on
-the context in which the expression occurs, and on entailment (or
-satisfiability) of the constraints on the expression's type.
+could instantiate such unreachable variables. The presence of
+unreachable variables does not necessarily imply ambiguity. Ambiguity
+is a property of an expression, and it depends on the context in which
+the expression occurs, and on entailment of the constraints on the
+expression's type.
 
 Entailment of constraints and its algorithmic (functional) counterpart
 are well-known in the Haskell world (see
