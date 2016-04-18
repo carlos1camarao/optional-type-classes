@@ -1,3 +1,85 @@
-\section{Anti-unification of instance types}
+\section{Preliminaries}\label{prelimirares}
+
+In this section we introduce some basic definitions and notations. We
+consider that meta-variables defined can appear primed or subscripted.
+
+Meta-variable usage is defined in the paper as follows: $x,y$ denote
+term variables, $\alpha, \beta$ ($a, b,...$
+in examples) type variables, $e$ a term,
+$\tau,\rho$ simple types, $\kappa$ a constraint set, $x:\tau$ a
+constraint, $\sigma$ a type, $\Gamma$ a typing context, that is, a set
+of pairs written as $x:\sigma$, and $S$ a substitution.
+
+The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes the
+sequence $a_1,\ldots,a_n$, where $n \geq 0$. When used in a context of
+a set, it denotes the corresponding set of elements in the sequence
+$\{a_1,\ldots,a_n\}$.
+
+A substitution is a function from type variables to simple type
+expressions (cf.~Section \ref{Optional-type-classes}). The identity substitution
+denoted by \id. $S\sigma$ represents the capture-free operation of
+substituting $S(\alpha)$ for each free occurrence of $\alpha$ in
+$\sigma$.
+
+We overload the substitution application on constraints, constraint sets
+and sets of types. Definition of application on these elements is
+straightforward. The symbol $\circ$ denotes function composition and
+$\dom{S}=\{\alpha \mid\ S(\alpha) \neq \alpha\}$.
+
+The notation $S[\overline{\alpha}\mapsto\overline{\tau}]$ denotes the
+updating of $S$ such that $\overline{\alpha}$ maps to
+$\overline{\tau}$, that is, the substitution $S'$ such that $S'(\beta)
+= \tau_i$ if $\beta = \alpha_i$, for $i = 1,...,n$, otherwise
+$S(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}] =
+\id[\overline{\alpha}\mapsto\overline{\tau}]$.
+
+
+\subsection{Anti-unification of instance types}
 \label{sec:anti-unif}
 
+A type $\tau$ is a generalization --- also called (first-order) 
+{\em anti-unification\/} \cite{ModelTheory2012} --- of simple types
+$\overline{\tau}^{\,n}$ if there exist substitutions
+$\overline{S}^{\,n}$ such that $S_i(\tau)=\tau_i$, for $i=1,\ldots,n$.
+
+We call a function that gives the least generalization of a finite
+set of simple types the {\it least common generalization} ($\lcg$). 
+
+An algorithm for computing the \lcg\ of a finite set of types in
+presented in Figure \ref{fig:lcg}. The concept of least common
+generalization was studied by Gordon Plotkin
+\cite{plotkin1970note,plotkin1971further}, that defined a function for
+constructing a generalization of two symbolic
+expressions.
+
+\begin{figure*}[ht]
+	\[\progfig{
+		$\lcg(\mathbb{T})=\tau$ $\:\:\:$ where 
+		$(\tau, S)=\lcg'(\mathbb{T},\emptyset)$, for some  $S$ \\ \\
+		$\lcg'(\{\tau\},S) = (\tau, S)$  \\ \\		
+		$\lcg'(\{\tau_1, \tau_2\} \cup \mathbb{T}, S) = \lcg''(\tau, \tau',S') \:\:\:$ where
+		$\begin{array}[t]{ll}
+		(\tau, S_0) & = lcg''(\tau_1, \tau_2, S)\\
+		(\tau',S')  & = lcg'(\mathbb{T}, S_0)
+		\end{array}$  \\ \\		
+		xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
+		$\lcg'' (C \: \overline{\tau}^{\,n},\:  D\: \overline{\rho}^{\,m},S)=$\+\\
+		\textbf{if}\ $S(\alpha)=( C\:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})$
+		for some $\alpha$ \textbf{then}\ $(\alpha,S)$ \\
+		\textbf{else} \+\\
+		\textbf{if}\ $n\not=m$ \textbf{then}\
+		$(\beta, S [\beta \mapsto ( C \:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})])$ \+ \\
+		where $\beta$ is a fresh type variable \-\\[.1cm]
+		\textbf{else}\ $(\psi\: \overline{\tau'}^{\,n}, S_n)$\+\\
+		where $\begin{array}[t]{l}
+		(\psi,S_0) = \left\{\begin{array}{ll}
+		(C ,S) & \textbf{if } C = D \\
+		(\alpha, S\,[\alpha\mapsto (C, D)])
+		& \text{otherwise, $\alpha$ is fresh }\\
+		\end{array}\right. \\[.3cm]
+		(\tau'_i,S_i) = lcg''(\tau_i, \rho_i, S_{i-1}), \text{ for } i=1, \ldots, n
+		\end{array}$ \-\-\-	
+	}
+	\]
+	\caption{Least Common Generalization} \label{fig:lcg}
+\end{figure*}
