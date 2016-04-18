@@ -9,17 +9,16 @@ language to allow multiple parameter type classes (MPTCs). This
 extension is thought to require additional mechanisms, such as
 functional dependencies or type families. In another paper
 \cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown that
-the introduction of MPTCs in the language can and should be done
-without the need of additional mechanisms: a simplifying change is
-sufficient, to Haskell's ambiguity rule. Interested readers are
-referred to \cite{JBCS-Ambiguity-and-constrained-polymorphism}. The
-main ideas are summarized below.
+the introduction of MPTCs in the language can be done without the need
+of additional mechanisms: a simplifying change is sufficient, to
+Haskell's ambiguity rule. Interested readers are referred to
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}. The main ideas are
+summarized below.
 
 Haskell with MPTCs uses constrained types of the form $\forall
 \overline{a}.\,C \Rightarrow \tau$, where $C$ is a set of constraints
-and $\tau$ is the well-known simple (unconstrained, unquantified)
-type; a constraint is a class name followed by a sequence of type
-variables.
+and $\tau$ is a simple (unconstrained, unquantified) type; a
+constraint is a class name followed by a sequence of type variables.
 
 In (GHC) Haskell, ambiguity is a property of a type: a type $\forall
 \overline{a}.\,C \Rightarrow \tau$ is ambiguous if there exists a type
@@ -40,19 +39,18 @@ dependencies and type families: a type variable $a$ that occurs in a
 set of constraints is reachable from the set of type variables in
 $\tau$ if it occurs in $\tau$ or there exists a type variable $b$ in
 $C$ that is reachable. For example, in $C \Rightarrow b$, where
-$C=(D\: a\: b, E a)$, type variable $a$ is reachable from the set of
+$C=(D\: a\: b, E\: a)$, type variable $a$ is reachable from the set of
 type variables in $b$.
 
-The presence of unreachable variables in a constraint $pi\in C$
+The presence of unreachable variables in a constraint $\pi\in C$
 characterizes overloading resolution, or, in other words, that
 overloading is resolved for $\pi$: it characterizes that there is no
 context in which an expression with such a type could be placed that
-could instantiate such unreachable variables.
-
-The presence of unreachable variables does not necessarily imply
-ambiguity. Ambiguity is a property of an expression, and it depends on
-the context in which the expression occurs, and on entailment (or
-satisfiability) of constraints.
+could instantiate such unreachable variables. The presence of
+unreachable variables does not necessarily imply ambiguity. Ambiguity
+is a property of an expression, and it depends on the context in which
+the expression occurs, and on entailment of the constraints on the
+expression's type.
 
 Entailment of constraints and its algorithmic (functional) counterpart
 are well-known in the Haskell world (see
