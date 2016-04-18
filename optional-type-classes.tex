@@ -1,2 +1,31 @@
 \section{Core-Haskell with Optional Type Classes}
 \label{Optional-type-classes}
+
+\subsection{Term and type syntax}
+\label{syntax}
+
+The context-free syntax of terms and types is presented in Figure
+\ref{term-types-syntax}. For simplicity and following common practice,
+kinds are not considered in type expressions and type expressions
+which are not simple types are not explicitly distinguished from
+simple types. Type expression variables are called simply type
+variables. There is a distinguished type constructor that is written
+as an infix operator, $\tau \to \tau'$, as usual.
+
+\begin{figure}[ht]
+	\[
+	\begin{array}{llcl}
+	%          \text{Skolem constant}    & K                    & \\
+	\text{Terms}              & e     & ::= & x                     \,\mid\,
+	\lambda x.\,e         \,\mid\,
+	e\:e'                  \,\mid\,
+	\mlet x = e\,\iin\,e'  \\
+	\text{Simple types}      & \tau   & ::= & \alpha \,\mid\,
+	T  \,\mid\, \tau\:\tau    \\
+        \text{Constraint} &  \kappa & ::= & C\:\overline{\tau} \\
+	\text{Type schemes}      & \sigma & ::= & \forall\,\overline{\alpha}.\,\kappa.\,\tau 
+	\end{array}
+	\]
+	\caption{Syntax of terms and types}
+	\label{term-types-syntax}
+\end{figure}
