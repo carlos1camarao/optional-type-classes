@@ -6,9 +6,11 @@ consider that meta-variables defined can appear primed or subscripted.
 Meta-variable usage is defined in the paper as follows: $x,y$ denote
 term variables, $\alpha, \beta$ ($a, b,...$
 in examples) type variables, $e$ a term,
-$\tau,\rho$ simple types, $\kappa$ a constraint set, $x:\tau$ a
-constraint, $\sigma$ a type, $\Gamma$ a typing context, that is, a set
-of pairs written as $x:\sigma$, and $S$ a substitution.
+$\tau,\rho$ simple types, $\sigma$ a type, $\Gamma$ a typing context, 
+that is, a set of pairs written as $x:\sigma$, and $S$ a
+substitution. A constraint is formed by a pair of a class name $C$ and
+a sequence of types $\overline{\tau}$. We slighly abuse notation and 
+use $\kappa$ to denote both a single constraint and a constraint set.
 
 The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes the
 sequence $a_1,\ldots,a_n$, where $n \geq 0$. When used in a context of
@@ -40,10 +42,12 @@ $S(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}] =
 A type $\tau$ is a generalization --- also called (first-order) 
 {\em anti-unification\/} \cite{ModelTheory2012} --- of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
-$\overline{S}^{\,n}$ such that $S_i(\tau)=\tau_i$, for $i=1,\ldots,n$.
-
-We call a function that gives the least generalization of a finite
-set of simple types the {\it least common generalization} ($\lcg$). 
+$\overline{S}^{\,n}$ such that $S_i(\tau)=\tau_i$, for
+$i=1,\ldots,n$. We say that $\tau'$ is less general than $\tau$,
+written $\tau \leq \tau'$, if there exist $S$ such that $S(\tau) =
+\tau'$. The {\it least common generalization} of a set of types
+$\tau_i$ is a type $\tau$ such that for all any generalization $\tau'$
+of $\tau_i$, we have $\tau \leq \tau'$.
 
 An algorithm for computing the \lcg\ of a finite set of types in
 presented in Figure \ref{fig:lcg}. The concept of least common
@@ -51,6 +55,8 @@ generalization was studied by Gordon Plotkin
 \cite{plotkin1970note,plotkin1971further}, that defined a function for
 constructing a generalization of two symbolic
 expressions.
+In Figure~\ref{fig:lcg}, we present  a function that gives the least
+common generalization of a finite set of simple type ($\lcg$). 
 
 \begin{figure*}[ht]
 	\[\progfig{
