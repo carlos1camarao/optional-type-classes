@@ -51,22 +51,29 @@ of $\tau_i$, we have $\tau \leq \tau'$.
 
 An algorithm for computing the \lcg\ of a finite set of types in
 presented in Figure \ref{fig:lcg}. The concept of least common
-generalization was studied by Gordon Plotkin
+generalization (LCG) was studied by Gordon Plotkin
 \cite{plotkin1970note,plotkin1971further}, that defined a function for
 constructing a generalization of two symbolic
 expressions.
-In Figure~\ref{fig:lcg}, we present  a function that gives the least
-common generalization of a finite set of simple type ($\lcg$). 
+In Figure~\ref{fig:lcg}, we present  a function that gives the LCG
+of a finite set of simple types by recursion on the structure of set
+$\mathbb{T}$ using a function to compute the generalization of two
+simple types. For two types $\tau_1$ and $\tau_2$ the idea is to
+recursively traverse the structure of both types using a finite
+map to store previously generalized types. Whenever we found two
+different type constructors, we search on the finite map if they have
+been previously generalized. If this was the case the generalization
+is returned. But if these two type constructors aren't in the finite
+map we insert them using a fresh type variable as their generalization. 
 
 \begin{figure*}[ht]
 	\[\progfig{
 		$\lcg(\mathbb{T})=\tau$ $\:\:\:$ where 
 		$(\tau, S)=\lcg'(\mathbb{T},\id)$, for some  $S$ \\ \\
 		$\lcg'(\{\tau\},S) = (\tau, S)$  \\ \\		
-		$\lcg'(\{\tau_1, \tau_2\} \cup \mathbb{T}, S) = \lcg''(\tau, \tau',S') \:\:\:$ where
+		$\lcg'(\{\tau_1\} \cup \mathbb{T}, S) = \lcg''(\tau_1, \tau',S') \:\:\:$ where
 		$\begin{array}[t]{ll}
-		(\tau, S_0) & = lcg''(\tau_1, \tau_2, S)\\
-		(\tau',S')  & = lcg'(\mathbb{T}, S_0)
+		(\tau',S')  & = lcg'(\mathbb{T}, S)
 		\end{array}$  \\ \\		
 		xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
 		$\lcg'' (C \: \overline{\tau}^{\,n},\:  D\: \overline{\rho}^{\,m},S)=$\+\\
@@ -90,11 +97,16 @@ common generalization of a finite set of simple type ($\lcg$).
 	\caption{Least Common Generalization} \label{fig:lcg}
 \end{figure*}
 
-As examples of least generatizations, consider the following types for
+
+As an example of LCG, consider the following types for
 the well known \haskell{map} function for lists and binary trees:
 \[
-  \begin{array}{c}
+  \begin{array}{l}
        \haskell{(a -> b) -> [a] -> [b]}\\
        \haskell{(a -> b) -> Tree a -> Tree b}
   \end{array}
 \]
+a call for $\lcg(\{\haskell{(a -> b) -> [a] -> [b]},\haskell{(a -> b)
+  -> Tree a -> Tree b}\})$ would produce the type $\haskell{(a -> b)
+  -> c a -> c b}$ where $\haskell{c}$ generalizes the different type
+constructors (\haskell{[]} and \haskell{Tree}). 
