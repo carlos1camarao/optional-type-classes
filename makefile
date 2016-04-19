@@ -1,6 +1,6 @@
 default: pdf
 pdf:
-	pdflatex art.tex
-	pdflatex art.tex
+	pdflatex -shell-escape art.tex
+	pdflatex -shell-escape art.tex
 	bibtex art
-	pdflatex art.tex
+	pdflatex -shell-escape art.tex
