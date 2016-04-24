@@ -10,7 +10,7 @@
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage{fancyhdr}
-%\usepackage{minted}
+\usepackage{minted}
 
 \begin{document}
 
@@ -40,19 +40,20 @@ DCC, Universidade do Estado de Santa Catarina (UDESC), Joinville\\
 \begin{abstract}
 
 This paper explores an approach for allowing type classes to be
-optionally declared by programmers, i.e. for allowing programmers to
-overload symbols without having to declare the types of these symbols
-in type classes.
+optionally declared by programmers, i.e. programmers can overload
+symbols without declaring their types in type classes.
 
-The idea is based on defining the type of an overloaded symbol without
-an annotated type as the anti-unification of instance types defined for
-the symbol in a module, by automatically creating a type class with
-that single overloaded name. This depends on a modularization of
-instance visibility, as well as on a redefinition of Haskell's
-ambiguity rule. The paper presents the modifications to Haskell's
-module system that are necessary for allowing instances to have a
-modular scope, based on previous work published by one of the
-authors. The definition of the type of overloaded symbols as the
+The type of an overloaded symbol is, if not explicitly defined in a
+type class, automatically determined from the anti-unification of
+instance types defined for the symbol in the relevant module. A type
+class having the overloaded name as its unique member is automatically
+created from this type.
+
+This depends on a modularization of instance visibility, as well as on
+a redefinition of Haskell's ambiguity rule. The paper presents the
+modifications to Haskell's module system that are necessary for
+allowing instances to have a modular scope, based on previous work by
+the authors. The definition of the type of overloaded symbols as the
 anti-unification of available instance types and the redefined
 ambiguity rule is also based on previous works by the authors.
 
