@@ -12,101 +12,138 @@ substitution. A constraint is formed by a pair of a class name $C$ and
 a sequence of types $\overline{\tau}$. We slighly abuse notation and 
 use $\kappa$ to denote both a single constraint and a constraint set.
 
-The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes the
-sequence $a_1,\ldots,a_n$, where $n \geq 0$. When used in a context of
-a set, it denotes the corresponding set of elements in the sequence
-$\{a_1,\ldots,a_n\}$.
+The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes
+the sequence $a_1 \cdots a_n$, or $a_1, \ldots, a_n$, or
+$a_1;\ldots;a_n$, depending on the context where it is used, where
+$n\geq 0$. When used in a context of a set, it denotes the
+corresponding set of elements in the sequence $\{a_1,\ldots,a_n\}$. It
+can be used with more than one variable; for example, in $\overline{x
+  = e}^{\,n}$, it denotes the sequence $x_1 = e_1, \ldots, x_n = e_n$.
 
 A substitution is a function from type variables to simple type
-expressions (cf.~Section \ref{Optional-type-classes}). The identity substitution
-denoted by \id. $S\sigma$ represents the capture-free operation of
-substituting $S(\alpha)$ for each free occurrence of $\alpha$ in
-$\sigma$.
+expressions (cf.~Section \ref{Optional-type-classes}). The identity
+substitution denoted by \id. $\phi\sigma$ represents the capture-free
+operation of substituting $\phi(\alpha)$ for each free occurrence of
+$\alpha$ in $\sigma$.
 
-We overload the substitution application on constraints, constraint sets
-and sets of types. Definition of application on these elements is
+We overload the substitution application on constraints, constraint
+sets and sets of types. Definition of application on these elements is
 straightforward. The symbol $\circ$ denotes function composition and
-$\dom{S}=\{\alpha \mid\ S(\alpha) \neq \alpha\}$.
+$\dom{\phi}=\{\alpha \mid\ \phi(\alpha) \neq \alpha\}$.
 
-The notation $S[\overline{\alpha}\mapsto\overline{\tau}]$ denotes the
-updating of $S$ such that $\overline{\alpha}$ maps to
-$\overline{\tau}$, that is, the substitution $S'$ such that $S'(\beta)
-= \tau_i$ if $\beta = \alpha_i$, for $i = 1,...,n$, otherwise
-$S(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}] =
-\id[\overline{\alpha}\mapsto\overline{\tau}]$.
-
+The notation $\phi[\overline{\alpha}\mapsto\overline{\tau}]$ denotes
+the updating of $\phi$ such that $\overline{\alpha}$ maps to
+$\overline{\tau}$, that is, the substitution $\phi'$ such that
+$\phi'(\beta) = \tau_i$ if $\beta = \alpha_i$, for $i = 1,...,n$,
+otherwise $\phi(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}]
+= \id[\overline{\alpha}\mapsto\overline{\tau}]$.
 
 \subsection{Anti-unification of instance types}
 \label{sec:anti-unif}
 
-A type $\tau$ is a generalization --- also called (first-order) 
-{\em anti-unification\/} \cite{ModelTheory2012} --- of simple types
+A type $\tau$ is a generalization of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
-$\overline{S}^{\,n}$ such that $S_i(\tau)=\tau_i$, for
-$i=1,\ldots,n$. We say that $\tau'$ is less general than $\tau$,
-written $\tau \leq \tau'$, if there exist $S$ such that $S(\tau) =
-\tau'$. The {\it least common generalization} of a set of types
-$\tau_i$ is a type $\tau$ such that for all any generalization $\tau'$
-of $\tau_i$, we have $\tau \leq \tau'$.
+$\overline{\phi}^{\,n}$ such that $\phi_i(\tau)=\tau_i$, for
+$i=1,\ldots,n$.  A generalization is also called a (first-order) {\em
+  anti-unification\/} \cite{ModelTheory2012}.
 
-An algorithm for computing the \lcg\ of a finite set of types in
-presented in Figure \ref{fig:lcg}. The concept of least common
-generalization (LCG) was studied by Gordon Plotkin
-\cite{plotkin1970note,plotkin1971further}, that defined a function for
-constructing a generalization of two symbolic
-expressions.
-In Figure~\ref{fig:lcg}, we present  a function that gives the LCG
-of a finite set of simple types by recursion on the structure of set
-$\mathbb{T}$ using a function to compute the generalization of two
-simple types. For two types $\tau_1$ and $\tau_2$ the idea is to
-recursively traverse the structure of both types using a finite
-map to store previously generalized types. Whenever we found two
-different type constructors, we search on the finite map if they have
-been previously generalized. If this was the case, the generalization
-is returned. But if these two type constructors aren't in the finite
-map we insert them using a fresh type variable as their generalization
-and return this new variable. 
+We say that $\tau'$ is less general than $\tau$, written $\tau \leq
+\tau'$, if there exist $\phi$ such that $\phi(\tau) = \tau'$. 
+
+The {\it least common generalization} (lcg) of a set of types
+$\mathbb{T}$ and a type $\tau$ holds, written as
+$\lcgR(\mathbb{T},\tau)$, if for all generalizations $\tau'$ of
+$\mathbb{T}$, we have $\tau \leq \tau'$.
+
+An algorithm for computing the lcg of a finite set of types in
+presented in Figure \ref{fig:lcg}. The concept was studied by Gordon
+Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
+function for constructing a generalization of two symbolic
+expressions.  In Figure~\ref{fig:lcg}, we present function \lcg, that
+gives the lcg of a finite set of simple types by recursion on the
+structure of set $\mathbb{T}$, using a function to compute the
+generalization of two simple types. For two types $\tau_1$ and
+$\tau_2$ the idea is to recursively traverse the structure of both
+types using a finite map to store previously generalized
+types. Whenever we found two different type constructors, we search on
+the finite map if they have been previously generalized. If this was
+the case, the generalization is returned. But if these two type
+constructors aren't in the finite map we insert them using a fresh
+type variable as their generalization and return this new variable.
 
 \begin{figure*}[ht]
 	\[\progfig{
-		$\lcg(\mathbb{T})=\tau$ $\:\:\:$ where 
-		$(\tau, S)=\lcg'(\mathbb{T},\id)$, for some  $S$ \\ \\
-		$\lcg'(\{\tau\},S) = (\tau, S)$  \\ \\		
-		$\lcg'(\{\tau_1\} \cup \mathbb{T}, S) = \lcg''(\tau_1, \tau',S') \:\:\:$ where
+            $\lcg(\mathbb{T})=\tau$ $\:\:\:$ where 
+               $(\tau, \phi)=\lcg'(\mathbb{T},\id)$, for some  $\phi$ \\ \\
+            $\lcg'(\{\tau\},\phi) = (\tau, \phi)$  \\ \\		
+            $\lcg'(\{\tau_1\} \cup \mathbb{T}, \phi) = \lcg''(\tau_1, \tau',\phi') \:\:\:$ where
 		$\begin{array}[t]{ll}
-		(\tau',S')  & = lcg'(\mathbb{T}, S)
+                   (\tau',\phi')  & = lcg'(\mathbb{T}, \phi)
 		\end{array}$  \\ \\		
-		xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
-		$\lcg'' (C \: \overline{\tau}^{\,n},\:  D\: \overline{\rho}^{\,m},S)=$\+\\
-		\textbf{if}\ $S(\alpha)=( C\:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})$
-		for some $\alpha$ \textbf{then}\ $(\alpha,S)$ \\
-		\textbf{else} \+\\
-		\textbf{if}\ $n\not=m$ \textbf{then}\
-		$(\beta, S [\beta \mapsto ( C \:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})])$ \+ \\
-		where $\beta$ is a fresh type variable \-\\[.1cm]
-		\textbf{else}\ $(\psi\: \overline{\tau'}^{\,n}, S_n)$\+\\
-		where $\begin{array}[t]{l}
-		(\psi,S_0) = \left\{\begin{array}{ll}
-		(C ,S) & \textbf{if } C = D \\
-		(\alpha, S\,[\alpha\mapsto (C, D)])
-		& \text{otherwise, $\alpha$ is fresh }\\
-		\end{array}\right. \\[.3cm]
-		(\tau'_i,S_i) = lcg''(\tau_i, \rho_i, S_{i-1}), \text{ for } i=1, \ldots, n
-		\end{array}$ \-\-\-	
-	}
-	\]
-	\caption{Least Common Generalization} \label{fig:lcg}
+            xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
+            $\lcg'' (C \: \overline{\tau}^{\,n},\:  D\: \overline{\rho}^{\,m},\phi)=$\+\\
+              \textbf{if}\ $\phi(\alpha)=( C\:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})$
+                      for some $\alpha$ \textbf{then}\ $(\alpha,\phi)$ \\
+              \textbf{else} \+\\
+              \textbf{if}\ $n\not=m$ \textbf{then}\
+                 $(\beta, \phi [\beta \mapsto ( C \:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})])$ \+ \\
+		 where $\beta$ is a fresh type variable \-\\[.1cm]
+              \textbf{else}\ $(\psi\: \overline{\tau'}^{\,n}, \phi_n)$\+\\
+                 where $\begin{array}[t]{l}
+		          (\psi,\phi_0) = \left\{\begin{array}{ll}
+                                            (C ,\phi) & \textbf{if } C = D \\
+                                            (\alpha, \phi\,[\alpha\mapsto (C, D)])
+                                                      & \text{otherwise, $\alpha$ is fresh }\\
+                                          \end{array}\right. \\[.3cm]
+                          (\tau'_i,\phi_i) = lcg''(\tau_i, \rho_i, \phi_{i-1}), \text{ for } i=1, \ldots, n
+                        \end{array}$ \-\-\-	
+        }
+        \]
+\caption{Least Common Generalization} \label{fig:lcg}
 \end{figure*}
+As an example of the use of \lcg, consider the following types for the
+well known \map\ function for lists and binary trees:
 
-As an example of LCG, consider the following types for
-the well known \haskell{map} function for lists and binary trees:
-\[
-  \begin{array}{l}
-       \haskell{(a -> b) -> [a] -> [b]}\\
-       \haskell{(a -> b) -> Tree a -> Tree b}
-  \end{array}
-\]
-a call of $\lcg$ for a set containing the above types would produce,
-as their LCG, the type $\haskell{(a -> b) -> c a -> c b}$, where $\haskell{c}$ generalizes the different type
-constructors (\haskell{[]} and \haskell{Tree}). 
+\proga{
+   $(a \rightarrow b)$ $\rightarrow$ [$a$] $\rightarrow$ [$b$]\\
+   $(a \rightarrow b)$ $\rightarrow$ \Tree\ $a$ $\rightarrow$ \Tree\ $b$
+}
+
+A call of \lcg\ for a set containing the above types yields type $(a
+\rightarrow b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
+generalization of type constructors {\tt []} and \Tree.
+
+We have: 
+
+\begin{Theorem}[Soundness of \lcg]
+For all (set of simple types) $\mathbb{T}$, we have that
+$\lcg(\mathbb{T})$ yields a generalization of $\mathbb{T}$.
+\label{theorem:lcg-is-sound}
+\end{Theorem}
+
+\begin{Theorem}[Completeness of \lcg]
+For all (set of simple types) $\mathbb{T}$, we have that
+$\lcg(\mathbb{T})$ yields a lcg of $\mathbb{T}$, (i.e.~if $\tau$ is a
+generalization of $\mathbb{T}$ then $\lcg(\mathbb{T}) \leq \tau$).
+\label{theorem:lcg-is-complete}
+\end{Theorem}
+
+\begin{Theorem}[Compositionality of \lcg]
+For all (set of simple types) $\mathbb{T}, \mathbb{T'}$, we have that
+$\lcg(\lcg(\mathbb{T}),\lcg(\mathbb{T'})) = \lcg(\mathbb{T} \cup
+mathbb{T'})$. 
+\label{theorem:lcg-is-compositional}
+\end{Theorem}
+
+\begin{Theorem}[Uniqueness of \lcg]
+For all (set of simple types) $\mathbb{T}$, we have that
+$\lcg(\mathbb{T})$ is unique, up to variable renaming.
+\label{theorem:lcg-is-unique-modulo-variable-renaming}
+\end{Theorem}
+
+
+
+The proofs use straighforward induction on the number and complexity
+of elements of $\mathbb{T}$.
+
 

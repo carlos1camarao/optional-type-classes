@@ -1,31 +1,289 @@
-\section{Core-Haskell with Optional Type Classes}
+\section{Mini-Haskell with Optional Type Classes}
 \label{Optional-type-classes}
 
-\subsection{Term and type syntax}
-\label{syntax}
+In this section we present a type system for mini-Haskell, where type
+class declaration is optional. Programmers can overload symbols
+without declaring their types in type classes. The type of an
+overloaded symbol is, if not explicitly defined in a type class, based
+on the anti-unification of instance types defined for the symbol in
+the relevant module.
 
-The context-free syntax of terms and types is presented in Figure
-\ref{term-types-syntax}. For simplicity and following common practice,
-kinds are not considered in type expressions and type expressions
-which are not simple types are not explicitly distinguished from
-simple types. Type expression variables are called simply type
-variables. There is a distinguished type constructor that is written
-as an infix operator, $\tau \to \tau'$, as usual.
+Figure \ref{fig:mini-Haskell-context-free-syntax} shows meta-variable
+usage and the context-free syntax of mini-Haskell: expressions and
+their types, modules and programs. Meta-variables can be possibly
+primed or subscripted. An instance can be specified without specifying
+a type class. 
 
-\begin{figure}[ht]
-	\[
-	\begin{array}{llcl}
-	%          \text{Skolem constant}    & K                    & \\
-	\text{Terms}              & e     & ::= & x                     \,\mid\,
-	\lambda x.\,e         \,\mid\,
-	e\:e'                  \,\mid\,
-	\mlet x = e\,\iin\,e'  \\
-	\text{Simple types}      & \tau   & ::= & \alpha \,\mid\,
-	T  \,\mid\, \tau\:\tau    \\
-        \text{Constraint} &  \kappa & ::= & C\:\overline{\tau} \\
-	\text{Type schemes}      & \sigma & ::= & \forall\,\overline{\alpha}.\,\kappa.\,\tau 
-	\end{array}
-	\]
-	\caption{Syntax of terms and types}
-	\label{term-types-syntax}
+% (the use of the keywork \instance\ is not strictly
+%necessary, it is included here for the sake of simplicity).
+
+For simplicity and following common practice, kinds are not considered
+in type expressions and type expressions which are not simple types
+are not explicitly distinguished from simple types. Type expression
+variables are called simply type variables. 
+
+As usual, we assume the existence of type constructor $\to$, that is
+written as an infix operator ($\tau \to \tau'$). 
+
+For simplicitly, imported and exported variables and instances must be
+explicitly indicated. 
+
+Multi-parameter type classes are supported. In this papert we do not
+consider recursivity, neither in let-bindings nor in instance
+declarations. 
+
+\begin{figure} 
+
+\[ \begin{array}[c]{llll}
+\textrm{Class Name}         &\hspace{.1cm} & A,B            & \\
+\textrm{Module Name}        &              & M,N            & \\
+\textrm{Type variable}      &         & a,b,\alpha,\beta & \\
+\textrm{Type constructor}   &         & T              & \\
+\textrm{Simple Constraint}  &         & \pi            & ::= A\,\overline{\tau}\\
+\textrm{Unquantified Constraint} &    & \psi           & ::= C\Rightarrow \pi\\
+\textrm{Constraint}         &         & \theta         & ::= \forall\,\overline{\alpha}.\,\psi\\
+\textrm{Set of Unquantified Constraints} &   & C,D      & \\
+\textrm{Constrained Type}   &         & \delta,\epsilon & ::= C\Rightarrow \tau\\
+\textrm{Simple Type}        &         & \tau, \rho     & ::= \alpha \mid T \mid \tau\:\tau' \\
+\textrm{Type}               &         & \sigma         & ::= \forall\,\overline{\alpha}.\,\delta\\
+\textrm{Program Theory}     &         & P,Q            &\\
+\textrm{Variable}           &         & x, y, z        &\\
+\textrm{Expression}         &         & e              & ::= x \,\mid\, \lambda x.\,e  \,\mid\, e\:e' \,\mid\, \mlet x = e\,\iin\,e'\\ 
+\textrm{Program}            &         & p              & ::= \overline{m}\\
+\textrm{Module}             &         & m              & ::= \module\, M\, (\exportC) \ \where\ \overline{\importC};\: \overline{\!d}\\
+\textrm{Export clause}      &         & \exportC\      & ::= \overline{\iitem}\\
+\textrm{Import clause}      &         & \importC\      & ::= \import\ M\: (\,\overline{\iitem}\,)\\
+\textrm{Item}               &         & \iitem         & ::= x \,\mid\, \instance\ \overline{\tau}\: A\\ 
+\textrm{Declaration}        &         & d              & ::= \classDecl \,\mid\, \instDecl \,\mid\, \overline{b}\\
+\textrm{Class Declaration}  &         & \classDecl\    & ::= \class\ C \Rightarrow A\: \overline{a}\:\: \where\ \overline{x:\delta}\\
+\textrm{Instance Declaration} &       & \instDecl\     & ::= \instance\ C \Rightarrow A\: \overline{\tau}\:\: \where\ \overline{b} 
+                                                             \,\mid\, \instance\ b\\
+\textrm{Binding}              &       & b              & ::= \overline{x = e} 
+\end{array} \]
+\caption{Context-free syntax of mini-Haskell and types}
+\label{fig:mini-Haskell-context-free-syntax}
 \end{figure}
+
+A program theory $P$ is a set of axioms of first-order logic,
+generated from class and instance declarations occurring in the
+program, of the form $C \Rightarrow \pi$, where $C$ is a set of simple
+constraints and $\pi$ is a simple constraint (see Figure
+\ref{fig:mini-Haskell-context-free-syntax}). 
+
+Entailment of a set of constraints $C$ by a program theory $P$ is
+written as $P \entail C$
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}.
+
+Typing contexts are indexed by module names. $\Gamma(M)(x)$ gives the
+type of $x$ in module $M$ and typing context $\Gamma$. A special,
+empty module name, denoted by $\texttt{[]}$, is used for names
+exported by modules, to control the scope of names that use import and
+export clauses. Also, a reserved name $\gamma$ is used to refer to the
+current module, being defined in the type system and relations to
+control import and export clauses.
+
+It is not necessary to save multiple instance types for the same
+variable in a typing context, neither it is necessary to use instance
+types in typing contexts (they are needed only in the program theory);
+only the lcg of instance types is used, because of lcg
+compositionality (theorem \ref{theorem:lcg-is-compositional}). When a
+new instance is declared, if it is an instance of a declared class the
+type systems guarantees that each field is an instance of the type
+declared in the type class; otherwise (i.e.~it is the single field of
+an undeclared class), its (new) type is given by the lcg of the
+existing type (an existing lcg of previous instance types) and the
+instance type.
+
+A type system for core-Haskell is presented in Figure
+\ref{fig:core-haskell-type-system}, using rules of the form $P;\Gamma
+\vdash_0 e:\psi$, which means that $e$ has type $\psi$ in typing
+context $\Gamma$ and program theory $P$.
+
+A partial order on types is defined so that $\sigma \leq
+\phi\,\sigma$, for all types $\sigma$ and all substitutions $\phi$.
+
+Note that type ordering disregards constraint set satisfiability.
+Satisfiability is only important when considering whether a constraint
+set $C$ can be removed from a constrained type $C,D \Rightarrow \tau$
+($C$ can be removed if and only if overloading for $C$ has been
+resolved and there exists a single satisfying substitution for
+$C$)\cite{JBCS-Ambiguity-and-constrained-polymorphism}.
+
+Rule (\LET) performs constraint set simplification before type
+generalization. Constrait set simplification $\simplifies{P}$ is a
+relation on cons\-traints, defined as a composition of improvement and
+context reduction \cite{JBCS-Ambiguity-and-constrained-polymorphism}.
+
+In rule (\APP), the constraints on the type of the result are those
+that occur in the function type plus not all constraints that occur in
+the type of the argument but only those that have variables reachable
+from the set of variables that occur in the simple type of the result
+or in the constraint set on the function type.  This allows, for
+example, not including constraints on the type of the following
+expressions, where $o$ is any expression, with a possibly non-empty
+set of constraints on its type: {\tt \flip\ \const\ $o$} (where
+\const\ has type $\forall a, b.\,a \rightarrow b \rightarrow a$ and
+\flip\ has type $\forall a, b, c.\,(a \rightarrow b \rightarrow c)
+\rightarrow b \rightarrow a\rightarrow c$), which should denote an
+identity function, and \fst\ ($e$, $o$), which should have the same
+denotation as $e$.
+
+A variable $a\in \tv(C)$ is called reachable from, or with respect to,
+a set of type variables $V$ if $a\in V$ or if $a\in \pi$ for some
+$\pi\in C$ such that there exists $b\in \tv(\pi)$ such that $b$ is
+reachable. $a\in \tv(C)$ is called unreachable if it is not
+reachable. The set of reachable and unreachable type variables of
+constraint set $C$ {\em from V\/} is denoted by $\reachableVars(C,V)$.
+
+%We also say that type variables $W$ are reachable in constrained type
+%$C\Rightarrow \tau$ if $W\subseteq \reachableVars(C,\tv(\tau))$ (and
+%similarly for unreachable type variables and if $W$ is a type variable
+%instead of a set of type variables).
+
+$C \oplus_V D$ denotes the constraint set obtained by adding to $C$
+constraints from $D$ that have type variables reachable from $V$:
+  \[ P \oplus_V Q = P \cup \{ \psi \in Q \mid \tv(\psi) \cap \reachableVars(Q,V) \not= \emptyset \} \]
+
+$\gen(\psi,\sigma,V)$ holds if
+  $\sigma=\forall\,\overline{\alpha}.\,\psi$, where
+  $\overline{\alpha}=\tv(\psi) - V$.
+
+A type system for mini-Haskell, which extends core-Haskell with
+(optional) type classes, modules and modularized instance
+declarations, is presented in Figures
+\ref{fig:mini-haskell-module-rule} and
+\ref{fig:mini-haskell-rules-for-declarations}.
+Rule (\MODULE) uses relations ($\vdash_{\Downarrow}$) and
+($\vdash_{\Uparrow}^X$), which are defined separately, for clarity, in
+Figures \ref{fig:import-relation} and \ref{fig:export-relation}
+
+The import relation $\Gamma \vdash_{\Downarrow} \overline{\importC}
+\leadsto \Gamma'$ yields a typing context ($\Gamma'$) from a typing
+context ($\Gamma$) and a sequence of import clauses
+($\overline{\importC}$).
+
+Relation $P;\Gamma \vdash_{\Uparrow}^X \overline{\!d}:(R,P',\Gamma')$
+types a sequence of bindings, from a typing context ($\Gamma$), a
+program theory ($P$) and a set of exported names ($X$); it yields a
+record of elements ($R)$ of the form $(x:\sigma)$, together with a new
+typing context ($\Gamma'$), modified to contain elements of $X$, so
+that $\Gamma'(\texttt{[]})$ contains the types of each $x\in X$, and a
+new program theory ($P'$), updated from class and instance
+declarations.  Relation $(\vdash_0)$ is used to check that expressions
+of core-Haskell that occur in declarations are well-typed.
+
+% and updates the typing context if these declarations are exported,
+%and updates the program theory from class and instance declarations.
+
+There must exist a sequence of derivations for typing a sequence of
+modules that composes a program that starts from an empty typing
+context, or from a typing context that corresponds to predefined
+library modules. Recursive modules are not treated in this paper.
+
+\begin{figure}
+\[ \begin{array}{cc}
+      \displaystyle\frac
+        {\begin{array}[t]{lll}
+           \Gamma(\gamma)(x) = \sigma\ & \:\sigma \leq \psi\: & \:P \entail \psi
+         \end{array}}
+        {P;\Gamma \vdash_0 x: \psi} \:(\VAR) \\ \\
+
+	\displaystyle\frac
+          {(\Gamma(\gamma),x \mapsto \tau) \vdash_0 e: C \Rightarrow \tau'}
+	  {P;\Gamma \vdash_0 \lambda x.\:e: C\Rightarrow \tau \rightarrow \tau'} \:(\ABS)  \\ \\
+
+	\displaystyle\frac
+	  {\begin{array}[t]{cc}
+             P;\Gamma \vdash_0 e: C \Rightarrow \tau' \rightarrow \tau\: &\:
+             P;\Gamma \vdash_0 e': C' \Rightarrow \tau' \\
+             V = \tv(\tau) \cup \tv(C) & (C \oplus_V C') \simplifies{P} D
+           \end{array}}
+	{P;\Gamma \vdash_0 e\:e': D\Rightarrow \tau} \:(\APP) \\ \\
+
+	\displaystyle\frac
+	 {\begin{array}{ll}
+            P;\Gamma \vdash_0 e\!:C \Rightarrow \tau & C \simplifies{P} D\\
+             \gen(D\Rightarrow \tau,\sigma,\tv(\Gamma))\: & \:P;(\Gamma(\gamma),x \mapsto\sigma) \vdash_0 e'\!:\psi
+          \end{array}}
+	 {P;\Gamma \vdash_0 \mlet\ x=e\ \iin\ e':\psi} \:(\LET)
+\end{array} \]
+\caption{Core-Haskell Type System}
+\label{fig:core-haskell-type-system}
+\end{figure}
+
+\begin{figure}
+\[ \begin{array}{cc}
+	\displaystyle\frac
+	 {\begin{array}{ll}
+           \Gamma_0 \vdash_{\Downarrow} \overline{\!I} : \Gamma\:\: & \:\:P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R,P',\Gamma') \}
+          \end{array}}
+	 {P;\Gamma_0 \vdash \module\ M\, (\exportC)\ \where\ \overline{\!I};\, \overline{\!d} : R} \:(\MODULE)
+\end{array} \]
+\caption{Mini-Haskell module rule} 
+\label{fig:mini-haskell-module-rule}
+\end{figure}
+
+\begin{figure}
+\[ \begin{array}{cc}
+	\displaystyle\frac
+	 {\begin{array}{ll}
+            \Gamma'(M)(x) = \left\{ \begin{array}{ll}
+                \Gamma(\texttt{[]})(x) & \text{ if } M = \gamma\\
+                \Gamma(M)(x)           & \text{ otherwise}
+             \end{array}\right.
+          \end{array}}
+	 {\Gamma \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}) : \Gamma'} \\ \\
+
+	\displaystyle\frac
+	 {\begin{array}{ll}
+	   \Gamma_0 \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}) : \Gamma \\
+           \Gamma \vdash_{\Downarrow} \overline{\importC} : \Gamma'
+          \end{array}}
+	 {\Gamma_0 \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}); \overline{\importC} : \Gamma'} 
+\end{array} \]
+\caption{Import relation}
+\label{fig:import-relation}
+\end{figure}
+
+\begin{figure}
+\[ \begin{array}{cc}
+	\displaystyle\frac
+	 {\begin{array}{ll}
+            Q = P \cup \left\{ \begin{array}{ll}
+                                  \{ C \Rightarrow T\:\overline{a} \} & \text{ if } C \not= \emptyset \\
+                                  \emptyset                              & \text{ otherwise}
+                                \end{array}\right.\: & \:
+            Q;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (\overline{y:\epsilon}^{\,m}, Q', \Gamma)
+          \end{array}}
+	 {P;\Gamma \vdash_{\Uparrow}^X \class\ C \Rightarrow T\: \overline{a}\ \where\ \overline{x:\delta}^{\,n};\, \overline{\!d} : 
+            (\overline{x:\delta}^{\,n} \oplus\ \overline{y:\epsilon}^{\,m}, Q', \Gamma')} \\ \\
+
+	\displaystyle\frac
+	 {\begin{array}{l}
+            Q = P \cup \left \{ \begin{array}{ll}
+                         \{ \forall\,\overline{a}.\,C \Rightarrow T\: (\overline{\tau}) \} & \text{ if } C \not= \emptyset \\
+                         \{ \forall\,\overline{a}.\,T\: (\overline{\tau}) \} & \text{ otherwise}
+                                \end{array}\right. \\
+           Q;\Gamma \vdash? \overline{b} : ? \text{ falta definir como tipar bindings\ldots} \\
+	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') \\
+          \end{array}}
+	 {P;\Gamma \vdash_{\Downarrow} \instance\ C \Rightarrow T\:\overline{\tau}\ \where\ \overline{b};\, \overline{\!d} 
+             : (R,P',\Gamma')}\\ \\
+
+	\displaystyle\frac
+	 {\begin{array}{l}
+            Q = P \cup \left\{ \begin{array}{ll}
+                                  \{ C \Rightarrow T\: (\overline{a}) \} & \text{ if } C \not= \emptyset \\
+                                  \emptyset                              & \text{ otherwise}
+                                \end{array}\right. \\
+            \Gamma(M)(x) = \tau_x \text{ is such that } \lcgR(\{ \tau_x, T\:\overline
+	   Q;\Gamma \vdash_{\Uparrow} \overline{d} : (R,Q',\Gamma') \\
+           \Gamma \vdash_{\Downarrow} \overline{\importC} \leadsto \Gamma'
+          \end{array}}
+	 {P;\Gamma_0 \vdash_{\Downarrow} \instance\ x = e; \overline{d} : (R,P',\Gamma')} 
+
+\end{array} \]
+\caption{Mini-Haskell rules for declarations}
+\label{fig:mini-haskell-rules-for-declarations}
+\end{figure}
+
