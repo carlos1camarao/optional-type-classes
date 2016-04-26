@@ -60,15 +60,15 @@ Modularization of instance definitions is allowed by means of the
 importation and exportion of instances as shown in
 \cite{Controlling-scope-instances}. Essentially, import and export
 clauses can specify, instead of just names, occurrences of {\tt
-  instance $\overline{\tau}$ $D$}, where $\overline{\tau}$ is a
-(non-empty) sequence of types and $D$ is a class name.  We have:
+  instance $A$ $\overline{\tau}$}, where $\overline{\tau}$ is a
+(non-empty) sequence of types and $A$ is a class name.  We have:
 
-  \[ \text{\module\ $M$ (\instance\ $\overline{\tau}$ $D$ \where\ \ldots)} \]
+  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$ \where\ \ldots)} \]
 specifies that the instance of $\overline{\tau}$ for class $D$ is
 exported in module $M$.
 
-  \[ \text{\import\ $M$ (\instance\ $\overline{\tau}$ $D$)} \]
-specifies that the instance of $\overline{\tau}$ for class $D$ is
+  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$)} \]
+specifies that the instance of $\overline{\tau}$ for class $A$ is
 imported from $M$, in the module where the import clause occurs.
 
 Alternatively could simply give a name to an instance, in an instance

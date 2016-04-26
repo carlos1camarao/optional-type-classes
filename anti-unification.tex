@@ -48,7 +48,7 @@ $i=1,\ldots,n$. A generalization is also called a (first-order) {\em
   anti-unification\/} \cite{ModelTheory2012}.
 
 We say that $\tau'$ is less general than $\tau$, written $\tau \leq
-\tau'$, if there exist $\phi$ such that $\phi(\tau) = \tau'$. 
+\tau'$, if there exist $\phi$ such that $\phi(\tau) = \tau'$.
 
 The {\it least common generalization} (lcg) of a set of types
 $\mathbb{T}$ and a type $\tau$ holds, written as
@@ -116,27 +116,27 @@ generalization of type constructors {\tt []} and \Tree.
 We have: 
 
 \begin{Theorem}[Soundness of \lcg]
-For all (set of simple types) $\mathbb{T}$, we have that
+For all (sets of simple types) $\mathbb{T}$, we have that
 $\lcg(\mathbb{T})$ yields a generalization of $\mathbb{T}$.
 \label{theorem:lcg-is-sound}
 \end{Theorem}
 
 \begin{Theorem}[Completeness of \lcg]
-For all (set of simple types) $\mathbb{T}$, we have that
-$\lcg(\mathbb{T})$ yields a lcg of $\mathbb{T}$, (i.e.~if $\tau$ is a
-generalization of $\mathbb{T}$ then $\lcg(\mathbb{T}) \leq \tau$).
+For all (sets of simple types) $\mathbb{T}$, we have that
+$\lcgR(\mathbb{T},\lcg(\mathbb{T}))$ holds, i.e.~if $\tau$ is a
+generalization of $\mathbb{T}$ then $\lcg(\mathbb{T}) \leq \tau$.
 \label{theorem:lcg-is-complete}
 \end{Theorem}
 
 \begin{Theorem}[Compositionality of \lcg]
-For all (set of simple types) $\mathbb{T}, \mathbb{T'}$, we have that
-$\lcg(\lcg(\mathbb{T}),\lcg(\mathbb{T'})) = \lcg(\mathbb{T} \cup
-mathbb{T'})$. 
+For all non-empty (sets of simple types) $\mathbb{T}, \mathbb{T'}$, we
+have that $\lcg(\lcg(\mathbb{T}),\lcg(\mathbb{T'})) = \lcg(\mathbb{T}
+\cup \mathbb{T'})$.
 \label{theorem:lcg-is-compositional}
 \end{Theorem}
 
 \begin{Theorem}[Uniqueness of \lcg]
-For all (set of simple types) $\mathbb{T}$, we have that
+For all (sets of simple types) $\mathbb{T}$, we have that
 $\lcg(\mathbb{T})$ is unique, up to variable renaming.
 \label{theorem:lcg-is-unique-modulo-variable-renaming}
 \end{Theorem}
