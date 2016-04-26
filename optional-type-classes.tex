@@ -152,10 +152,11 @@ A type system for mini-Haskell, which extends core-Haskell with
 (optional) type classes, modules and modularized instance
 declarations, is presented in Figures
 \ref{fig:mini-haskell-module-rule} and
+\ref{fig:mini-haskell-rules-for-declarations}.  Rule (\MODULE) uses
+relations ($\vdash_{\Downarrow}$) and ($\vdash_{\Uparrow}^X$), which
+are defined separately, for clarity, in Figures
+\ref{fig:import-relation} and
 \ref{fig:mini-haskell-rules-for-declarations}.
-Rule (\MODULE) uses relations ($\vdash_{\Downarrow}$) and
-($\vdash_{\Uparrow}^X$), which are defined separately, for clarity, in
-Figures \ref{fig:import-relation} and \ref{fig:export-relation}
 
 The import relation $\Gamma \vdash_{\Downarrow} \overline{\importC}
 \leadsto \Gamma'$ yields a typing context ($\Gamma'$) from a typing
@@ -163,14 +164,15 @@ context ($\Gamma$) and a sequence of import clauses
 ($\overline{\importC}$).
 
 Relation $P;\Gamma \vdash_{\Uparrow}^X \overline{\!d}:(R,P',\Gamma')$
-types a sequence of bindings, from a typing context ($\Gamma$), a
-program theory ($P$) and a set of exported names ($X$); it yields a
-record of elements ($R)$ of the form $(x:\sigma)$, together with a new
-typing context ($\Gamma'$), modified to contain elements of $X$, so
-that $\Gamma'(\texttt{[]})$ contains the types of each $x\in X$, and a
-new program theory ($P'$), updated from class and instance
-declarations.  Relation $(\vdash_0)$ is used to check that expressions
-of core-Haskell that occur in declarations are well-typed.
+is used for specifying the types a sequence of bindings, from a typing
+context ($\Gamma$), a program theory ($P$) and a set of exported names
+($X$); it yields a record of elements ($R)$ of the form $(x:\sigma)$,
+together with both i) a new typing context ($\Gamma'$), modified to
+contain elements of $X$, so that $\Gamma'(\texttt{[]})$ contains the
+types of each $x\in X$, and ii) a new program theory ($P'$), updated
+from class and instance declarations.  Relation $(\vdash_0)$ is used
+to check that expressions of core-Haskell that occur in declarations
+are well-typed.
 
 % and updates the typing context if these declarations are exported,
 %and updates the program theory from class and instance declarations.
@@ -179,6 +181,15 @@ There must exist a sequence of derivations for typing a sequence of
 modules that composes a program that starts from an empty typing
 context, or from a typing context that corresponds to predefined
 library modules. Recursive modules are not treated in this paper.
+
+$C \oplus_V D$ denotes the constraint set obtained by adding to $C$
+constraints from $D$ that have type variables reachable from $V$:
+  \[ P \oplus_V Q = P \cup \{ \psi \in Q \mid \tv(\psi) \cap \reachableVars(Q,V) \not= \emptyset \} \]
+
+%If $R = \overline{x:\delta}^{\,n}$ and $R'
+% =\overline{y:\epsilon}^{\,m}$, then $R \oplus R'$ denotes the record
+% $\{ x_1,:\delta_1, \ldots, x_n:\delta_n, y_1:\epsilon_1, \ldots,
+% y_m:\delta_m \}$.
 
 \begin{figure}
 \[ \begin{array}{cc}
@@ -249,38 +260,47 @@ library modules. Recursive modules are not treated in this paper.
 \[ \begin{array}{cc}
 	\displaystyle\frac
 	 {\begin{array}{ll}
+            Q;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R, Q', \Gamma') \:\: & \:\:
             Q = P \cup \left\{ \begin{array}{ll}
                                   \{ C \Rightarrow T\:\overline{a} \} & \text{ if } C \not= \emptyset \\
                                   \emptyset                              & \text{ otherwise}
-                                \end{array}\right.\: & \:
-            Q;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (\overline{y:\epsilon}^{\,m}, Q', \Gamma)
+                                \end{array}\right. \\
+            \multicolumn{2}{c}{
+                \Gamma(M)(x) = \left\{ \begin{array}{ll}
+                                 \delta_k       & \text{ if } x = x_k, \text{ for some } 1 \leq k \leq n, \text{ and } 
+                                                              M \in \{ \gamma, \texttt{[]} \}\\
+                                 \Gamma_0(M)(x) & \text{ otherwise} 
+                               \end{array}\right. }
           \end{array}}
-	 {P;\Gamma \vdash_{\Uparrow}^X \class\ C \Rightarrow T\: \overline{a}\ \where\ \overline{x:\delta}^{\,n};\, \overline{\!d} : 
-            (\overline{x:\delta}^{\,n} \oplus\ \overline{y:\epsilon}^{\,m}, Q', \Gamma')} \\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \class\ C \Rightarrow T\: \overline{a}\ \where\ \overline{x:\delta}^{\,n};\: \overline{\!d} : 
+            (R, Q', \Gamma') } \\ \\
 
 	\displaystyle\frac
-	 {\begin{array}{l}
+	 {\begin{array}{ll}
             Q = P \cup \left \{ \begin{array}{ll}
-                         \{ \forall\,\overline{a}.\,C \Rightarrow T\: (\overline{\tau}) \} & \text{ if } C \not= \emptyset \\
-                         \{ \forall\,\overline{a}.\,T\: (\overline{\tau}) \} & \text{ otherwise}
-                                \end{array}\right. \\
-           Q;\Gamma \vdash? \overline{b} : ? \text{ falta definir como tipar bindings\ldots} \\
-	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') \\
+                         \{ \forall\,\overline{a}.\,C \Rightarrow T\: \overline{\tau} \} & \text{ if } C \not= \emptyset \\
+                         \{ \forall\,\overline{a}.\,T\: \overline{\tau} \} & \text{ otherwise}
+                                \end{array}\right. \: & \:
+            P \entail C \Rightarrow T\:\overline{\tau} \\
+           Q;\Gamma \vdash_{\Uparrow}^X \overline{x=e}^{\,n} : ? \text{ como tipar bindings\ldots} \: & \: 
+	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') 
           \end{array}}
-	 {P;\Gamma \vdash_{\Downarrow} \instance\ C \Rightarrow T\:\overline{\tau}\ \where\ \overline{b};\, \overline{\!d} 
+	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow T\:\overline{\tau}\ \where\ \overline{x = e}^{\,n};\: \overline{\!d} 
              : (R,P',\Gamma')}\\ \\
 
 	\displaystyle\frac
-	 {\begin{array}{l}
-            Q = P \cup \left\{ \begin{array}{ll}
-                                  \{ C \Rightarrow T\: (\overline{a}) \} & \text{ if } C \not= \emptyset \\
-                                  \emptyset                              & \text{ otherwise}
-                                \end{array}\right. \\
-            \Gamma(M)(x) = \tau_x \text{ is such that } \lcgR(\{ \tau_x, T\:\overline
-	   Q;\Gamma \vdash_{\Uparrow} \overline{d} : (R,Q',\Gamma') \\
-           \Gamma \vdash_{\Downarrow} \overline{\importC} \leadsto \Gamma'
+	 {\begin{array}{ll}
+           \Gamma(M)(y) = \left\{ \begin{array}{ll}
+                                          \sigma         & \text{ if } y = x, M = \gamma \\
+                                          \Gamma_0(M)(y) & \text{ otherwise }
+                                    \end{array} \right. \:\: & \:\:
+           P; \Gamma \vdash_0 e: \psi \:\: \gen(\psi,\sigma, \tv(\Gamma)) \\ 
+           \Gamma(M)(x) = \left\{ \begin{array}{ll}
+                                     \psi \text{ such that } \lcgR(\{ \tau_x, \Gamma_1(M)T\: \}) \: & \: 
+                                  \end{array}\right. \: & \: 
+           Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') 
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Downarrow} \instance\ x = e; \overline{d} : (R,P',\Gamma')} 
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (R,Q',\Gamma')} 
 
 \end{array} \]
 \caption{Mini-Haskell rules for declarations}
