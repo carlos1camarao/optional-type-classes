@@ -53,7 +53,7 @@ declarations.
 \textrm{Module}             &         & m              & ::= \module\, M\, (\exportC) \ \where\ \overline{\importC};\: \overline{\!d}\\
 \textrm{Export clause}      &         & \exportC\      & ::= \overline{\iitem}\\
 \textrm{Import clause}      &         & \importC\      & ::= \import\ M\: (\,\overline{\iitem}\,)\\
-\textrm{Item}               &         & \iitem         & ::= x \,\mid\, \instance\ \overline{\tau}\: A\\ 
+\textrm{Item}               &         & \iitem         & ::= x \,\mid\, \instance\ A\: \overline{\tau}\\ 
 \textrm{Declaration}        &         & d              & ::= \classDecl \,\mid\, \instDecl \,\mid\, \overline{b}\\
 \textrm{Class Declaration}  &         & \classDecl\    & ::= \class\ C \Rightarrow A\: \overline{a}\:\: \where\ \overline{x:\delta}\\
 \textrm{Instance Declaration} &       & \instDecl\     & ::= \instance\ C \Rightarrow A\: \overline{\tau}\:\: \where\ \overline{b} 
@@ -93,6 +93,21 @@ declared in the type class; otherwise (i.e.~it is the single field of
 an undeclared class), its (new) type is given by the lcg of the
 existing type (an existing lcg of previous instance types) and the
 instance type.
+
+A partial order on possibly constrained and possibly quantified types,
+based on constraint set entailment, is defined in Figure
+\ref{fig:type-partial-order}. We use $P \entail C$ to abbreviate
+$P\entail \pi$ for all $\pi\in C$.
+
+\begin{figure}
+   \[ \begin{array}{ccc}
+   	\displaystyle\frac
+          {P \entail \phi\,C \:\:\:\:\: D \subseteq \phi\,C \:\:\:\:\: \overline{b} \subseteq \tv(D) \cup \tv(\phi\,\tau) }
+          {\forall\,\overline{a}.\,C \Rightarrow \tau \leq_P \forall\,\overline{b}.\,D \Rightarrow \phi\,\tau}
+  \end{array} \]
+\caption{Partial order on Types}
+\label{fig:type-partial-order}
+\end{figure}
 
 A type system for core-Haskell is presented in Figure
 \ref{fig:core-haskell-type-system}, using rules of the form $P;\Gamma
@@ -195,7 +210,7 @@ constraints from $D$ that have type variables reachable from $V$:
 \[ \begin{array}{cc}
       \displaystyle\frac
         {\begin{array}[t]{lll}
-           \Gamma(\gamma)(x) = \sigma\ & \:\sigma \leq \psi\: & \:P \entail \psi
+           \Gamma(\gamma)(x) = \sigma\ & \:\sigma \leq_P \psi
          \end{array}}
         {P;\Gamma \vdash_0 x: \psi} \:(\VAR) \\ \\
 
@@ -238,19 +253,20 @@ constraints from $D$ that have type variables reachable from $V$:
 \[ \begin{array}{cc}
 	\displaystyle\frac
 	 {\begin{array}{ll}
-            \Gamma'(M)(x) = \left\{ \begin{array}{ll}
-                \Gamma(\texttt{[]})(x) & \text{ if } M = \gamma\\
-                \Gamma(M)(x)           & \text{ otherwise}
+            \Gamma'(M)(x) = \left\{ \begin{array}{lll}
+               \Gamma(\texttt{[]})(x) & \text{ if } M = \gamma \text{ and } (& x = \iota_k, \text{ for some } 1 \leq k \leq n, \text{ or }\\
+                                      &                                      & x \text{ is the single member of such } \iota_k)\\
+               \Gamma(M)(x)           & \text{ otherwise}
              \end{array}\right.
           \end{array}}
-	 {\Gamma \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}) : \Gamma'} \\ \\
+	 {\Gamma \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}^{\,n}\,) : \Gamma'} \\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
-	   \Gamma_0 \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}) : \Gamma \\
+	   \Gamma_0 \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}\,) : \Gamma \\
            \Gamma \vdash_{\Downarrow} \overline{\importC} : \Gamma'
           \end{array}}
-	 {\Gamma_0 \vdash_{\Downarrow} \import\ M\, (\overline{\iitem}); \overline{\importC} : \Gamma'} 
+	 {\Gamma_0 \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}\,); \overline{\importC} : \Gamma'} 
 \end{array} \]
 \caption{Import relation}
 \label{fig:import-relation}
@@ -277,16 +293,17 @@ constraints from $D$ that have type variables reachable from $V$:
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
-            Q = P \cup \left \{ \begin{array}{ll}
+            P' = P \cup \left \{ \begin{array}{ll}
                          \{ \forall\,\overline{a}.\,C \Rightarrow T\: \overline{\tau} \} & \text{ if } C \not= \emptyset \\
                          \{ \forall\,\overline{a}.\,T\: \overline{\tau} \} & \text{ otherwise}
                                 \end{array}\right. \: & \:
             P \entail C \Rightarrow T\:\overline{\tau} \\
-           Q;\Gamma \vdash_{\Uparrow}^X \overline{x=e}^{\,n} : ? \text{ como tipar bindings\ldots} \: & \: 
+
+           P';\Gamma_0 \vdash_{\Uparrow}^X \overline{x=e}^{\,n} : (\overline{x : \delta}^{\,n},Q,\Gamma) \: & \: 
 	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') 
           \end{array}}
-	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow T\:\overline{\tau}\ \where\ \overline{x = e}^{\,n};\: \overline{\!d} 
-             : (R,P',\Gamma')}\\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ C \Rightarrow T\:\overline{\tau}\ \where\ \overline{x = e}^{\,n};\: \overline{\!d} 
+             : (R,Q',\Gamma')}\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
