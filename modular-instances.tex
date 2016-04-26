@@ -12,8 +12,8 @@ account for the possibility of type classes to be declared or not):
 
 \begin{definition}[Type of overloaded variable]
 
-If the type of an overloaded variable (i.e.~a variable that is
-introduced in an instance definition) is not explicitly annotated in a
+If the type of an overloaded variable --- i.e.~a variable that is
+introduced in an instance definition --- 2is not explicitly annotated in a
 type class declaration, then the variable's type is the
 anti-unification of instance types defined for the variable in the
 current module; otherwise, it is the annotated type.
@@ -56,24 +56,28 @@ usage if, {\em and only if}, the expression has a constrained type.
 \subsection{Instance visibility control: a summary}
 \label{subsec:instance-visibility-control}
 
-Modularization of instance definitions is allowed by means of the
+Modularization of instance definitions can be allowed by means of the
 importation and exportion of instances as shown in
 \cite{Controlling-scope-instances}. Essentially, import and export
 clauses can specify, instead of just names, occurrences of {\tt
   instance $A$ $\overline{\tau}$}, where $\overline{\tau}$ is a
 (non-empty) sequence of types and $A$ is a class name.  We have:
 
-  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$ \where\ \ldots)} \]
+  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots} \]
 specifies that the instance of $\overline{\tau}$ for class $D$ is
 exported in module $M$.
 
-  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$)} \]
+  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots)} \]
 specifies that the instance of $\overline{\tau}$ for class $A$ is
 imported from $M$, in the module where the import clause occurs.
 
-Alternatively could simply give a name to an instance, in an instance
-declaration, and use that name in import and export clauses (see
-\cite{Controlling-scope-instances}).
+Alternatively, which is what we adopt in this paper, for simplicity,
+we can simply give a name to an instance, in an instance declaration,
+and use that name in import and export clauses (see
+\cite{Controlling-scope-instances}). Inthis paper we don't even need
+to give a name to an instance, since we only need to consider
+instances (of undeclared classes) with a single member. We can thus
+use the member name as the instance name.
 
 \subsection{Pros and Cons of Instance Modularization}
 
