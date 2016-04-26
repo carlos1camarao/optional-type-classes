@@ -3,14 +3,14 @@
 In this section we introduce some basic definitions and notations. We
 consider that meta-variables defined can appear primed or subscripted.
 
-Meta-variable usage is defined in the paper as follows: $x,y$ denote
-term variables, $\alpha, \beta$ ($a, b,...$
-in examples) type variables, $e$ a term,
-$\tau,\rho$ simple types, $\sigma$ a type, $\Gamma$ a typing context, 
-that is, a set of pairs written as $x:\sigma$, and $S$ a
-substitution. A constraint is formed by a pair of a class name $C$ and
-a sequence of types $\overline{\tau}$. We slighly abuse notation and 
-use $\kappa$ to denote both a single constraint and a constraint set.
+%Meta-variable usage is defined in the paper as follows: $x,y$ denote
+%term variables, $\alpha, \beta$ ($a, b,...$
+%in examples) type variables, $e$ a term,
+%$\tau,\rho$ simple types, $\sigma$ a type, $\Gamma$ a typing context, 
+%that is, a set of pairs written as $x:\sigma$, and $S$ a
+%substitution. A constraint is formed by a pair of a class name $C$ and
+%a sequence of types $\overline{\tau}$. We slighly abuse notation and 
+%use $\kappa$ to denote both a single constraint and a constraint set.
 
 The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes
 the sequence $a_1 \cdots a_n$, or $a_1, \ldots, a_n$, or
@@ -21,10 +21,10 @@ example, in $\overline{x = e}^{\,n}$, it denotes the sequence
 $x_1=e_1, \ldots, x_n = e_n$.
 
 A substitution is a function from type variables to simple type
-expressions (cf.~Section \ref{Optional-type-classes}). The identity
-substitution denoted by \id. $\phi(\sigma)$ (or simply $\phi\,\sigma$)
-represents the capture-free operation of substituting $\phi(\alpha)$
-for each free occurrence of $\alpha$ in $\sigma$.
+expressions. The identity substitution denoted by \id. $\phi(\sigma)$
+(or simply $\phi\,\sigma$) represents the capture-free operation of
+substituting $\phi(\alpha)$ for each free occurrence of $\alpha$ in
+$\sigma$.
 
 We overload the substitution application on constraints, constraint
 sets and sets of types. Definition of application on these elements is
