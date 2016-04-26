@@ -104,11 +104,9 @@ Among the advantages of this simple change, we cite (following
 With instance modularization, programmers need to be aware of which
 entities are exported and imported (i.e.~which entities are visible in
 the scope of a module) and their types, in particular if they are
-overloaded or not.
-
-A simple change like a type annotation for a variable exported from a
-module, can lead to a change in the semantics of using this variable
-in another module.
+overloaded or not.  A simple change like a type annotation for a
+variable exported from a module, can lead to a change in the semantics
+of using this variable in another module.
 
 % The change is very significant if the type annotation instantiates
 % the type of $x$ so that overloading of $x$ is resolved in $A$, since
