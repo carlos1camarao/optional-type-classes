@@ -41,10 +41,10 @@ otherwise $\phi(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}]
 \subsection{Anti-unification of instance types}
 \label{sec:anti-unif}
 
-A type $\tau$ is a generalization of simple types
+A type $\tau$ is a generalization of a set of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
 $\overline{\phi}^{\,n}$ such that $\phi_i(\tau)=\tau_i$, for
-$i=1,\ldots,n$.  A generalization is also called a (first-order) {\em
+$i=1,\ldots,n$. A generalization is also called a (first-order) {\em
   anti-unification\/} \cite{ModelTheory2012}.
 
 We say that $\tau'$ is less general than $\tau$, written $\tau \leq
@@ -52,7 +52,7 @@ We say that $\tau'$ is less general than $\tau$, written $\tau \leq
 
 The {\it least common generalization} (lcg) of a set of types
 $\mathbb{T}$ and a type $\tau$ holds, written as
-$\lcgR(\mathbb{T},\tau)$, if for all generalizations $\tau'$ of
+$\lcgR(\mathbb{T},\tau)$, if, for all generalizations $\tau'$ of
 $\mathbb{T}$, we have $\tau \leq \tau'$.
 
 An algorithm for computing the lcg of a finite set of types in
