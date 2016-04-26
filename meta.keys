@@ -1,4 +1,10 @@
-\definecolor{mygrey}{gray}{0.85}
+%\newtheorem{Lemma}{Lemma}
+%\newtheorem{Theorem}{Theorem}
+%\theoremstyle{plain}
+%\newdefinition{Definition}{Definition}
+%\newtheorem{Corollary}{Corollary}
+%\newdefinition{Example}{Example}
+%\definecolor{mygrey}{gray}{0.85}
 
 \newcommand{\prog}[1]{
   \normalfont\ttfamily
@@ -40,8 +46,6 @@
         #1
   \end{tabbing}}
   \end{center} }
-
-
 
 \newcommand{\progbb}[1]{
   \normalfont\ttfamily
@@ -89,6 +93,7 @@
 \newcommand{\ssat}{\text{\tt sat}}
 
 \newcommand{\lcg}{\text{\it lcg\/}}
+\newcommand{\lcgR}{\text{\tt lcg}_r}
 
 \newcommand{\Integer}{\text{\it Integer\/}}
 \newcommand{\Bool}{\text{\it Bool\/}}
@@ -123,10 +128,6 @@
 
 \newcommand{\Eq}{\text{\it Eq\/}}
 
-\newcommand{\VAR}{\text{\tt VAR}}
-\newcommand{\LAM}{\text{\tt LAM}}
-\newcommand{\APP}{\text{\tt APP}}
-\newcommand{\LET}{\text{\tt LET}}
 \newcommand{\CASE}{\text{\tt CASE}}
 \newcommand{\IMPROVE}{\text{\tt IMPROVE}}
 \newcommand{\ALTSRec}{\text{\tt ALTSRec}}
@@ -136,11 +137,17 @@
 \newcommand{\alts}{\text{\tt alts}}
 
 \newcommand{\module}{\text{\tt module}}
+\newcommand{\export}{\text{\tt export}}
 \newcommand{\import}{\text{\tt import}}
+\newcommand{\classDecl}{\text{\it classDecl\/}}
+\newcommand{\instDecl}{\text{\it instDecl\/}}
+\newcommand{\importC}{I}
+\newcommand{\exportC}{X}
 \newcommand{\class}{\text{\tt class}}
 \newcommand{\instance}{\text{\tt instance}}
 \newcommand{\where}{\text{\tt where}}
 \newcommand{\member}{\text{\it member\/}}
+\newcommand{\iitem}{\iota}
 \newcommand{\iinsert}{\text{\it insert\/}}
 \newcommand{\eempty}{\text{\it empty\/}}
 \newcommand{\Either}{\text{\it Either\/}}
@@ -161,3 +168,36 @@
 \newcommand{\String}{\text{\it String\/}}
 
 \newcommand{\Collection}{\text{\it Collection\/}}
+\newcommand{\flip}{\text{\it flip\/}}
+\newcommand{\map}{\text{\it map\/}}
+\newcommand{\const}{\text{\it const\/}}
+\newcommand{\ddom}{\text{\it dom\/}}
+
+%\newcommand{\VAR}{\text{\tt VAR}}
+%\newcommand{\LAM}{\text{\tt LAM}}
+%\newcommand{\APP}{\text{\tt APP}}
+%\newcommand{\LET}{\text{\tt LET}}
+\newcommand{\MODULE}{\texttt{\scriptsize{MOD}}}
+\newcommand{\VAR}{\texttt{\scriptsize{VAR}}}
+\newcommand{\APP}{\texttt{\scriptsize{APP}}}
+\newcommand{\ABS}{\texttt{\scriptsize{ABS}}}
+\newcommand{\LET}{\texttt{\scriptsize{LET}}}
+\newcommand{\VARi}{\texttt{\scriptsize{VAR}}_i}
+\newcommand{\APPi}{\texttt{\scriptsize{APP}}_i}
+\newcommand{\ABSi}{\texttt{\scriptsize{ABS}}_i}
+\newcommand{\LETi}{\texttt{\scriptsize{LET}}_i}
+\newcommand{\VARs}{\texttt{\scriptsize{VAR}}_s}
+\newcommand{\APPs}{\texttt{\scriptsize{APP}}_s}
+\newcommand{\ABSs}{\texttt{\scriptsize{ABS}}_s}
+\newcommand{\LETs}{\texttt{\scriptsize{LET}}_s}
+
+\newcommand{\simplifies}[1]{>\!\!\!>_{#1}}
+
+\newcommand{\fst}{\text{\it fst\/}}
+\newcommand{\snd}{\text{\it snd\/}}
+\newcommand{\reachable}{\arrowvert^{\ast}}
+\newcommand{\gen}{\mbox{\it gen}}
+\newcommand{\improves}[1]{\ensuremath{\vdash_{\texttt{impr}}^{#1}}}
+\newcommand{\contextreduces}[1]{\ensuremath{\vdash_{\texttt{red}}^{#1}}}
+\newcommand{\reachableVars}{\text{\it reachableVars\/}}
+\newcommand{\entail}{\vdash_e}
