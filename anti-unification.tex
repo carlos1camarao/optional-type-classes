@@ -101,16 +101,16 @@ type variable as their generalization and return this new variable.
         \]
 \caption{Least Common Generalization} \label{fig:lcg}
 \end{figure*}
-As an example of the use of \lcg, consider the following types for the
-well known \map\ function for lists and binary trees:
+As an example of the use of \lcg, consider the following types (of
+functions \map\ on lists and trees, respectively):
 
 \progb{
    $(a \rightarrow b)$ $\rightarrow$ [$a$] $\rightarrow$ [$b$]\\
    $(a \rightarrow b)$ $\rightarrow$ \Tree\ $a$ $\rightarrow$ \Tree\ $b$
 }
 
-A call of \lcg\ for a set containing the above types yields type $(a
-\rightarrow b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
+A call of \lcg\ for a set with these types yields type $(a \rightarrow
+b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
 generalization of type constructors {\tt []} and \Tree.
 
 We have: 
