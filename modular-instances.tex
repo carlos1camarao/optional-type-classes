@@ -71,13 +71,19 @@ exported in module $M$.
 specifies that the instance of $\overline{\tau}$ for class $A$ is
 imported from $M$, in the module where the import clause occurs.
 
-Alternatively, which is what we adopt in this paper, for simplicity,
-we can simply give a name to an instance, in an instance declaration,
-and use that name in import and export clauses (see
-\cite{Controlling-scope-instances}). Inthis paper we don't even need
-to give a name to an instance, since we only need to consider
-instances (of undeclared classes) with a single member. We can thus
-use the member name as the instance name.
+Alternatively, we can simply give a name to an instance, in an
+instance declaration, and use that name in import and export clauses
+(see \cite{Controlling-scope-instances}). However, in this paper we
+don't need to give a name to an instance, since we only consider
+instances of undeclared classes, which have a single member, and we
+can thus use the name of the member as the instance name. 
+
+%For example, 
+%we can have:
+%  \progb{
+%   \instance\ $x$ = '1';\\
+%   \instance\ $x$ = \True;
+%  }    
 
 \subsection{Pros and Cons of Instance Modularization}
 
