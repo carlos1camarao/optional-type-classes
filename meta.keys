@@ -139,6 +139,7 @@
 \newcommand{\module}{\text{\tt module}}
 \newcommand{\export}{\text{\tt export}}
 \newcommand{\import}{\text{\tt import}}
+\newcommand{\data}{\text{\tt data}}
 \newcommand{\classDecl}{\text{\it classDecl\/}}
 \newcommand{\instDecl}{\text{\it instDecl\/}}
 \newcommand{\importC}{I}
@@ -201,3 +202,10 @@
 \newcommand{\contextreduces}[1]{\ensuremath{\vdash_{\texttt{red}}^{#1}}}
 \newcommand{\reachableVars}{\text{\it reachableVars\/}}
 \newcommand{\entail}{\vdash_e}
+
+\newcommand{\Address}{\text{\it Address\/}}
+\newcommand{\address}{\text{\it address\/}}
+\newcommand{\Person}{\text{\it Person\/}}
+\newcommand{\get}{\text{\it get\/}}
+\newcommand{\name}{\text{\it name\/}}
+
