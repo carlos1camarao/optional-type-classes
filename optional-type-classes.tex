@@ -79,26 +79,8 @@ written as $P \entail C$ (see
 e.g.~\cite{JBCS-Ambiguity-and-constrained-polymorphism}).
 
 Typing contexts are indexed by module names. $\Gamma(M)$ gives a
-function that can be eiter:
-
-  \begin{itemize}
-
-    \item a function on variable names to types, if the variable is
-      not an overloaded name declared as an instance of an undeclared
-      class. 
-
-     In this case, $\Gamma(M)(x)$ gives the type of $x$ in module $M$
-     and typing context $\Gamma$.
-
-    \item otherwise, a function on the instance type to the type of
-      the instance name. 
-
-     In this case, $\Gamma(M)(x,\tau)$ gives the type of $x$ of type
-     $\tau$, in module $M$ and typing context $\Gamma$ ($\tau$ must be
-     the type of $x$ in an instance with an undeclared class, as
-     described below).
-
-  \end{itemize}
+function on variable names to types: $\Gamma(M)(x)$ gives the type of
+$x$ in module $M$ and typing context $\Gamma$.
    
 A special, empty module name, denoted by $\texttt{[]}$, is used for
 names exported by modules, to control the scope of names that use
