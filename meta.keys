@@ -206,6 +206,9 @@
 \newcommand{\Address}{\text{\it Address\/}}
 \newcommand{\address}{\text{\it address\/}}
 \newcommand{\Person}{\text{\it Person\/}}
+\newcommand{\new}{\text{\it new\/}}
 \newcommand{\get}{\text{\it get\/}}
+\newcommand{\update}{\text{\it update\/}}
 \newcommand{\name}{\text{\it name\/}}
+\newcommand{\fieldname}{\text{\it fieldname\/}}
 
