@@ -200,14 +200,10 @@ modules that composes a program that starts from an empty typing
 context, or from a typing context that corresponds to predefined
 library modules. Recursive modules are not treated in this paper.
 
-$C \oplus_V D$ denotes the constraint set obtained by adding to $C$
-constraints from $D$ that have type variables reachable from $V$:
-  \[ P \oplus_V Q = P \cup \{ \psi \in Q \mid \tv(\psi) \cap \reachableVars(Q,V) \not= \emptyset \} \]
-
-Relation $\oplus$ is also used in Figure
-\ref{fig:mini-haskell-rules-for-declarations} for concatenation of
-record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
-= \{ x_1, \ldots, x_n, y_1, \ldots, y_m \}$.
+Concatenation of record elements, denoted by {\tt (++)}, is used in
+Figure \ref{fig:mini-haskell-rules-for-declarations}: $\{ x_1, \ldots,
+x_n \} ++ \{ y_1, \ldots, y_m \} = \{ x_1, \ldots, x_n, y_1,
+\ldots, y_m \}$.
 
 %If $R = \overline{x:\delta}^{\,n}$ and $R'
 % =\overline{y:\epsilon}^{\,m}$, then $R \oplus R'$ denotes the record
@@ -318,7 +314,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
 	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') 
           \end{array}}
 	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow \pi\ \where\ \overline{x = e}^{\,n};\: \overline{\!d} 
-             : (\overline{x : \delta}^{\,n} \oplus (R,Q',\Gamma')}\\ \\
+             : (\overline{x : \delta}^{\,n} ++ R,Q',\Gamma')}\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
@@ -331,7 +327,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
                                    \end{array}\right.}\\[.2cm]                   
            \multicolumn{2}{c}{P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R,Q',\Gamma')} 
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (\{x:C\Rightarrow \tau\} \oplus (R,Q',\Gamma')} \\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (\{x:C\Rightarrow \tau\} \texttt{++} R,Q',\Gamma')} \\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
@@ -343,7 +339,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
                                    \end{array}\right. }\\[.2cm]                   
            \multicolumn{2}{c}{P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R,P',\Gamma')}
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!d} : (\{x:\delta\} \oplus (R,P',\Gamma')} 
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!d} : (\{x:\delta\} \texttt{++} R,P',\Gamma')} 
 \end{array} \]
 \caption{Mini-Haskell rules for declarations}
 \label{fig:mini-haskell-rules-for-declarations}
