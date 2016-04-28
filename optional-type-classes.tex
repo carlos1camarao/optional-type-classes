@@ -12,7 +12,8 @@ Figure \ref{fig:mini-Haskell-context-free-syntax} shows meta-variable
 usage and the context-free syntax of mini-Haskell: expressions and
 their types, modules and programs. Meta-variables can be possibly
 primed or subscripted. An instance can be specified without specifying
-a type class. 
+a type class, cf.~second option (after {\tt |}) Figure
+\ref{fig:mini-Haskell-context-free-syntax}.
 
 % (the use of the keywork \instance\ is not strictly
 %necessary, it is included here for the sake of simplicity).
@@ -94,8 +95,8 @@ types in typing contexts (they are needed only in the program theory);
 only the lcg of instance types is used, because of lcg
 compositionality (theorem \ref{theorem:lcg-is-compositional}). When a
 new instance is declared, if it is an instance of a declared class the
-type systems guarantees that each field is an instance of the type
-declared in the type class; otherwise (i.e.~it is the single field of
+type systems guarantees that each member is an instance of the type
+declared in the type class; otherwise (i.e.~it is the single member of
 an undeclared class), its (new) type is given by the lcg of the
 existing type (an existing lcg of previous instance types) and the
 instance type.
