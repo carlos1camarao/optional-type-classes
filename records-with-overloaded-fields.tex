@@ -16,18 +16,37 @@ Consider a simple example of overloaded record fields (taken from
 The overloaded \id\ fields of types \Person\ and \Address\ have the
 following types:
 
-\progb{\id\ :: \= \kill
+\progb{\id\ :: \Address\ \= \kill
 \id\ :: \Person\  \>$\rightarrow$ \Int\\
 \id\ :: \Address\ \>$\rightarrow$ \Int
 }
 
-In our approach, we would have the following (automatically created
-instance declarations without declared type classes), with a special
-mark to indicate (not shown below) that the instances are of record
-field names, not variable names:
+In our approach, we can automatically create following instance
+declarations without declared type classes, that are part of a record
+field name space that is distinct from the variable name space:
 
 \progb{
-\instance\ \get\_\id\ ($p$ :: \Person\ \id\ \_)  = \id\\
-\instance\ \get\_\id\ ($a$ :: \Address\ \id\ \_) = \id}
+\get\_\id\ :: \Person\ $\rightarrow$ \Int\\
+\instance\ \get\_\id\ ($p$ :: \Person\ \id\ \_\ )  = \id\\ \\
 
-\ldots \ldots 
+\get\_\id\ :: \Address\ $\rightarrow$ \Int\\
+\instance\ \get\_\id\ ($a$ :: \Address\ \id\ \_\ ) = \id}
+
+If record field updating is used, automatically created functions are
+created, as illustrated below. Consider for example that record field
+updating is used as follows:
+
+\progb{
+\update\_\id\ :: \Person\ $\rightarrow$ \Int\ $\rightarrow$ \Person\\
+\instance\ \update\_\id\ (\Person\ \id\ \name) \new\_\id\ = \Person\ \new\_\id\ \name\\ \\
+
+\update\_\id\ :: \Address\ $\rightarrow$ \Int\ $\rightarrow$ \Address\\
+\instance\ \update\_\id\ ($a$ :: \Address\ \id\ \address) \new\_\id = \Address\ \new\_\id\ \address
+}
+
+Given any expression $p$ of of type \Person, any use of {\tt ($p$ \{
+  \id\ = \new\_\id \})} could then be translated to {\tt
+  (\update\_\id\ $p$ \new\_\id)}. Similarly, given any expression $a$
+of type \Address, any use of {\tt $a$ \{ \id\ = \new\_\id \}} could
+then be translated to {\tt \update\_\id\ $a$ \new\_\id}.
+
