@@ -13,8 +13,8 @@ account for the possibility of type classes to be declared or not):
 \begin{definition}[Type of overloaded variable]
 
 If the type of an overloaded variable --- i.e.~a variable that is
-introduced in an instance definition --- 2is not explicitly annotated in a
-type class declaration, then the variable's type is the
+introduced in an instance definition --- is not explicitly annotated
+in a type class declaration, then the variable's type is the
 anti-unification of instance types defined for the variable in the
 current module; otherwise, it is the annotated type.
 
@@ -45,10 +45,9 @@ The definition of $f$ in module $A$ is well-typed, because constraints
 (\SShow\ $a$, \RRead\ $a$) can be removed; this occurs because there
 exists a single instance, in module $A$, for each constraint, that
 entails it. As a result, $f$ has type \String $\rightarrow$
-\String. Its use in module $B$ is (then) also well-typed.
-
-That means: $f$'s semantics is a function that receives a value of
-type \String\ and returns a value of type \String, according to the
+\String. Its use in module $B$ is (then) also well-typed. That means:
+$f$'s semantics is a function that receives a value of type
+\String\ and returns a value of type \String, according to the
 definition of $f$ given in module $A$. The semantics of an expression
 involves passing a (dictionary) value that is given in the context of
 usage if, {\em and only if}, the expression has a constrained type.
