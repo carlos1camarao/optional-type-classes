@@ -318,7 +318,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
 	   Q;\Gamma \vdash_{\Uparrow} \overline{\!d} : (R,Q',\Gamma') 
           \end{array}}
 	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow \pi\ \where\ \overline{x = e}^{\,n};\: \overline{\!d} 
-             : (\overline{x : \delta}^{\,n} \oplus R,Q',\Gamma')}\\ \\
+             : (\overline{x : \delta}^{\,n} \oplus (R,Q',\Gamma')}\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
@@ -331,7 +331,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
                                    \end{array}\right.}\\[.2cm]                   
            \multicolumn{2}{c}{P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R,Q',\Gamma')} 
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (\{x:C\Rightarrow \tau\} \oplus R,Q',\Gamma')} \\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (\{x:C\Rightarrow \tau\} \oplus (R,Q',\Gamma')} \\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
@@ -343,7 +343,7 @@ record elements: $\{ x_1, \ldots, x_n \} \oplus \{ y_1, \ldots, y_m \}
                                    \end{array}\right. }\\[.2cm]                   
            \multicolumn{2}{c}{P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (R,P',\Gamma')}
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!d} : (\{x:\delta\} \oplus R,P',\Gamma')} 
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!d} : (\{x:\delta\} \oplus (R,P',\Gamma')} 
 \end{array} \]
 \caption{Mini-Haskell rules for declarations}
 \label{fig:mini-haskell-rules-for-declarations}
