@@ -35,4 +35,6 @@ Type level literals~\cite{type-lits} is an extension that complements datatype
 promotion to numeric and string types. The Haskell prime proposal for
 overloaded records relies on this extension to overload field
 access and update functions. Our approach, based on optional declaration of
-type classes, is simpler since it doesn't demand type promotion features.
+type classes, is simpler since it doesn't demand type promotion features and
+it doesn't need to create an instance for each record field (overloaded or not)
+as GHC's proposal.
