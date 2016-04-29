@@ -1,40 +1,44 @@
 \section{Related Work}
 \label{sec:related-work}
 
-Haskell type system has been extended with several advanced typing features
-such as functional dependencies~\cite{Jones2008}, type families~\cite{Chakravarty2005} and
-GADTs~\cite{Chen2016}, just to name a few. To the best of our knowledge, there's no
-previous work on optional declaration of type classes. In this section, we
-summarize some recent Haskell type system extensions.
+Haskell type system has been extended with several advanced typing
+features such as functional dependencies~\cite{Jones2008}, type
+families~\cite{Chakravarty2005} and GADTs~\cite{Chen2016}, just to
+name a few. To the best of our knowledge, there's no previous work on
+optional declaration of type classes. In this section, we summarize
+some recent Haskell type system extensions.
 
-Functional dependencies (FDs) were introduced by Mark Jones as a way to specify
-type class parameter dependencies to improve infered typesin the
-context of MPTCs. FDs where also used to support some form of type level
+Functional dependencies (FDs) were introduced by Mark Jones as a way
+to specify type class parameter dependencies in order to avoid
+ambiguity and to improve inferred types in the context of MPTCs. FDs
+where also used to support some form of type level
 programming~\cite{Hallgren2000} and to define heterogeneous lists and
 extensible records~\cite{KiselyovLS04}.
 
-Type families~\cite{Chakravarty2005} (TFs) where introduced as a ``more functional'' alternative
-to FDs, that is relational in nature. However, there are some issues with
-type families injectivity~\cite{Eisenberg2014} that motivated the so-called closed type
-families and type families dependencies~\cite{Eisenberg2014a}. Closed type families define all
-possible instances of a type family a priori and type families dependencies allows
-the specification of parameter dependencies, in a similar fashion of FDs.
-All type families related extensions cater to better type improvement.
+Type families~\cite{Chakravarty2005} (TFs) where introduced as a
+``more functional'' alternative to FDs (which is relational in
+nature). However, there are some issues with type family
+injectivity~\cite{Eisenberg2014} that motivated so-called closed type
+families and type family dependencies~\cite{Eisenberg2014a}. Closed
+type families define all possible instances of a type family a priori
+and type family dependencies allows the specification of parameter
+dependencies, in a similar way of FDs.  All type family related
+extensions cater to better type improvement.
 
-Datatype promotion~\cite{Yorgey2012,Eisenberg2014} is useful Haskell extension that lifts user
-defined algebraic datatypes to kinds and data constructors to types. Such
-extension allows for defining some types dependently typed programs.
-Singleton types and promoted functions~\cite{Eisenberg2012} have been used to automate
-(through Template Haskell) some constructions commonly needed in Haskell-style
-dependent types. Lindley and McBride~\cite{Lindley2013} describes some dependently
-typed programs in Haskell and how to use GHC's constraint solver as theorem
-prover to discharge proof obligations in a implementation of a merge-sort
-algorithm.
+Datatype promotion~\cite{Yorgey2012,Eisenberg2014} lifts user defined
+algebraic datatypes to kinds and data constructors to types. It allows
+the definition of some dependently typed programs.  Singleton types
+and promoted functions~\cite{Eisenberg2012} have been used to automate
+(through Template Haskell) some constructions commonly needed in
+Haskell-style dependent types. Lindley and McBride~\cite{Lindley2013}
+describe some dependently typed programs in Haskell and how to use
+GHC's constraint solver as a theorem prover to discharge proof
+obligations in an implementation of a merge-sort algorithm.
 
-Type level literals~\cite{type-lits} is an extension that complements datatype
-promotion to numeric and string types. The Haskell prime proposal for
-overloaded records relies on this extension to overload field
-access and update functions. Our approach, based on optional declaration of
-type classes, is simpler since it doesn't demand type promotion features and
-it doesn't need to create an instance for each record field (overloaded or not)
-as GHC's proposal.
+Type level literals~\cite{type-lits} is an extension that complements
+datatype promotion to numeric and string types. The Haskell prime
+proposal for overloaded record fields relies on this extension to
+overload field access and update functions. Our approach, based on
+optional declaration of type classes, does not demand type promotion
+features and does not need to create an instance for each record field
+(overloaded or not). 
