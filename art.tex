@@ -1,7 +1,6 @@
 \documentclass{llncs}
 \usepackage{amsmath,amssymb}
 \usepackage{makeidx}  % allows for indexgeneration
-%
 
 \usepackage[american]{babel}
 \usepackage[utf8]{inputenc}
@@ -10,7 +9,6 @@
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage{fancyhdr}
-%\usepackage{minted}
 
 \begin{document}
 
@@ -18,12 +16,10 @@
 
 \input{meta.keys}
 
-%
-\mainmatter              % start of the contributions
+\mainmatter 
 
 \title{Optional Type Classes for Haskell}
 
-%
 \author{Rodrigo Ribeiro \inst{1} \and Carlos Camar\~ao\inst{2} \and Luc\'ilia
 Figueiredo\inst{3} \and Cristiano Vasconcellos\inst{4}}
 \institute{DECSI, Universidade Federal de Ouro Preto (UFOP), João Monlevade\\
@@ -35,7 +31,7 @@ DECOM, Universidade Federal de Ouro Preto (UFOP), Ouro Preto\\
 DCC, Universidade do Estado de Santa Catarina (UDESC), Joinville\\
 \email{cristiano.vasconcellos@udesc.br}
 }
-\maketitle              % typeset the title of the contribution
+\maketitle 
 
 \begin{abstract}
 
@@ -53,7 +49,7 @@ modifications to Haskell's module system that are necessary for
 allowing instances to have a modular scope, based on previous work by
 the authors. The definition of the type of overloaded symbols as the
 anti-unification of available instance types and the redefined
-ambiguity rule is also based on previous works by the authors.
+ambiguity rule are also based on previous works by the authors.
 
 The added flexibility to Haskell-style of overloading is illustrated
 by defining a type system and by showing how overloaded record fields

@@ -1,14 +1,20 @@
 \section{Anti-unification of instance types}
 \label{sec:anti-unif}
 
-A type $\tau$ is a generalization of a set of simple types
+A simple type $\tau$ is a generalization of a set of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
 $\overline{\phi}^{\,n}$ such that $\phi_i(\tau)=\tau_i$, for
-$i=1,\ldots,n$. A generalization is also called a (first-order) {\em
+$i=1,\ldots,n$. For example, $\alpha_0 \rightarrow \alpha_0$,
+$\alpha_1 \rightarrow \alpha_2$, and $\alpha_3$ are generalizations of
+$\{ \Int \rightarrow \Int, \Float \rightarrow \Float\}$.
+
+A generalization is also called a (first-order) {\em
   anti-unification\/} \cite{ModelTheory2012}.
 
-We say that $\tau'$ is less general than $\tau$, written $\tau \leq
-\tau'$, if there exist $\phi$ such that $\phi(\tau) = \tau'$.
+We say that $\tau$ is less general than $\tau'$, written $\tau \leq
+\tau'$, if there exist $\phi$ such that $\phi(\tau') = \tau$.  For
+example, $\alpha_0 \rightarrow \alpha_0 <= \alpha_1 \rightarrow
+\alpha_2 <= \alpha_3$.
 
 The {\it least common generalization} (lcg) of a set of types
 $\mathbb{T}$ and a type $\tau$ holds, written as
@@ -25,8 +31,8 @@ structure of set $\mathbb{T}$, using a function to compute the
 generalization of two simple types. For two types $\tau_1$ and
 $\tau_2$ the idea is to recursively traverse the structure of both
 types using a finite map to store previously generalized
-types. Whenever we found two different type constructors, we search on
-the finite map if they have been previously generalized. If this was
+types. Whenever we find two different type constructors, we search on
+the finite map if they have been previously generalized. If this is
 the case, the generalization is returned. But if these two type
 constructors aren't in the finite map we insert them using a fresh
 type variable as their generalization and return this new variable.
@@ -71,7 +77,9 @@ functions \map\ on lists and trees, respectively):
 
 A call of \lcg\ for a set with these types yields type $(a \rightarrow
 b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
-generalization of type constructors {\tt []} and \Tree.
+generalization of type constructors {\tt []} and \Tree (for $c$ to be
+used in $c\: b$, mapping $c \mapsto ({\tt []},\Tree)$ is saved in
+parameter $\phi$ of $\lcg''$, to be reused).
 
 We have: 
 

@@ -22,35 +22,50 @@ constraint is a class name followed by a sequence of type variables.
 
 In (GHC) Haskell, ambiguity is a property of a type: a type $\forall
 \overline{a}.\,C \Rightarrow \tau$ is ambiguous if there exists a type
-variable that occurs in the constraints ($C$) that is not uniquely
-determined from the set of type variables that occur in the simple
-type ($\tau$). This unique determination specifies that, for each type
-variable $a$ that occurs in $C$ but not in $\tau$ there must exist a
-functional dependency $b \mapsto c$ for some $b$ in $\tau$ (or a
-similar unique determination specified via type families). Notation $b
-\mapsto c$ is used, instead of $b \rightarrow c$, to avoid confusion
-with the notation used to denote functional types.
+variable that occurs in the set of constraints ($C$) that is not
+uniquely determined from the set of type variables that occur in the
+simple type ($\tau$). This unique determination is such that, for each
+type variable $a$ that occurs in $C$ but not in $\tau$ there must
+exist a functional dependency $a \mapsto b$ for some $b$ in $\tau$ (or
+a similar unique determination specified via type families). Notation
+$a \mapsto b$ is used, instead of $a \rightarrow b$, to avoid
+confusion with the notation used to denote functional types.
 
 A new definition, which we prefer to call here {\em expression
   ambiguity\/} (in \cite{JBCS-Ambiguity-and-constrained-polymorphism}
 it is called {\em delayed closure ambiguity\/}), uses a similar
-property, of variable reachability, that is independent of functional
-dependencies and type families: a type variable $a$ that occurs in a
-set of constraints is reachable from the set of type variables in
-$\tau$ if it occurs in $\tau$ or there exists a type variable $b$ in
-$C$ that is reachable. For example, in $C \Rightarrow b$, where
-$C=(D\: a\: b, E\: a)$, type variable $a$ is reachable from the set of
-type variables in $b$.
+property, of variable reachability (Definition \ref{def:reachable},
+Section \ref{Optional-type-classes}), that is independent of
+functional dependencies and type families: a type variable $a$ that
+occurs in a constraint $\pi$ of a set of constraints $C$ on the type
+$C\Rightarrow\tau$ of an expression is reachable from the set of type
+variables in $\tau$ if it occurs in $\tau$ or there exists a type
+variable $b$ that occurs in $\pi$ that is reachable. For example, in
+$C \Rightarrow b$, where $C=(A\: a\: b, B\: a)$, type variable $a$ is
+reachable from the set of type variables in $b$, because $a$ occurs in
+constraint $D\: a\: b$, and $b$ is reachable. Similarly, $c$ is
+reachable from $a$, where $C=(A\_1\: a\: b, A\_2\: b c, A\_3\: c)$.
 
-The presence of unreachable variables in a constraint $\pi\in C$
-characterizes overloading resolution, or, in other words, that
-overloading is resolved for $\pi$: it characterizes that there is no
-context in which an expression with such a type could be placed that
-could instantiate such unreachable variables. The presence of
-unreachable variables does not necessarily imply ambiguity. Ambiguity
-is a property of an expression, and it depends on the context in which
-the expression occurs, and on entailment of the constraints on the
-expression's type.
+The presence of unreachable variables in a constraint $\pi\in C$, on a
+type $\sigma = C \Rightarrow \tau$, characterizes {\em overloading
+  resolution\/}; in other words, it means that overloading for $\pi$
+is resolved. The fact that overloading is resolved --- for a
+constraint ($\pi$) that occurs in the set of constraints ($C$) on a
+type ($\sigma$) --- means that there is no context in which an
+expression with such a type ($\sigma$) could be placed that could
+instantiate any of the unreachable variables (occurring in
+$\pi$). However, the presence of unreachable variables does not
+necessarily imply ambiguity. Ambiguity is a property of an expression,
+not of a type. It depends on the context in which the expression
+occurs, and on entailment of the constraints on the expression's type.
+Also, because of Haskell's {\em open-world\/} style of overloading,
+ambiguity can be checked only when there exist unreachable variables;
+when there no unreachable variables, overloading is yet unresolved.
+In Section \ref{sec:modular-instances} we consider a canonical example
+of ``ambiguous type'' in Haskell, namely {\tt (\SShow\ $a$,
+  \RRead\ $a$) => \String}; an expression $e$ with this type is not
+ambiguous if there exists a single constraint for \SShow, and a single
+constraint for \RRead, in the context where $e$ is used.
 
 Entailment of constraints and its algorithmic (functional) counterpart
 are well-known in the Haskell world (see
@@ -58,30 +73,30 @@ e.g.~\cite{MarkJones94a,TheoryOfOverloading,JBCS-Ambiguity-and-constrained-polym
 
 Informally, a set of constraints $C$ is entailed (or satisfied) in a
 program $P$ if there exists a substitution $\phi$ such that $\phi(C)$
-is contained in the set of instance declarations of $P$, or is implied
-by the transitivity implied by the set of class and instance
-declarations occuring in $P$. For a formal definition, see
+is contained in the set of instance declarations of $P$, or is
+transitively implied by the set of class and instance declarations
+occurring in $P$. For a formal definition, see
 e.g.~\cite{MarkJones94a,JBCS-Ambiguity-and-constrained-polymorphism}. In
-this case we say that $C$ is entailed by $\phi(C)$. 
+this case we say that $C$ is entailed by $\phi$.
 
 For example, {\tt \Eq\ [[\Integer]]} is entailed if we have instances
 {\tt \Eq\ \Integer} and {\tt \Eq\ $a$ => \Eq\ [$a$]}, visible in the
 context where an expression whose type has a constraint {\tt
   \Eq\ [[\Integer]]} occurs.
 
-If overloading is resolved for a constraint $C$ occurring in a type
-$\sigma = C,D \Rightarrow \tau$ then exactly one of the following
+If overloading is resolved for a constraint $\pi$ occurring in a type
+$\sigma = \pi,C \Rightarrow \tau$ then exactly one of the following
 holds:
 \begin{itemize}
 
-\item $C$ is entailed by a single instance; in this case a type
+\item $\pi$ is entailed by a single instance; in this case a type
   simplification (also called ``improvement'') occurs: $\sigma$ can be
-  simplified to $D \Rightarrow \tau$;
+  simplified to $C \Rightarrow \tau$;
 
-\item $C$ is entailed by more than instance; in this case we have a
-  type error: ambiguity; 
+\item $\pi$ is entailed by two or more instances; in this case we have
+  a type error: ambiguity;
 
-\item $C$ is not entailed (by any instance); in this case we have also
+\item $\pi$ is not entailed (by any instance); in this case we have also
   a type error: unsatisfiability.
 
 \end{itemize}
@@ -90,30 +105,30 @@ Note that variables in a single constraint are either all reachable or
 all unreachable. If they are unreachable, either the constraint can be
 removed, in the case of single entailment, or there is a type error
 (either ambiguity, in the case of two or more entailments, or
-unsatisfiability, in the case of no entaiment).
+unsatisfiability, in the case of no entailment).
 
-Instead of being dependent on the specification or not of functional
+Instead of being dependent on the specification of functional
 dependencies or type families, ambiguity depends on the existence of
 (two or more) instances in a program context when overloading is
 resolved for a constraint on the type of an expression.
 
 The possibility of a modular control of the visibility of instance
 definitions conforms to this simplifying change. This is the subject
-of Section \ref{sec:modular-instances}.
+of Section \ref{sec:modular-instances}. 
 
 Also in conformance with this change is the possibility, explored in
 this paper, of allowing type classes to be optionally declared by
 programmers, i.e. for allowing programmers to overload symbols without
-having to declare the types of these symbols in type classes. 
+having to declare the types of these symbols in type classes.
 
 A type system and a type inference algorithm for a core-Haskell
 language where type classes can be optionally declared is presented in
 Section \ref{Optional-type-classes}.  The idea is based on defining
-the type of unanottated overloaded symbol as the anti-unification of
-instance types defined for the symbol in a module, by automatically
-creating a type class with a single overloaded name. This depends on a
-modularization of instance visibility (as well as on a redefinition of
-Haskell's ambiguity rule).
+the type of an overloaded symbol that does not appear explicitly in a
+type class as the anti-unification of instance types defined for the
+symbol in a module, by automatically creating a type class with a
+single overloaded name. This depends on a modularization of instance
+visibility (as well as on a redefinition of Haskell's ambiguity rule).
 
 The paper presents the modifications to Haskell's module system that
 are necessary to allow instances to have a modular scope, based on

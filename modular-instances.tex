@@ -41,26 +41,29 @@ for example:
   $g$ = $f$ "123"
 }
 
-The definition of $f$ in module $A$ is well-typed, because constraints
-(\SShow\ $a$, \RRead\ $a$) can be removed; this occurs because there
-exists a single instance, in module $A$, for each constraint, that
-entails it. As a result, $f$ has type \String $\rightarrow$
-\String. Its use in module $B$ is (then) also well-typed. That means:
-$f$'s semantics is a function that receives a value of type
-\String\ and returns a value of type \String, according to the
-definition of $f$ given in module $A$. The semantics of an expression
-involves passing a (dictionary) value that is given in the context of
-usage if, {\em and only if}, the expression has a constrained type.
+In our approach (i.e.~considering ambiguity as a property of an
+expression, not of a type), the definition of $f$ in module $A$ is
+well-typed (it is not well-typed in Haskell), because constraints
+(\SShow\ $a$, \RRead\ $a$) can be removed (in Haskell, type {\tt
+  (\SShow\ $a$, \RRead\ $a$) $\Rightarrow$ \String} is ambiguous); the
+constraints can be removed because there exists a single instance, in
+module $A$, for each constraint, that entails it. As a result, $f$ has
+type \String $\rightarrow$ \String. Its use in module $B$ is (then)
+also well-typed. That means: $f$'s semantics is a function that
+receives a value of type \String\ and returns a value of type \String,
+according to the definition of $f$ given in module $A$. The semantics
+of an expression involves passing a (dictionary) value that is given
+in the context of usage if, {\em and only if}, the expression has a
+constrained type.
 
 \subsection{Instance visibility control: a summary}
 \label{subsec:instance-visibility-control}
 
-Modularization of instance definitions can be allowed by means of the
-importation and exportion of instances as shown in
+Modularization of instance definitions can be allowed as shown in
 \cite{Controlling-scope-instances}. Essentially, import and export
-clauses can specify, instead of just names, occurrences of {\tt
-  instance $A$ $\overline{\tau}$}, where $\overline{\tau}$ is a
-(non-empty) sequence of types and $A$ is a class name.  We have:
+clauses can specify, instead of just names, also {\tt instance $A$
+  $\overline{\tau}$}, where $\overline{\tau}$ is a (non-empty)
+sequence of types and $A$ is a class name; we have that:
 
   \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots} \]
 specifies that the instance of $\overline{\tau}$ for class $D$ is
@@ -91,19 +94,20 @@ Among the advantages of this simple change, we cite (following
 
 \begin{itemize}
 
-  \item programmers have better control of which entities are
-    necessary and should be in the scope of each module in a program;
+  \item Programmers have better control of which entities are
+    necessary and should be in the scope of each module in a program.
 
-  \item it is possible to define and use more than one instance for
-    the same type in a program;
+  \item It is possible to define and use more than one instance for
+    the same type in a program.
 
-  \item problems with orphan instances (i.e.~instances defined in a
-    module where neither the definition of the data type nor the
-    definition of the type class) do not occur (for example, distinct
-    instances of \Either\ for class \Monad, say one from package
-    \mtl\ and another from \transformers, can be used in a program);
+  \item Problems with orphan instances do not occur (orphan instances
+    are instances defined in a module where neither the definition of
+    the data type nor the definition of the type class occur). For
+    example, distinct instances of \Either\ for class \Monad, say one
+    from package \mtl\ and another from \transformers, can be used in
+    a program.
 
-  \item the introduction of newtypes, as well as the use of functions
+  \item The introduction of newtypes, as well as the use of functions
     that include additional (-by) parameters, such as e.g.~the (first)
     parameter of function \sortBy\ in module \Data.\List\ can be
     avoided.
@@ -111,11 +115,11 @@ Among the advantages of this simple change, we cite (following
 \end{itemize}
 
 With instance modularization, programmers need to be aware of which
-entities are exported and imported (i.e.~which entities are visible in
-the scope of a module) and their types, in particular if they are
-overloaded or not.  A simple change like a type annotation for a
-variable exported from a module, can lead to a change in the semantics
-of using this variable in another module.
+entities are exported and imported --- i.e.~which entities are visible
+in the scope of a module --- {\em and their types}, in particular
+whether they are or not overloaded. A simple change like a type
+annotation for a variable exported from a module, can lead to a change
+in the semantics of using this variable in another module.
 
 % The change is very significant if the type annotation instantiates
 % the type of $x$ so that overloading of $x$ is resolved in $A$, since

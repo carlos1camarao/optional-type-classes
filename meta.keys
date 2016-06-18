@@ -1,10 +1,4 @@
-%\newtheorem{Lemma}{Lemma}
-%\newtheorem{Theorem}{Theorem}
-%\theoremstyle{plain}
-%\newdefinition{Definition}{Definition}
-%\newtheorem{Corollary}{Corollary}
-%\newdefinition{Example}{Example}
-%\definecolor{mygrey}{gray}{0.85}
+\definecolor{mygrey}{gray}{0.85}
 
 \newcommand{\prog}[1]{
   \normalfont\ttfamily

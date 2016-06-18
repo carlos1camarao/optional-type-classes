@@ -35,10 +35,10 @@ field name space that is distinct from the variable name space:
 
 \progb{
 \get\_\id\ :: \Person\ $\rightarrow$ \Int\\
-\instance\ \get\_\id\ ($p$ :: \Person\ \id\ \_\ )  = \id\\ \\
+\instance\ \get\_\id\ (\Person\ \id\ \_\ )  = \id\\ \\
 
 \get\_\id\ :: \Address\ $\rightarrow$ \Int\\
-\instance\ \get\_\id\ ($a$ :: \Address\ \id\ \_\ ) = \id}
+\instance\ \get\_\id\ (\Address\ \id\ \_\ ) = \id}
 
 If record field updating is used, automatically created functions are
 created, as illustrated below. Consider for example that record field
@@ -49,7 +49,7 @@ updating is used as follows:
 \instance\ \update\_\id\ (\Person\ \id\ \name) \new\_\id\ = \Person\ \new\_\id\ \name\\ \\
 
 \update\_\id\ :: \Address\ $\rightarrow$ \Int\ $\rightarrow$ \Address\\
-\instance\ \update\_\id\ ($a$ :: \Address\ \id\ \address) \new\_\id = \Address\ \new\_\id\ \address
+\instance\ \update\_\id\ (\Address\ \id\ \address) \new\_\id\ = \Address\ \new\_\id\ \address
 }
 
 Given any expression $p$ of of type \Person, any use of {\tt ($p$ \{
