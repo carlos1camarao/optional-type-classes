@@ -8,26 +8,19 @@ overloaded symbol is, if not explicitly defined in a type class, based
 on the anti-unification of instance types defined for the symbol in
 the relevant module.
 
-Figure \ref{fig:mini-Haskell-context-free-syntax} shows meta-variable
-usage and the context-free syntax of mini-Haskell: expressions and
-their types, modules and programs. Meta-variables can be possibly
-primed or subscripted. An instance can be specified without specifying
-a type class, cf.~second option (after {\tt |}) in Figure
+Figure \ref{fig:mini-Haskell-context-free-syntax} shows the context-free syntax of mini-Haskell: expressions, modules and programs. 
+%Meta-variables can be possibly primed or subscripted. 
+An instance can be specified without specifying
+a type class, cf.~second option (after {\tt |}) in Instance Declaration in Figure
 \ref{fig:mini-Haskell-context-free-syntax}.
 
 % (the use of the keywork \instance\ is not strictly
 %necessary, it is included here for the sake of simplicity).
 
-For simplicity and following common practice, kinds are not considered
-in type expressions and type expressions which are not simple types
-are not explicitly distinguished from simple types. Type expression
-variables are called simply type variables. 
-
-As usual, we assume the existence of type constructor $\to$, that is
-written as an infix operator ($\tau \to \tau'$). A type
-$\forall\,\overline{a}.\,C\Rightarrow \tau$ is equivalent to
-$C\Rightarrow \tau$ if $\overline{a}$ is empty and, similarly,
-$C\Rightarrow \tau$ is equivalent to $\tau$ if $C$ is empty.
+%For simplicity and following common practice, kinds are not considered
+%in type expressions and type expressions which are not simple types
+%are not explicitly distinguished from simple types. 
+%Type expression variables are called simply type variables. 
 
 For simplicity, imported and exported variables and instances must be
 explicitly indicated, e.g.~we do not include notations for exporting
@@ -35,37 +28,28 @@ and importing all variables of a module.
 
 Multi-parameter type classes are supported. In this paper we do not
 consider recursivity, neither in let-bindings nor in instance
-declarations. 
+declarations. \vspace{-.3cm} 
 
 \begin{figure} 
-
+\begin{mdframed}
 \[ \begin{array}[c]{llll}
-\textrm{Class Name}         &\hspace{.1cm} & A,B            & \\
 \textrm{Module Name}        &              & M,N            & \\
-\textrm{Type variable}      &         & a,b,\alpha,\beta & \\
-\textrm{Type constructor}   &         & T              & \\
-\textrm{Simple Constraint}  &         & \pi            & ::= A\,\overline{\tau}\\
-\textrm{Unquantified Constraint} &    & \psi           & ::= C\Rightarrow \pi\\
-\textrm{Constraint}         &         & \theta         & ::= \forall\,\overline{\alpha}.\,\psi\\
-\textrm{Set of Simple Constraints} &  & C,D            & \\
-\textrm{Constrained Type}   &         & \delta,\epsilon & ::= C\Rightarrow \tau\\
-\textrm{Simple Type}        &         & \tau, \rho     & ::= \alpha \mid T \mid \tau\:\tau' \\
-\textrm{Type}               &         & \sigma         & ::= \forall\,\overline{\alpha}.\,\delta\\
 \textrm{Program Theory}     &         & P,Q            &\\
-\textrm{Variable}           &         & x, y, z        &\\
+\textrm{Variable}           &         & x, y           &\\
 \textrm{Expression}         &         & e              & ::= x \,\mid\, \lambda x.\,e  \,\mid\, e\:e' \,\mid\, \mlet x = e\,\iin\,e'\\ 
 \textrm{Program}            &         & p              & ::= \overline{m}\\
-\textrm{Module}             &         & m              & ::= \module\, M\, (\exportC) \ \where\ \overline{\importC};\: \overline{\!d}\\
+\textrm{Module}             &         & m              & ::= \module\, M\, (\exportC) \ \where\ \overline{\importC};\: \overline{\!D}\\
 \textrm{Export clause}      &         & \exportC\      & ::= \overline{\iitem}\\
-\textrm{Import clause}      &         & \importC\      & ::= \import\ M\: (\,\overline{\iitem}\,)\\
+\textrm{Import clause}      &         & \importC\      & ::= \import\ M\: (X)\\
 \textrm{Item}               &         & \iitem         & ::= x \,\mid\, \instance\ A\: \overline{\tau}\\ 
-\textrm{Declaration}        &         & d              & ::= \classDecl \,\mid\, \instDecl \,\mid\, \overline{b}\\
+\textrm{Declaration}        &         & D              & ::= \classDecl \,\mid\, \instDecl \,\mid\, \overline{B}\\
 \textrm{Class Declaration}  &         & \classDecl\    & ::= \class\ C \Rightarrow A\: \overline{a}\:\: \where\ \overline{x:\delta}\\
-\textrm{Instance Declaration} &       & \instDecl\     & ::= \instance\ C \Rightarrow A\: \overline{\tau}\:\: \where\ \overline{b} 
-                                                             \,\mid\, \instance\ b\\
-\textrm{Binding}              &       & b              & ::= x = e 
-\end{array} \]
-\caption{Context-free syntax of mini-Haskell and types}
+\textrm{Instance Declaration} &       & \instDecl\     & ::= \instance\ C \Rightarrow A\: \overline{\tau}\:\: \where\ \overline{B} 
+                                                             \,\mid\, \instance\ B\\
+\textrm{Binding}              &       & B              & ::= x = e 
+\end{array} \] 
+\end{mdframed} \vspace{-.2cm}
+\caption{Context-free syntax of mini-Haskell}
 \label{fig:mini-Haskell-context-free-syntax}
 \end{figure}
 
@@ -85,7 +69,7 @@ $x$ in module $M$ and typing context $\Gamma$.
    
 A special, empty module name, denoted by $\texttt{[]}$, is used for
 names exported by modules, to control the scope of names that use
-import and export clauses. Also, a reserved name $\gamma$ is used to
+import and export clauses. Also, a reserved name $(\self)$ is used to
 refer to the current module, being defined and used in the type system
 and relations to control import and export clauses.
 
@@ -101,64 +85,95 @@ an undeclared class), its (new) type is given by the lcg of the
 existing type (an existing lcg of previous instance types) and the
 instance type.
 
-A partial order on possibly constrained and possibly quantified types,
-based on constraint set entailment, is defined in Figure
-\ref{fig:type-partial-order}. We use $P \entail C$ to abbreviate
-$P\entail \pi$ for all $\pi\in C$.  Note that type ordering disregards
-constraint set satisfiability.  Satisfiability is only important when
-considering whether a constraint set $C$ can be removed from a
-constrained type $C,D \Rightarrow \tau$ ($C$ can be removed if and
-only if overloading for $C$ has been resolved and there exists a
-single satisfying substitution for
-$C$)\cite{JBCS-Ambiguity-and-constrained-polymorphism}.
+We consider that a constraint set $C'$ can be removed from a
+constrained type $C,C' \Rightarrow \tau$ if and only if overloading
+for $C'$ has been resolved and there exists a single satisfying
+substitution for
+$C'$\cite{JBCS-Ambiguity-and-constrained-polymorphism}.
 
-\begin{figure}
-   \[ \begin{array}{ccc}
-   	\displaystyle\frac
-          {P \entail \phi\,C \:\:\:\:\: D \subseteq \phi\,C \:\:\:\:\: \overline{b} \subseteq \tv(D) \cup \tv(\phi\,\tau) }
-          {\forall\,\overline{a}.\,C \Rightarrow \tau \leq_P \forall\,\overline{b}.\,D \Rightarrow \phi\,\tau}
-  \end{array} \]
-\caption{Partial order on Types}
-\label{fig:type-partial-order}
-\end{figure}
+%\begin{figure}
+%   \[ \begin{array}{ccc}
+%   	\displaystyle\frac
+%          {P \entail \phi\,C}
+%          {\forall\,\overline{a}.\,C \Rightarrow \tau \leq_P \phi\,C  \Rightarrow \phi\,\tau}
+%  \end{array} \]
+%\caption{Type Instantiation Relation}
+%\label{fig:type-partial-order}
+%\end{figure}
 
-A type system for core-Haskell is presented in Figure
+A declarative type system for core-Haskell is presented in Figure
 \ref{fig:core-haskell-type-system}, using rules of the form $P;\Gamma
 \vdash_0 e:\delta$, which means that $e$ has type $\delta$ in typing
-context $\Gamma$ and program theory $P$.
+context $\Gamma$ and program theory $P$. 
+
+\begin{figure}
+\begin{mdframed}
+\[ \begin{array}{cc}
+      \displaystyle\frac
+        {\begin{array}[t]{lll}
+           \Gamma(\self)(x) = (\forall\,\overline{a}.\,C\Rightarrow \tau)\:\:\: & \:\:\:P \entail \phi\,C 
+           & \:\:\:\dom{\phi} \subseteq \overline{a}
+         \end{array}}
+        {P;\Gamma \vdash_0 x: \phi (C \Rightarrow \tau)} \:(\VAR) \\ \\
+
+	\displaystyle\frac
+          {(\Gamma(\self),x \mapsto \tau) \vdash_0 e: C \Rightarrow \tau'}
+	  {P;\Gamma \vdash_0 \lambda x.\:e: C\Rightarrow \tau \rightarrow \tau'} \:(\ABS)  \\ \\
+
+	\displaystyle\frac
+	  {\begin{array}[t]{cc}
+             P;\Gamma \vdash_0 e: C \Rightarrow \tau' \rightarrow \tau\: &\:
+             P;\Gamma \vdash_0 e': C' \Rightarrow \tau' \\
+             V = \tv(\tau) \cup \tv(C) & (C \oplus_V C') \simplifies{P} C''
+        \end{array}}
+	{P;\Gamma \vdash_0 e\:e': C'' \Rightarrow \tau} \:(\APP) \\ \\
+
+	\displaystyle\frac
+	 {\begin{array}{ll}
+            P;\Gamma \vdash_0 e\!:C \Rightarrow \tau & C \simplifies{P} C'' \\
+            \gen(C'' \Rightarrow \tau,\sigma,\tv(\Gamma))\: & \:P;(\Gamma(\self),x \mapsto\sigma) \vdash_0 e'\!:\,C' \Rightarrow \tau'
+          \end{array}}
+	 {P;\Gamma \vdash_0 \mlet\ x=e\ \iin\ e': C' \Rightarrow\tau' } \:(\LET)
+\end{array} \]
+\end{mdframed} \vspace{-.2cm}
+\caption{Core-Haskell Type System} 
+\label{fig:core-haskell-type-system}
+\end{figure}
 
 Rule (\LET) performs constraint set simplification before type
 generalization. Constraint set simplification $\simplifies{P}$ is a
 relation on cons\-traints, defined as a composition of improvement and
 context reduction \cite{JBCS-Ambiguity-and-constrained-polymorphism}.
 $\gen(\delta,\sigma,V)$ holds if
-  $\sigma=\forall\,\overline{\alpha}.\,\delta$, where
-  $\overline{\alpha}=\tv(\delta) - V$.
+  $\sigma=\forall\,\overline{a}.\,\delta$, where
+  $\overline{a}=\tv(\delta) - V$; similarly, for constraints, 
+$\gen(C\Rightarrow\pi,\theta,V)$ holds if
+$\theta=\forall\,\overline{a}.\,C\Rightarrow\pi$, where
+$\overline{a}=\tv(C\Rightarrow\pi) - V$. 
 
-We have, more precisely: 
+%We have, more precisely: 
 
-\begin{Definition}
+%\begin{Definition}
+%
+%A variable $a\in \tv(C)$ is \textbf{reachable} from a set of type variables $V$ if $a\in V$ or if $a\in
+%\pi$ for some $\pi\in C$ such that there exists $b\in \tv(\pi)$ such
+%that $b$ is reachable. 
 
-A variable $a\in \tv(C)$ is called reachable from, or
-with respect to, a set of type variables $V$ if $a\in V$ or if $a\in
-\pi$ for some $\pi\in C$ such that there exists $b\in \tv(\pi)$ such
-that $b$ is reachable. 
+%$a\in \tv(C)$ is unreachable if it is not reachable. The set of
+%reachable type variables of constraint set $C$ {\em from V\/} is
+%denoted by $\reachableVars(C,V)$.
 
-$a\in \tv(C)$ is called unreachable if it is not reachable. The set of
-reachable type variables of constraint set $C$ {\em from V\/} is
-denoted by $\reachableVars(C,V)$.
-
-\label{def:reachable}
-\end{Definition}
+%\label{def:reachable}
+%\end{Definition}
 
 %We also say that type variables $W$ are reachable in constrained type
 %$C\Rightarrow \tau$ if $W\subseteq \reachableVars(C,\tv(\tau))$ (and
 %similarly for unreachable type variables and if $W$ is a type variable
 %instead of a set of type variables).
 
-$C \oplus_V D$ denotes the constraint set obtained by adding to $C$
+$C \oplus_V C'$ denotes the constraint set obtained by adding to $C$
 constraints from $D$ that have type variables reachable from $V$:
-  \[ C \oplus_V D = C \cup \{ \psi \in D \mid \tv(\psi) \cap \reachableVars(D,V) \not= \emptyset \} \]
+  \[ C \oplus_V C' = C \cup \{ \pi \in C'\,\mid\, \tv(\pi) \cap \reachableVars(C',V) \not= \emptyset \} \]
 
 In rule (\APP), the constraints on the type of the result are those
 that occur in the function type plus not all constraints that occur in
@@ -174,22 +189,19 @@ expression, with a possibly non-empty set of constraints on its type:
 c$), which should denote an identity function, and \fst\ ($e$, $o$),
 which should have the same denotation as $e$.
 
-A type system for mini-Haskell, which extends core-Haskell with
+The extension of core-Haskell to mini-Haskell, which allows
 (optional) type classes, modules and modularized instance
 declarations, is presented in Figures
-\ref{fig:mini-haskell-module-rule} and
-\ref{fig:mini-haskell-rules-for-declarations}. Rule (\MODULE) uses
-relations ($\vdash_{\Downarrow}$) and ($\vdash_{\Uparrow}^X$), which
+\ref{fig:mini-haskell-module-rule} through \ref{fig:mini-haskell-rules-for-declarations}. Rule (\MODULE), in Figure \ref{fig:mini-haskell-module-rule}, uses relations ($\vdash_{\Downarrow}$) and ($\vdash_{\Uparrow}^X$), which
 are defined separately, for clarity, in Figures
 \ref{fig:import-relation} and
 \ref{fig:mini-haskell-rules-for-declarations}.
 
-The import relation $\Gamma \vdash_{\Downarrow} \overline{\importC}
-\leadsto \Gamma'$ yields a typing context ($\Gamma'$) from a typing
+The import relation $\Gamma \vdash_{\Downarrow} \overline{\importC} :  \Gamma'$ yields a typing context ($\Gamma'$) from a typing
 context ($\Gamma$) and a sequence of import clauses
-($\overline{\importC}$).
+($\overline{\importC}$). 
 
-Relation $P;\Gamma \vdash_{\Uparrow}^X \overline{\!d}:(E,P',\Gamma')$
+Relation $P;\Gamma \vdash_{\Uparrow}^X \overline{\!D}:(E,P',\Gamma')$
 is used for specifying the types of a sequence of bindings, from a
 typing context ($\Gamma$), a program theory ($P$) and a set of
 exported items ($X$); it yields the set ($E$) of exported variables
@@ -212,73 +224,41 @@ library modules. Recursive modules are not treated in this paper.
 % Figure \ref{fig:mini-haskell-rules-for-declarations}: $\{ x_1, \ldots,
 % x_n \} \texttt{++} \{ y_1, \ldots, y_m \} = \{ x_1, \ldots, x_n, y_1,
 % \ldots, y_m \}$.
-$\gen$ is defined for constraints similarly as for types:
-$\gen(\psi,\theta,V)$ holds if
-$\theta=\forall\,\overline{\alpha}.\,\psi$, where
-$\overline{\alpha}=\tv(\psi) - V$. It is used in Figure
-\ref{fig:mini-haskell-rules-for-declarations}.
 
 %If $R = \overline{x:\delta}^{\,n}$ and $R'
 % =\overline{y:\epsilon}^{\,m}$, then $R \oplus R'$ denotes the record
 % $\{ x_1,:\delta_1, \ldots, x_n:\delta_n, y_1:\epsilon_1, \ldots,
 % y_m:\delta_m \}$.
 
-\begin{figure}
-\[ \begin{array}{cc}
-      \displaystyle\frac
-        {\begin{array}[t]{lll}
-           \Gamma(\gamma)(x) = \sigma\ & \:\sigma \leq_P \delta
-         \end{array}}
-        {P;\Gamma \vdash_0 x: \delta} \:(\VAR) \\ \\
-
-	\displaystyle\frac
-          {(\Gamma(\gamma),x \mapsto \tau) \vdash_0 e: C \Rightarrow \tau'}
-	  {P;\Gamma \vdash_0 \lambda x.\:e: C\Rightarrow \tau \rightarrow \tau'} \:(\ABS)  \\ \\
-
-	\displaystyle\frac
-	  {\begin{array}[t]{cc}
-             P;\Gamma \vdash_0 e: C \Rightarrow \tau' \rightarrow \tau\: &\:
-             P;\Gamma \vdash_0 e': C' \Rightarrow \tau' \\
-             V = \tv(\tau) \cup \tv(C) & (C \oplus_V C') \simplifies{P} D
-           \end{array}}
-	{P;\Gamma \vdash_0 e\:e': D\Rightarrow \tau} \:(\APP) \\ \\
-
-	\displaystyle\frac
-	 {\begin{array}{ll}
-            P;\Gamma \vdash_0 e\!:C \Rightarrow \tau & C \simplifies{P} D\\
-             \gen(D\Rightarrow \tau,\sigma,\tv(\Gamma))\: & \:P;(\Gamma(\gamma),x \mapsto\sigma) \vdash_0 e'\!:\delta
-          \end{array}}
-	 {P;\Gamma \vdash_0 \mlet\ x=e\ \iin\ e':\delta} \:(\LET)
-\end{array} \]
-\caption{Core-Haskell Type System}
-\label{fig:core-haskell-type-system}
-\end{figure}
 
 \begin{figure}
+\begin{mdframed}
 \[ \begin{array}{cc}
 	\displaystyle\frac
 	 {\begin{array}{ll}
-           \Gamma_0 \vdash_{\Downarrow} \overline{\!I} : \Gamma\:\: & \:\:P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (E,P',\Gamma') 
+           \Gamma_0 \vdash_{\Downarrow} \overline{\!I} : \Gamma\:\: & \:\:P;\Gamma \vdash_{\Uparrow}^X \overline{\!D} : (E,P',\Gamma') 
           \end{array}}
-	 {P;\Gamma_0 \vdash \module\ M\, (\exportC)\ \where\ \overline{\!I};\, \overline{\!d} : (E,P',\Gamma')} \:(\MODULE)
+	 {P;\Gamma_0 \vdash \module\ M\, (\exportC)\ \where\ \overline{\!I};\, \overline{\!D} : (E,P',\Gamma')} \:(\MODULE)
 \end{array} \]
+\end{mdframed} \vspace{-.2cm}
 \caption{Mini-Haskell module rule} 
 \label{fig:mini-haskell-module-rule}
 \end{figure}
 
 \begin{figure}
+\begin{mdframed}
 \[ \begin{array}{cc}
 	\displaystyle\frac
 	 {\begin{array}{ll}
             \Gamma'(M)(x) = \left\{ \begin{array}{ll}
-              \Gamma(\texttt{[]})(x) & \text{ if } M = \gamma \text{ and, for some $1 \leq k \leq n$, }\\
-                                     & \hspace*{.3cm} 
-                                         x = \iota_k \text{ or 
-                                         ($x$ is a member of class $A$, } \iota_k = \instance\ A\: \overline{\tau})\\
+              \Gamma(\texttt{[]})(x) & \text{ if } M = \self \text{ and, for some $1 \leq k \leq n$, }\\
+                                     & %\hspace*{.3cm} 
+                                         x\hspace*{-.05cm} =\hspace*{-.05cm} \iota_k \text{ or 
+                                         ($\iota_k\hspace*{-.05cm} =\hspace*{-.05cm} \instance\ A\: \overline{\tau}$, $x$ is a member of class $A$)}\\
                \Gamma(M)(x)          & \text{ otherwise}
              \end{array}\right.
           \end{array}}
-	 {\Gamma \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}^{\,n}\,) : \Gamma'} \\ \\
+	 {\Gamma \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}^{\,n}\,) : \Gamma'}  \\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{ll}
@@ -287,15 +267,17 @@ $\overline{\alpha}=\tv(\psi) - V$. It is used in Figure
           \end{array}}
 	 {\Gamma_0 \vdash_{\Downarrow} \import\ M\, (\,\overline{\iitem}\,); \overline{\importC} : \Gamma'} 
 \end{array} \]
+\end{mdframed} \vspace{-.2cm}
 \caption{Import relation}
 \label{fig:import-relation}
 \end{figure}
 
 \begin{figure}
+\begin{mdframed}
 \[ \begin{array}{cc}
 	\displaystyle\frac
 	 {\begin{array}{ll}
-            Q;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (E, Q', \Gamma') \:\: & \:\:
+            Q;\Gamma \vdash_{\Uparrow}^X \overline{\!D} : (E, Q', \Gamma') \:\: & \:\:
             Q = P \cup \left\{ \begin{array}{ll}
                                   \{ C \Rightarrow A\:\overline{a} \} & \text{ if } C \not= \emptyset \\
                                   \emptyset                              & \text{ otherwise}
@@ -303,66 +285,70 @@ $\overline{\alpha}=\tv(\psi) - V$. It is used in Figure
             \multicolumn{2}{c}{
                 \Gamma(M)(x) = \left\{ \begin{array}{ll}
                                  \delta_k       & \text{ if } x = x_k, 1 \leq k \leq n, \text{ and } 
-                                                              M \in \{ \gamma, \texttt{[]} \}\\
+                                                              M \in \{ \self, \texttt{[]} \}\\
                                  \Gamma_0(M)(x) & \text{ otherwise} 
                                \end{array}\right. }
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X \class\ C \Rightarrow A\: \overline{a}\ \where\ \overline{x:\delta}^{\,n};\: \overline{\!d} : 
-            (E, Q', \Gamma') } \\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \class\ C \Rightarrow A\: \overline{a}\ \where\ \overline{x:\delta}^{\,n};\: \overline{\!D} : 
+            (E, Q', \Gamma') } \\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{l}
                P \entail C \Rightarrow \pi \:\:\:
                \gen(C\Rightarrow \pi, \theta, \tv(\Gamma)) \:\:\:
-               Q = P \cup \{ \theta \} \:\:\:
-               Q;\Gamma \vdash_0 \overline{e}^{\,n} : \overline{\delta}^{\,n} \:\:\:
-               Q;\Gamma \vdash_{\Uparrow}^{X'} \overline{\!d} : (E,Q',\Gamma') \\[.2cm]
+               Q = P \cup \{ \theta \} \:\:\: \\[.2cm]
+               Q;\Gamma \vdash_0 \overline{e}^{\,n} : \overline{\delta}^{\,n} \:\:\:\\[.2cm]
+               Q;\Gamma \vdash_{\Uparrow}^{X'} \overline{\!D} : (E,Q',\Gamma') \\[.2cm]
                (X',E') = \left\{ \begin{array}{ll}
-                               (X - \{ \instance\ \phi\pi \}, E \cup \{ \overline{x : \delta}^{\,n} \}) 
-                                   & \text{if } (\instance\ \phi\pi) \in X, \text{ for some } \phi\\
+                               (X\hspace*{-.08cm} -\hspace*{-.08cm} \{ \instance\ \phi\pi \}, E \cup \{ \overline{x : \delta}^{\,n} \}) 
+                                   & \text{if } (\instance\ \phi\pi)\hspace*{-.08cm} \in\hspace*{-.05cm} X, \text{ for some } \phi\\
                                (X, E) & \text{otherwise} 
                              \end{array}\right.
           \end{array}}
-	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow \pi\ \where\ \overline{x = e}^{\,n};\: \overline{\!d}
-             : (E',Q',\Gamma')}\\ \\
+	 {P;\Gamma \vdash_{\Uparrow}^X \instance\ C \Rightarrow \pi\ \where\ \overline{x = e}^{\,n};\: \overline{\!D}
+             : (E',Q',\Gamma')}\\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{l}
             P; \Gamma_0 \vdash_0 e : C \Rightarrow \tau \:\:\:
-            \lcgR(\{ \tau\} \cup \{ \Gamma_0(\gamma)(x)\}, \tau') \:\:\:
-           P;\Gamma \vdash_{\Uparrow}^{X'} \overline{\!d} : (E,Q',\Gamma') \\[.1cm]
+            \lcgR(\{\{ \tau\} \cup \{ \Gamma_0(\self)(x)\},\tau') \:\:\: \\[.2cm]
+           P;\Gamma \vdash_{\Uparrow}^{X'} \overline{\!D} : (E,Q',\Gamma') \\[.2cm]
            \Gamma(M)(y) = \left\{ \begin{array}{ll}
-                                      \tau' & \text{ if } y = x, (M = \gamma \text{ or }
+                                      \tau' & \text{ if } y = x, (M = \self \text{ or }
                                                                  (M = \texttt{[]}, x \in X)) \\
                                       \Gamma_0(M)(y) & \text{ otherwise } 
-                                   \end{array}\right. \\[.2cm] 
+                                   \end{array}\right. \\[.3cm] 
            (X',E') = \left\{ \begin{array}{ll}
                                (X - \{ x \}, E \cup \{ x : C\Rightarrow \pi \}) 
                                    & \text{if } x \in X\\
                                (X, E) & \text{otherwise} 
                              \end{array}\right. 
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!d} : (E',Q',\Gamma')} \\ \\
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X \instance\ x = e;\: \overline{\!D} : (E',Q',\Gamma')} \\\ \\
 
 	\displaystyle\frac
 	 {\begin{array}{l}
-           P;\Gamma_0 \vdash_0 e : \delta \:\:\: \gen(\delta,\sigma,\tv(\Gamma_0)) \:\:\:
-           P;\Gamma \vdash_{\Uparrow}^X \overline{\!d} : (E,P',\Gamma')\\[.1cm]
+           P;\Gamma_0 \vdash_0 e : C\Rightarrow\tau \:\:\: \gen(C\Rightarrow\tau,\sigma,\tv(\Gamma_0)) \:\:\: \\[.2cm]
+           P;\Gamma \vdash_{\Uparrow}^X \overline{\!D} : (E,P',\Gamma')\\[.1cm]
 
            \Gamma(M)(y) = \left\{ \begin{array}{ll}
-                                    \sigma & \text{ if } y = x, (M = \gamma \text{ or }
+                                    \sigma & \text{ if } y = x, (M = \self \text{ or }
                                                                  (M = \texttt{[]}, x \in X)) \\
                                       \Gamma_0(M)(y) & \text{ otherwise } 
-                                   \end{array}\right.\\[.2cm]                   
+                                   \end{array}\right.\\[.3cm]                   
            (X',E') = \left\{ \begin{array}{ll}
-                               (X - \{ x \}, E \cup \{x : \delta\}) 
+                               (X - \{ x \}, E \cup \{x : C\Rightarrow\tau\}) 
                                    & \text{if } x \in X\\
                                (X, E) & \text{otherwise} 
                              \end{array}\right. 
           \end{array}}
-	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!d} : (E',P',\Gamma')} 
+	 {P;\Gamma_0 \vdash_{\Uparrow}^X x = e;\: \overline{\!D} : (E',P',\Gamma')} 
 \end{array} \]
+\end{mdframed} \vspace{-.2cm}
 \caption{Mini-Haskell rules for declarations}
 \label{fig:mini-haskell-rules-for-declarations}
 \end{figure}
 
+The first and second rules in Figure~\ref{fig:mini-haskell-rules-for-declarations} specify the bindigs generated by standard Haskell type classes and instance declarations, respectively. 
+
+The tricky is the third third, which accounts for instance declarations of an overloaded symbol $x$ whose type is not explicitly specified in a type class. As stated previously, the type $\tau'$ of $x$ is determined as the least common generalization of the set of types $\{\tau\} \cup \{\Gamma_0(\self)(x)\}$, where $\tau$ is the type of the expression in the current instance declaration for $x$ and  $\Gamma_0(\self)(x)$ is the type binded to $x$ in the current type environment (previously computed from other instance declarations for $x$ that are visible in $\Gamma_0$). The typing context used for specifying the bindigs generated by subsequent decladartions is updated to include the binding of $x$ to automatically determined type. Also, XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

@@ -1,17 +1,31 @@
 \section{Modularization of Instances}
 \label{sec:modular-instances}
 
-This paper does not attempt to discuss any major revision to Haskell's
-module system. We summarize in subsection
-\ref{subsec:instance-visibility-control} the work, presented in
+This section presents the simple modifications to Haskell's module
+system that are necessary to allow instances to have a modular scope
+(we do not attempt to discuss any major revision to Haskell's module
+system). This is based on previous work presented in
 \cite{Controlling-scope-instances}, that allows a modular control of
-the visibility of instance definitions. This has the additional
-benefit of enabling type classes to be optionally declared by
-programmers, by the introduction of a single additional rule (to
-account for the possibility of type classes to be declared or not):
+the visibility of instance definitions.
 
-\begin{definition}[Type of overloaded variable]
+Essentially, import and export clauses can specify, instead of just
+names, also {\tt instance $A$ $\overline{\tau}$}, where
+$\overline{\tau}$ is a (non-empty) sequence of types and $A$ is a
+class name:
 
+  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots} \]
+specifies that the instance of $\overline{\tau}$ for class $A$ is
+exported in module $M$.
+
+  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots)} \]
+specifies that the instance of $\overline{\tau}$ for class $A$ is
+imported from $M$, in the module where the import clause occurs.
+
+The single additional rule to the work presented in
+\cite{Controlling-scope-instances} that enables type classes to be
+optionally declared by programmers is the following:
+
+\begin{Definition}[Type of overloaded variable]
 If the type of an overloaded variable --- i.e.~a variable that is
 introduced in an instance definition --- is not explicitly annotated
 in a type class declaration, then the variable's type is the
@@ -19,66 +33,14 @@ anti-unification of instance types defined for the variable in the
 current module; otherwise, it is the annotated type.
 
 \label{overloaded-variable-type}
-\end{definition}
+\end{Definition}
 
-Instance modularization and the rule of expression ambiguity, that
-considers the context where an expression occurs to detect whether an
-expression is ambiguous or not, has profound consequences. Consider,
-for example:
-
-\proga{xx\=\kill
-\module\ $A$ where\+\\
-  \class\ \SShow\ $t$ \ldots\\
-  \class\ \RRead\ $t$ \ldots\\
-  \instance\ \SShow\ \Int\ \ldots\\
-  \instance\ \RRead\ \Int\ \ldots\\
-  $f$ = \sshow $\:$.$\:$\rread\-\\ \\
-
-\module\ $B$ \where\+\\
-  \import\ $A$\\
-  \instance\ \RRead\ \Bool\ \ldots\\
-  \instance\ \SShow\ \Bool\ \ldots\\
-  $g$ = $f$ "123"
-}
-
-In our approach (i.e.~considering ambiguity as a property of an
-expression, not of a type), the definition of $f$ in module $A$ is
-well-typed (it is not well-typed in Haskell), because constraints
-(\SShow\ $a$, \RRead\ $a$) can be removed (in Haskell, type {\tt
-  (\SShow\ $a$, \RRead\ $a$) $\Rightarrow$ \String} is ambiguous); the
-constraints can be removed because there exists a single instance, in
-module $A$, for each constraint, that entails it. As a result, $f$ has
-type \String $\rightarrow$ \String. Its use in module $B$ is (then)
-also well-typed. That means: $f$'s semantics is a function that
-receives a value of type \String\ and returns a value of type \String,
-according to the definition of $f$ given in module $A$. The semantics
-of an expression involves passing a (dictionary) value that is given
-in the context of usage if, {\em and only if}, the expression has a
-constrained type.
-
-\subsection{Instance visibility control: a summary}
-\label{subsec:instance-visibility-control}
-
-Modularization of instance definitions can be allowed as shown in
-\cite{Controlling-scope-instances}. Essentially, import and export
-clauses can specify, instead of just names, also {\tt instance $A$
-  $\overline{\tau}$}, where $\overline{\tau}$ is a (non-empty)
-sequence of types and $A$ is a class name; we have that:
-
-  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots} \]
-specifies that the instance of $\overline{\tau}$ for class $D$ is
-exported in module $M$.
-
-  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots)} \]
-specifies that the instance of $\overline{\tau}$ for class $A$ is
-imported from $M$, in the module where the import clause occurs.
-
-Alternatively, we can simply give a name to an instance, in an
-instance declaration, and use that name in import and export clauses
-(see \cite{Controlling-scope-instances}). However, in this paper we
-don't need to give a name to an instance, since we only consider
-instances of undeclared classes, which have a single member, and we
-can thus use the name of the member as the instance name. 
+%Alternatively, we can simply give a name to an instance, in an
+%instance declaration, and use that name in import and export clauses
+%(see \cite{Controlling-scope-instances}). However, this will not be
+%used in this paper, since we only consider instances of undeclared
+%classes, which have a single member, and thus the name of the member
+%can be used as the instance name.
 
 %For example, 
 %we can have:
@@ -126,7 +88,43 @@ in the semantics of using this variable in another module.
 % this leads to a change in the type (and meaning) of $x$ in module
 % $B$.
 
+Instance modularization and the rule of expression ambiguity, that
+considers the context where an expression occurs to detect whether an
+expression is ambiguous or not, has profound consequences. Consider,
+for example:
 
+
+\proga{xxxxxxxxxxxxxxxxx\=xx\= \+\kill
+\module\ $M$ where\+\\
+  \class\ \SShow\ $t$ \ldots\\
+  \class\ \RRead\ $t$ \ldots\\
+  \instance\ \SShow\ \Int\ \ldots\\
+  \instance\ \RRead\ \Int\ \ldots\\
+  $f$ = \sshow $\:$.$\:$\rread\-\\ \\
+
+\module\ $N$ \where\+\\
+  \import\ $M$\\
+  \instance\ \RRead\ \Bool\ \ldots\\
+  \instance\ \SShow\ \Bool\ \ldots\\
+  $g$ = $f$ "123"
+}
+
+
+The definition of $f$ in module $M$ is not well-typed in Haskell, since type {\tt
+ (\SShow\ $a$, \RRead\ $a$) $\Rightarrow$ \String} is ambiguous. 
+In our approach (i.e.~considering ambiguity as a property of an
+expression, not of a type), the definition of $f$ in module $M$ is
+well-typed, because constraints
+(\SShow\ $a$, \RRead\ $a$) can be removed; these
+can be removed because there exists a single instance, in
+module $M$, for each constraint, that entails it. As a result, $f$ has
+type \String $\rightarrow$ \String. Its use in module $N$ is (then)
+also well-typed. That means: $f$'s semantics is a function that
+receives a value of type \String\ and returns a value of type \String,
+according to the definition of $f$ given in module $M$. The semantics
+of an expression involves passing a (dictionary) value that is given
+in the context of usage {\em only if} the expression has a
+constrained type.
 
 
 

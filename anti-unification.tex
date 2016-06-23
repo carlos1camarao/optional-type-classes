@@ -4,67 +4,63 @@
 A simple type $\tau$ is a generalization of a set of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
 $\overline{\phi}^{\,n}$ such that $\phi_i(\tau)=\tau_i$, for
-$i=1,\ldots,n$. For example, $\alpha_0 \rightarrow \alpha_0$,
-$\alpha_1 \rightarrow \alpha_2$, and $\alpha_3$ are generalizations of
-$\{ \Int \rightarrow \Int, \Float \rightarrow \Float\}$.
-
-A generalization is also called a (first-order) {\em
-  anti-unification\/} \cite{ModelTheory2012}.
+$i=1,\ldots,n$. For example, $a_0 \rightarrow a_0$,
+$a_1 \rightarrow a_2$, and $a_3$ are generalizations of
+$\{ \Int \rightarrow \Int, \Float \rightarrow \Float\}$.\footnote{A generalization is also called a (first-order) {\em
+  anti-unification\/} \cite{ModelTheory2012}.}
 
 We say that $\tau$ is less general than $\tau'$, written $\tau \leq
-\tau'$, if there exist $\phi$ such that $\phi(\tau') = \tau$.  For
-example, $\alpha_0 \rightarrow \alpha_0 <= \alpha_1 \rightarrow
-\alpha_2 <= \alpha_3$.
+\tau'$, if there exist a substitution $\phi$ such that $\phi(\tau') = \tau$.  For
+example, $a_0 \rightarrow a_0 \leq a_1 \rightarrow
+a_2 \leq a_3$.
 
 The {\it least common generalization} (lcg) of a set of types
-$\mathbb{T}$ and a type $\tau$ holds, written as
-$\lcgR(\mathbb{T},\tau)$, if, for all generalizations $\tau'$ of
-$\mathbb{T}$, we have $\tau \leq \tau'$.
+$S$ and a type $\tau$ holds, written as $\lcgR(S,\tau)$, if, for all generalizations $\tau'$ of
+$S$ we have $\tau \leq \tau'$.
 
-An algorithm for computing the lcg of a finite set of types in
-presented in Figure \ref{fig:lcg}. The concept was studied by Gordon
-Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
+The concept of least common generalization was studied by Gordon Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
 function for constructing a generalization of two symbolic
-expressions.  In Figure~\ref{fig:lcg}, we present function \lcg, that
-gives the lcg of a finite set of simple types by recursion on the
-structure of set $\mathbb{T}$, using a function to compute the
+expressions.  In Figure~\ref{fig:lcg}, we define function \lcg, which 
+returns a lcg of a finite set of 
+simple types $S$, by recursion on the structure of $S$,  
+using function $\lcg'$ to compute the
 generalization of two simple types. For two types $\tau_1$ and
 $\tau_2$ the idea is to recursively traverse the structure of both
 types using a finite map to store previously generalized
 types. Whenever we find two different type constructors, we search on
 the finite map if they have been previously generalized. If this is
-the case, the generalization is returned. But if these two type
-constructors aren't in the finite map we insert them using a fresh
+the case, the previous generalization is returned. If these two type
+constructors are not in the finite map, we insert them using a fresh
 type variable as their generalization and return this new variable.
 
 \begin{figure*}[ht]
 	\[\progfig{
-            $\lcg(\mathbb{T})=\tau$ $\:\:\:$ where 
-               $(\tau, \phi)=\lcg'(\mathbb{T},\id)$, for some  $\phi$ \\ \\
+            $\lcg(S)=\tau$ $\:\:\:$ where 
+               $(\tau, \phi)=\lcg'(S,\id)$, for some  $\phi$ \\ \\
             $\lcg'(\{\tau\},\phi) = (\tau, \phi)$  \\ \\		
-            $\lcg'(\{\tau_1\} \cup \mathbb{T}, \phi) = \lcg''(\tau_1, \tau',\phi') \:\:\:$ where
+            $\lcg'(\{\tau_1\} \cup S, \phi) = \lcg''(\tau_1, \tau',\phi') \:\:\:$ where
 		$\begin{array}[t]{ll}
-                   (\tau',\phi')  & = lcg'(\mathbb{T}, \phi)
+                   (\tau',\phi')  & = lcg'(S, \phi)
 		\end{array}$  \\ \\		
             xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
-            $\lcg'' (C \: \overline{\tau}^{\,n},\:  D\: \overline{\rho}^{\,m},\phi)=$\+\\
-              \textbf{if}\ $\phi(\alpha)=( C\:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})$
-                      for some $\alpha$ \textbf{then}\ $(\alpha,\phi)$ \\
+            $\lcg'' (T \: \overline{\tau}^{\,n},\:  T'\: \overline{\rho}^{\,m},\phi)=$\+\\
+              \textbf{if}\ $\phi(a)=( T\:\overline{\tau}^{\,n},\: T'\:\overline{\rho}^{\,m})$
+                      for some $a$ \textbf{then}\ $(a,\phi)$ \\
               \textbf{else} \+\\
               \textbf{if}\ $n\not=m$ \textbf{then}\
-                 $(\beta, \phi [\beta \mapsto ( C \:\overline{\tau}^{\,n},\: D\:\overline{\rho}^{\,m})])$ \+ \\
-		 where $\beta$ is a fresh type variable \-\\[.1cm]
+                 $(b, \phi [b \mapsto ( T \:\overline{\tau}^{\,n},\: T'\:\overline{\rho}^{\,m})])$ \+ \\
+		 where $b$ is a fresh type variable \-\\[.1cm]
               \textbf{else}\ $(\psi\: \overline{\tau'}^{\,n}, \phi_n)$\+\\
                  where $\begin{array}[t]{l}
 		          (\psi,\phi_0) = \left\{\begin{array}{ll}
-                                            (C ,\phi) & \textbf{if } C = D \\
-                                            (\alpha, \phi\,[\alpha\mapsto (C, D)])
-                                                      & \text{otherwise, $\alpha$ is fresh }\\
+                                            (T ,\phi) & \textbf{if } T = T' \\
+                                            (a, \phi\,[a\mapsto (T, T')])
+                                                      & \text{otherwise, $a$ is fresh }\\
                                           \end{array}\right. \\[.3cm]
                           (\tau'_i,\phi_i) = lcg''(\tau_i, \rho_i, \phi_{i-1}), \text{ for } i=1, \ldots, n
                         \end{array}$ \-\-\-	
         }
-        \]
+        \] \vspace{-.2cm}
 \caption{Least Common Generalization} \label{fig:lcg}
 \end{figure*}
 As an example of the use of \lcg, consider the following types (of
@@ -77,41 +73,39 @@ functions \map\ on lists and trees, respectively):
 
 A call of \lcg\ for a set with these types yields type $(a \rightarrow
 b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
-generalization of type constructors {\tt []} and \Tree (for $c$ to be
-used in $c\: b$, mapping $c \mapsto ({\tt []},\Tree)$ is saved in
+generalization of type constructors {\tt []} and \Tree\ (for $c$ to be
+used in $c\: b$, mapping $c \mapsto (\texttt{[]},\Tree)$ is saved in
 parameter $\phi$ of $\lcg''$, to be reused).
 
-We have: 
+The following theorems guarantee correctness of function \lcg: 
 
 \begin{Theorem}[Soundness of \lcg]
-For all (sets of simple types) $\mathbb{T}$, we have that
-$\lcg(\mathbb{T})$ yields a generalization of $\mathbb{T}$.
+For all (sets of simple types) $S$, we have that
+$\lcg(S)$ yields a generalization of $S$.
 \label{theorem:lcg-is-sound}
 \end{Theorem}
 
 \begin{Theorem}[Completeness of \lcg]
-For all (sets of simple types) $\mathbb{T}$, we have that
-$\lcgR(\mathbb{T},\lcg(\mathbb{T}))$ holds, i.e.~if $\tau$ is a
-generalization of $\mathbb{T}$ then $\lcg(\mathbb{T}) \leq \tau$.
+For all (sets of simple types) $S$, we have that $\lcgR(S,\lcg(S))$
+holds (i.e.~$\lcg(S)$ is a generalization of $S$) and, for any $\tau$
+that is a generalization of $S$, we have that $\lcg(S) \leq \tau$.
 \label{theorem:lcg-is-complete}
 \end{Theorem}
 
 \begin{Theorem}[Compositionality of \lcg]
-For all non-empty (sets of simple types) $\mathbb{T}, \mathbb{T'}$, we
-have that $\lcg(\lcg(\mathbb{T}),\lcg(\mathbb{T'})) = \lcg(\mathbb{T}
-\cup \mathbb{T'})$.
+For all non-empty (sets of simple types) $S, S'$, we have that
+$\lcg(\lcg(S),\lcg(S')) = \lcg(S \cup S')$.
 \label{theorem:lcg-is-compositional}
 \end{Theorem}
 
 \begin{Theorem}[Uniqueness of \lcg]
-For all (sets of simple types) $\mathbb{T}$, we have that
-$\lcg(\mathbb{T})$ is unique, up to variable renaming.
+For all (sets of simple types) $S$, we have that
+$\lcg(S)$ is unique, up to variable renaming.
 \label{theorem:lcg-is-unique-modulo-variable-renaming}
 \end{Theorem}
 
 
-
 The proofs use straighforward induction on the number and structural
-complexity of elements of $\mathbb{T}$.
+complexity of elements of $S$.
 
 

@@ -1,43 +1,63 @@
 \section{Preliminaries}\label{prelimirares}
 
-In this section we introduce some basic definitions and notations. We
-consider that meta-variables defined can appear primed or subscripted.
+This section introduces basic definitions and notations. Meta-variable
+usage and the syntax of types are given in Figure~\ref{fig:meta}.  
+%Meta-variables can be possibly primed or subscripted).
 
-%Meta-variable usage is defined in the paper as follows: $x,y$ denote
-%term variables, $\alpha, \beta$ ($a, b,...$
-%in examples) type variables, $e$ a term,
-%$\tau,\rho$ simple types, $\sigma$ a type, $\Gamma$ a typing context, 
-%that is, a set of pairs written as $x:\sigma$, and $S$ a
-%substitution. A constraint is formed by a pair of a class name $C$ and
-%a sequence of types $\overline{\tau}$. We slighly abuse notation and 
-%use $\kappa$ to denote both a single constraint and a constraint set.
+\begin{figure} 
+\begin{mdframed}
+\[ \begin{array}[c]{llll}
+\textrm{Class Name}         &\hspace{.1cm} & A         & \\
+\textrm{Type variable}      &         & a,b & \\
+\textrm{Type constructor}   &         & T              & \\
+\textrm{Simple Constraint}  &         & \pi            & ::= A\,\overline{\tau}\\
+\textrm{Set of Simple Constraints} &  & C            & \\
+%\textrm{Unquantified Constraint} &    & \psi           & ::= C\Rightarrow \pi\\
+\textrm{Constraint}         &         & \theta         & ::= \forall\,\overline{a}.\,C\Rightarrow\pi\\
+\textrm{Simple Type}        &         & \tau,\rho     & ::= a \mid T \mid \tau\:\tau' \\
+\textrm{Constrained Type}   &         & \delta & ::= C\Rightarrow \tau\\
 
-The notation $\overline{a}^{\,n}$, or simply $\overline{a}$, denotes
-the sequence $a_1 \cdots a_n$, or $a_1, \ldots, a_n$, or
-$a_1;\ldots;a_n$, depending on the context where it is used, where
-$n\geq 0$. When used in a context of a set, it denotes
-$\{a_1,\ldots,a_n\}$. It can be used with more than one variable; for
-example, in $\overline{x = e}^{\,n}$, it denotes the sequence
-$x_1=e_1, \ldots, x_n = e_n$.
+\textrm{Type}               &         & \sigma         & ::= \forall\,\overline{a}.\,\delta \\
+\textrm{Substitution}    &         & \phi         & \\
+\end{array} \]
+\end{mdframed} \vspace{-.2cm}
+\caption{Syntax of Types}
+\label{fig:meta}
+\end{figure}
 
-A substitution is a function from type variables to simple type
+For simplicity and following common practice, kinds are not considered
+in type expressions and type expressions which are not simple types
+are not explicitly distinguished from simple types. 
+
+As usual, we assume the existence of type constructor $\to$, that is
+written as an infix operator ($\tau \to \tau'$). A type
+$\forall\,\overline{a}.\,C\Rightarrow \tau$ is equivalent to
+$C\Rightarrow \tau$ if $\overline{a}$ is empty and, similarly,
+$C\Rightarrow \tau$ is equivalent to $\tau$ if $C$ is empty.
+
+The set of type variables occurring in $X$ is denoted by $\tv(X)$,
+where $X$ can be a type, a constraint, sets of types or constraints,
+or a typing context.
+
+Notation $\overline{x}^{\,n}$, or simply $\overline{x}$, is used
+throughout this paper to denote the sequence $x_1 \cdots x_n$, or
+$x_1, \ldots, x_n$, or $x_1;\ldots;x_n$, depending on the context
+where it is used, where $n\geq 0$, and $x$'s can be either type
+variables, or mappings, or bindings etc.  When used in a context of a
+set, it denotes $\{x_1,\ldots,x_n\}$.
+
+A substitution $\phi$ is a function from type variables to simple type
 expressions. The identity substitution is denoted by
 \id. $\phi(\sigma)$ (or simply $\phi\,\sigma$) represents the
-capture-free operation of substituting $\phi(\alpha)$ for each free
-occurrence of $\alpha$ in $\sigma$.
+capture-free operation of substituting $\phi(a)$ for each free
+occurrence of $a$ in $\sigma$.
 
 We overload the substitution application on constraints, constraint
 sets and sets of types. Definition of application on these elements is
 straightforward. The symbol $\circ$ denotes function composition and
 $\dom{\phi}=\{\alpha \mid\ \phi(\alpha) \neq \alpha\}$.
 
-The notation $\phi[\overline{\alpha}\mapsto\overline{\tau}]$ denotes
-the updating of $\phi$ such that $\overline{\alpha}$ maps to
-$\overline{\tau}$, that is, the substitution $\phi'$ such that
-$\phi'(\beta) = \tau_i$ if $\beta = \alpha_i$, for $i = 1,...,n$,
-otherwise $\phi(\beta)$. Also, $[\overline{\alpha}\mapsto\overline{\tau}]
-= \id[\overline{\alpha}\mapsto\overline{\tau}]$.
-
-The set of type variables occurring in $X$ is denoted by $\tv(X)$,
-where $X$ can be a type, a constraint, sets of types or constraints,
-or a typing context.
+The notation $\phi[\overline{a\mapsto\tau}^{\,n}]$ denotes the
+substitution $\phi'$ such that $\phi'(b) = \tau_i$ if $b = a_i$, for
+$i = 1,...,n$, otherwise $\phi(b)$. Also, $[\overline{a\mapsto\tau}] =
+\id[\overline{a\mapsto\tau}^{\,n}]$.

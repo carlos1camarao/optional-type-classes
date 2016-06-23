@@ -9,6 +9,7 @@
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage{fancyhdr}
+\usepackage{mdframed}
 
 \begin{document}
 
@@ -55,9 +56,6 @@ The added flexibility to Haskell-style of overloading is illustrated
 by defining a type system and by showing how overloaded record fields
 can be easily allowed with such a type system.
 
-% The redefinition of Haskell's ambiguity rule can also be used to
-% address some of the issues related to type directed name resolution.
-
 \end{abstract}
 
 \input{introd}
@@ -66,15 +64,13 @@ can be easily allowed with such a type system.
 
 \input{anti-unification}
 
-\input{modular-instances}
+\input{ambiguity}
 
-% \input{ambiguity}
+\input{modular-instances}
 
 \input{optional-type-classes}
 
 \input{records-with-overloaded-fields}
-
-% \input{type-directed-named-resolution}
 
 \input{related-work}
 
