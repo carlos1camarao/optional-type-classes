@@ -18,20 +18,20 @@ The {\it least common generalization} (lcg) of a set of types
 $S$ and a type $\tau$ holds, written as $\lcgR(S,\tau)$, if, for all generalizations $\tau'$ of
 $S$ we have $\tau \leq \tau'$.
 
-The concept of least common generalization was studied by Gordon Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
+The concept of least common generalization was studied by Gordon
+Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
 function for constructing a generalization of two symbolic
-expressions.  In Figure~\ref{fig:lcg}, we define function \lcg, which 
-returns a lcg of a finite set of 
-simple types $S$, by recursion on the structure of $S$,  
-using function $\lcg'$ to compute the
-generalization of two simple types. For two types $\tau_1$ and
-$\tau_2$ the idea is to recursively traverse the structure of both
-types using a finite map to store previously generalized
-types. Whenever we find two different type constructors, we search on
-the finite map if they have been previously generalized. If this is
-the case, the previous generalization is returned. If these two type
-constructors are not in the finite map, we insert them using a fresh
-type variable as their generalization and return this new variable.
+expressions.  In Figure~\ref{fig:lcg}, we define function \lcg, which
+returns a lcg of a finite set of simple types $S$, by recursion on the
+structure of $S$, using function $\lcg'$ to compute the generalization
+of two simple types. For two types $\tau_1$ and $\tau_2$ the idea is
+to recursively traverse the structure of both types using a finite map
+to store previously generalized types. Whenever we find two different
+type constructors, we search on the finite map if they have been
+previously generalized. If this is the case, the previous
+generalization is returned. If these two type constructors are not in
+the finite map, we insert them using a fresh type variable as their
+generalization and return this new variable.
 
 \begin{figure*}[ht]
 	\[\progfig{
