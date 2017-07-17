@@ -1,0 +1,98 @@
+\subsubsection{Context Reduction}
+\label{sec:context-reduction}
+
+Context reduction is a process that reduces a constraint $\pi$ into
+constraint set $D$ according to a {\it matching instance\/} for $\pi$
+in a program theory $P$: if there exists
+$(\forall\,\overline{\alpha}.\,C\Rightarrow \pi')\in P$ such that
+$\phi(\pi') = \pi$, for some $\phi$ such that $\phi(C)$ reduces to
+$D$; if there is no matching instance for $\pi$ or no reduction of
+$\phi(C)$ is possible, then $\pi$ reduces to a constraint set
+containing only itself.
+
+%(in Haskell-terminology, $P$ is called the context and $\pi$ the head
+%of constrained type $P\Rightarrow \pi$).
+
+As an example of a context reduction, consider an instance declaration
+that introduces $\forall a.\,{\it Eq\/}\, a \Rightarrow \text{\tt {\it
+    Eq\/}[$a$]}$ in program theory $P$; then {\tt {\it Eq\/}[$a$]} is
+reduced to {\it Eq\/} $a$.
+
+Context reduction can also occur due to the presence of superclass
+class declarations, but we only consider the case of instance
+declarations in this paper, which is the more complex process. The
+treatment of reducing constraints due to the existence of superclasses
+is standard; see e.g.~\cite{MarkJones94a,Hall96,Faxen2002}.
+
+Context reduction uses $\matches$, defined as follows:
+  \[ \begin{array}{l}
+        \matches\bigl(\pi,(P,\Phi'), \Delta) \text{ holds if }\\
+          \:\:\:\: \Delta = \left\{ (\phi(C_0), \pi_0, \Phi')\,\,
+          						\begin{array}{|l}
+                             		\,\,(\forall\,\overline{\alpha}.\,C_0\Rightarrow \pi_0) \in P,\\
+                             		\,\,\mgm(\pi_0 = \pi,\phi),\, \Phi' = \Phi[\pi_0,\pi]
+                             	\end{array}\right\}
+     \end{array}
+  \]
+where $\mgm$ is analogous to $\mgu$ but denotes the most general
+matching substitution, instead of the most general unifier.
+
+The third parameter of $\matches$ is either empty or a singleton set,
+since overlapping instances \cite{ghc-users-guide} are not considered.
+
+Context reduction, defined in Figure~\ref{Context-reduction-fig}, uses
+rules of the form $C \contextreduces {P,\Phi} D;\Phi'$, meaning that
+either $C$ reduces to $D$ under program theory $P$ and least
+constraint value function $\Phi$, causing $\Phi$ to be updated to
+$\Phi'$, or $C \contextreduces {P,\Fail} C;\Fail$. Failure is used to
+define a reduction of a constraint set to itself.
+
+The least constraint value function is used as in the definition of
+{\it sats\/} to guarantee that context reduction is a decidable
+relation.
+
+\begin{figure}
+
+  \[ \begin{array}{c}
+       \begin{array}{cc}
+         \displaystyle\frac{}
+                           {\emptyset \contextreduces {P,\Phi} \emptyset;\Phi} (\redo) &
+         \displaystyle\frac{\{ \pi \} \contextreduces {P,\Phi} C;\Phi_1  \:
+                            D \contextreduces {P,\Phi_1} D';\Phi'}
+      	                   {\{ \pi \} \cup D \contextreduces {P,\Phi} C \cup D';\Phi'} (\conj)
+      \end{array}\\[.8cm]
+
+       \displaystyle\frac{\matches\bigl(\pi,(P,\Phi),\{(C,\pi',\Phi')\}\bigr)
+                           \:\:\: C \contextreduces {P,\Phi'} D;\Phi''}
+       	                 {\{ \pi \} \contextreduces {P,\Phi} D;\Phi''}\: (\instum)\\[.8cm]
+       \displaystyle\frac{\matches\bigl(\pi,(P,\Phi),\{(C,\pi',\Phi')\}\bigr) \:\:\:
+                            C \contextreduces {P,\Phi'} D;\Fail}
+       	                 {\{ \pi \} \contextreduces {P,\Phi} \{ \pi \}; \Fail} \: (\stopFail) \\[.8cm]
+       \begin{array}{c}
+       \displaystyle\frac{\matches\bigl(\pi,(P,\Phi),\{(C,\pi',\Fail)\}\bigr)}
+       	                 {\{ \pi \} \cup C \contextreduces {P,\Phi} \{ \pi \}\cup C;\Fail} \: (\stopo)
+       \end{array}
+    \end{array}
+  \]
+\caption{Context Reduction}
+\label{Context-reduction-fig}
+\end{figure}
+
+An empty constraint set reduces to itself ($\redo$).  Rule ($\conj$)
+specifies that constraint set simplification works, unlike constraint
+set satisfiability, by performing a union of the result of
+simplifying separately each constraint in the constraint set.
+To see that a rule similar to ($\conj$) cannot be used in the case of
+constraint set satisfiability, consider a simple example, of
+satisfiability of $C = \{A\:a, B\: a\}$ in $P = \{A\:\Int,A\:
+\Bool,B\: \Int,B\: \Char\}$. Satisfiability of $C$ yields a single
+substitution where $a$ maps to $\Int$, not the union of computing
+satisfiability for $A\:a$ and $B\:a$ separately.
+
+Rule ($\instum$) specifies that if there exists a constraint axiom
+$\forall\,\overline{\alpha}.\,C \Rightarrow A\,\overline{\tau}$, such
+that $A\,\overline{\tau}$ matches with an input constraint $\pi$, then
+$\pi$ reduces to any constraint set $D$ that $C$ reduces to.
+
+Rules ($\stopFail$) and ($\stopo$) deal with failure due to updating
+of the constraint-head-value function.

@@ -4,67 +4,48 @@
 A simple type $\tau$ is a generalization of a set of simple types
 $\overline{\tau}^{\,n}$ if there exist substitutions
 $\overline{\phi}^{\,n}$ such that $\phi_i(\tau)=\tau_i$, for
-$i=1,\ldots,n$. For example, $a_0 \rightarrow a_0$,
-$a_1 \rightarrow a_2$, and $a_3$ are generalizations of
-$\{ \Int \rightarrow \Int, \Float \rightarrow \Float\}$.\footnote{A generalization is also called a (first-order) {\em
-  anti-unification\/} \cite{ModelTheory2012}.}
+$i=1,\ldots,n$. For example, $a_0 \rightarrow a_0$, $a_1 \rightarrow
+a_2$, and $a_3$ are generalizations of $\{ \Int \rightarrow \Int,
+\Float \rightarrow \Float\}$. A generalization is also called a
+(first-order) {\em anti-unification\/} \cite{ModelTheory2012}.
 
 We say that $\tau$ is less general than $\tau'$, written $\tau \leq
-\tau'$, if there exist a substitution $\phi$ such that $\phi(\tau') = \tau$.  For
-example, $a_0 \rightarrow a_0 \leq a_1 \rightarrow
-a_2 \leq a_3$.
+\tau'$, if there exists a substitution $\phi$ such that $\phi(\tau') =
+\tau$.  For example, $a_0 \rightarrow a_0 \leq a_1 \rightarrow a_2
+\leq a_3$.
 
 The {\it least common generalization} (lcg) of a set of types
 $S$ and a type $\tau$ holds, written as $\lcgR(S,\tau)$, if, for all generalizations $\tau'$ of
 $S$ we have $\tau \leq \tau'$.
 
 The concept of least common generalization was studied by Gordon
-Plotkin \cite{plotkin1970note,plotkin1971further}, that defined a
+Plotkin \cite{plotkin1970note,plotkin1971further}, who defined a
 function for constructing a generalization of two symbolic
 expressions.  In Figure~\ref{fig:lcg}, we define function \lcg, which
 returns a lcg of a finite set of simple types $S$, by recursion on the
-structure of $S$, using function $\lcg'$ to compute the generalization
-of two simple types. For two types $\tau_1$ and $\tau_2$ the idea is
-to recursively traverse the structure of both types using a finite map
-to store previously generalized types. Whenever we find two different
-type constructors, we search on the finite map if they have been
-previously generalized. If this is the case, the previous
-generalization is returned. If these two type constructors are not in
-the finite map, we insert them using a fresh type variable as their
-generalization and return this new variable.
+structure of $S$, where $\emptyset$ is an empty finite map. Function
+$\lcg_2$ computes the generalization of two simple types. For two
+types $\tau_1$ and $\tau_2$ the idea is to recursively traverse the
+structure of both types using a finite map to store previously
+generalized types. Whenever two type expressions $\rho_1 =
+X\_1\:\bar{\tau}_1$ and $\rho_2 = X\_2\:\bar{\tau}_2$ are parameters
+of $\lcg_2$, it is checked whether the domain of the finite map
+contains a type variable that maps to $(X_1, X_2)$, i.e.~whether there
+has been a previous generalization of $X_1, X_2$. If this is the case,
+the previous generalization is returned; otherwise, a fresh type
+variable is saved as their generalization. In function $\lcg_2$, $X$
+is used to represent either a type constructor, constant or
+variable. Note that the domain of the finite map is polykinded, that
+is, type constructors $X_1$ and $X_2$ may have distinct arities, as
+illustrated in Example \ref{ex-polykindedness} below. In the
+definition of $\lcg$, the notation used for finite maps $\zeta$ is
+similar to that used for substitutions. We illustrate the use of
+$\lcg$ in the following examples.
 
-\begin{figure*}[ht]
-	\[\progfig{
-            $\lcg(S)=\tau$ $\:\:\:$ where 
-               $(\tau, \phi)=\lcg'(S,\id)$, for some  $\phi$ \\ \\
-            $\lcg'(\{\tau\},\phi) = (\tau, \phi)$  \\ \\		
-            $\lcg'(\{\tau_1\} \cup S, \phi) = \lcg''(\tau_1, \tau',\phi') \:\:\:$ where
-		$\begin{array}[t]{ll}
-                   (\tau',\phi')  & = lcg'(S, \phi)
-		\end{array}$  \\ \\		
-            xxx\=xxx\=xxx\=xxx\=xxxxx\=xxxxxx\=xxxxxxxx\= \kill
-            $\lcg'' (T \: \overline{\tau}^{\,n},\:  T'\: \overline{\rho}^{\,m},\phi)=$\+\\
-              \textbf{if}\ $\phi(a)=( T\:\overline{\tau}^{\,n},\: T'\:\overline{\rho}^{\,m})$
-                      for some $a$ \textbf{then}\ $(a,\phi)$ \\
-              \textbf{else} \+\\
-              \textbf{if}\ $n\not=m$ \textbf{then}\
-                 $(b, \phi [b \mapsto ( T \:\overline{\tau}^{\,n},\: T'\:\overline{\rho}^{\,m})])$ \+ \\
-		 where $b$ is a fresh type variable \-\\[.1cm]
-              \textbf{else}\ $(\psi\: \overline{\tau'}^{\,n}, \phi_n)$\+\\
-                 where $\begin{array}[t]{l}
-		          (\psi,\phi_0) = \left\{\begin{array}{ll}
-                                            (T ,\phi) & \textbf{if } T = T' \\
-                                            (a, \phi\,[a\mapsto (T, T')])
-                                                      & \text{otherwise, $a$ is fresh }\\
-                                          \end{array}\right. \\[.3cm]
-                          (\tau'_i,\phi_i) = lcg''(\tau_i, \rho_i, \phi_{i-1}), \text{ for } i=1, \ldots, n
-                        \end{array}$ \-\-\-	
-        }
-        \] \vspace{-.2cm}
-\caption{Least Common Generalization} \label{fig:lcg}
-\end{figure*}
-As an example of the use of \lcg, consider the following types (of
-functions \map\ on lists and trees, respectively):
+\begin{Example}
+\normalfont
+As a first example of the use of \lcg, consider the following types
+(of functions \map\ on lists and trees, respectively):
 
 \progb{
    $(a \rightarrow b)$ $\rightarrow$ [$a$] $\rightarrow$ [$b$]\\
@@ -74,8 +55,105 @@ functions \map\ on lists and trees, respectively):
 A call of \lcg\ for a set with these types yields type $(a \rightarrow
 b) \rightarrow c\:\: a \rightarrow c\:\: b$, where $c$ is a
 generalization of type constructors {\tt []} and \Tree\ (for $c$ to be
-used in $c\: b$, mapping $c \mapsto (\texttt{[]},\Tree)$ is saved in
-parameter $\phi$ of $\lcg''$, to be reused).
+used in $c\: b$, mapping $c \mapsto ({\text{\tt []}},\Tree)$ is saved
+in the finite map (second parameter of $\lcg_2$), so that $c$ can then
+be reused.
+
+\end{Example}
+
+\begin{Example}
+\normalfont
+As an example where $\lcg_2$ computes the lcg of two types with type
+constructors that have distinct numbers of type arguments, consider.
+
+  \[ \begin{array}[t]{llll}
+    \tau_1  & = a  & \rightarrow  & \tau_1' \\
+    \tau_1' & = &                 & \IO\: (\IORef\ a) \\
+    \tau_2   & = a' & \rightarrow & \tau_2'\\
+    \tau_2'  & =    &             & \ST\: s\: (\STRef\ s\: a')
+  \end{array}
+  \]
+%We have that $\tau_1$ can be written as $((\rightarrow)\: a\: (\IO\: (\IORef\: a)))$, and
+%  $\tau_2$ as $((\rightarrow)\: a'\: (\ST\: s\: (\STRef\: s\: a')))$).
+
+  We have, letting $S = \{ \tau_1, \tau_2\}$, that $\lcg(S) = \lcg'(S,
+  \id) = \lcg_2(\tau_1, \tau_2, \id)$.
+
+The arities of the outermost type constructor, $(\rightarrow)$, of
+both $\tau_1$ and $\tau_2$, are equal (to 2), and then we have:
+$\lcg_2(\tau_1, \tau_2, \id) = ((\rightarrow)\: a_1\: (b\: (b_1\:
+a₁)))$, where $b,b_1$ are fresh type variables, since: $(a_1, \phi_1)
+= lcg_2(a, a', \id)$, where $\phi_1 = \id [a_1\mapsto (a,a')]$, and
+$(b\: (b_1\: a_1), \phi_2) = lcg_2(\tau_1', \tau_2')$.
+
+The computation of $(b\: (b_1\: a_1), \phi_2) = lcg_2(\tau_1', \tau_2', \phi_1)$
+illustrates a case with distinct arities of the outermost constructors
+of the two type arguments of $\lcg_2$.  We have:
+$lcg_2(\tau_1', \tau_2', \phi_1) = (b\: (b_1\: a_1), \phi_2)$
+(where $b, b_1$ are fresh type variables), 
+$(b, \phi_1') = lcg_2(\IO, \ST\: s, \phi_1)$, where $\phi_1' = \phi_1[b \mapsto (\IO, \ST\: s)]$
+and $(b_1 \: a_1, \phi_2) = \lcg_2(\IORef\: a, \STRef\: s\: a', \phi_1')$.
+
+The computation of $lcg_2(\IORef\: a, \STRef\: s\: a', \phi_1')$
+involves also a case with distinct arities of type constructors (arity
+1 for \IORef\ and 2 for \STRef) and: $\lcg_2(\IORef\: a, \STRef\: s\:
+a', \phi_1') = (b a_1, \phi_2)$, where $(b, \phi_2') = \lcg_2(\IORef,
+\STRef\: s, \phi_1')$, where $\phi_2' = \phi_1'[b ↦ (\IORef,
+  \STRef\: s)]$ and $(a_1, \phi_2) = \lcg_2(a, a', \phi_1')$.
+     
+\end{Example}
+
+The following example illustrates that the domain of the finite map
+used in $\lcg_2$ is polykinded, that is, type constructors in the
+domain of the finite map may have distinct arities.
+
+\begin{Example}
+  \label{ex-polykindedness}
+  
+  Consider parameterised algebraic data types, such as e.g.:
+  \prog{\data\ $F$ $a$ = $T$ $a$\\
+    \data\ $G$ $f$ = $T'$ ($f$ \Int)
+    }
+  and let $\tau_1 = F\: (T\: \Int)$, $\tau_2 = G\: T$. 
+
+  We have that $\lcg(\{\tau_1,\tau_2\})$ yields the generalization
+  $\tau = c\: a$, where $c$ and $a$ are fresh type variables.  In the
+  domain of the finite map we have a type variable, say $b$, that maps
+  $b$ to a type ($T\:\Int$), and to a type constructor of arity 1 ($T$). 
+
+\end{Example}
+
+\begin{figure}[ht]
+	\progfig{
+            $\lcg(S)=\tau$ $\:\:\:$ where 
+               $(\tau, \phi)=\lcg'(S,\emptyset)$, for some  $\phi$ \\ \\
+            $\lcg'(\{\tau\},\zeta) = (\tau, \zeta)$  \\ \\		
+            $\lcg'(\{\tau_1\} \cup S, \zeta) = \lcg_2(\tau_1, \tau',\zeta') \:\:\:$ where
+		$\begin{array}[t]{ll}
+                   (\tau',\zeta')  & = lcg'(S, \zeta)
+		\end{array}$  \\ \\		
+            $\lcg_2$\=\ $(X \: \overline{\tau}^{\,n},\:  X'\: \overline{\rho}^{\,m},\zeta)=$\+\\
+              {\bf if}\ $\zeta(a)=( X\:\overline{\tau}^{\,n},\: X'\:\overline{\rho}^{\,m})$
+                      for some $a$ {\bf then}\ $(a,\zeta)$ \\
+              {\bf else} \={\bf if}\ $n=m$ {\bf then}\ $(\zeta\: \overline{\tau'}^{\,n}, \phi_n)$\+\\
+                 \hspace*{1cm} where $\begin{array}[t]{ll}
+		          (\psi,\phi_0) & = \left\{\begin{array}{ll}
+                                            (T ,\zeta) & {\rm if }\ X = X' \\
+                                            (a, \zeta\,[a\mapsto (X, X')])
+                                                       & \mbox{\rm{otherwise ($a$ fresh) }}\\
+                                          \end{array}\right. \\[.3cm]
+                          (\tau'_i,\zeta_i) & = lcg_2 (\tau_i, \rho_i, \zeta_{i-1}), {\rm for }\ i=1, \ldots, n
+                        \end{array}$ \\	
+                 {\bf else}\ \={\bf if}\ $n=0$ or $m=0$ {\bf then}\=\
+                   $(a, \zeta[a \mapsto (X\:\overline{\tau}^{\,n},\: X'\: \overline{\rho}^{\,m})])$\+\+\\
+                 	 where $a$ is a fresh type variable \-\\[.1cm]
+                 {\bf else}\ \=$(\tau', \tau'', \zeta'')$\+\\
+                     where \=$(\tau', \zeta') = \lcg_2 (X\:\overline{\tau}^{\,n-1},\: X'\: \overline{\rho}^{\,m-1}, \zeta)$\+\\
+                             $(\tau'',\zeta'') = \lcg_2 (\tau_m, \rho_m, \zeta')$ 
+        }
+        \vspace{-.2cm}
+\caption{Least Common Generalization} \label{fig:lcg}
+\end{figure}
 
 The following theorems guarantee correctness of function \lcg: 
 

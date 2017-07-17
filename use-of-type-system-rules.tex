@@ -1,0 +1,109 @@
+\subsection{Use of type system rules}
+\label{sec:use-of-rules}
+
+This section presents examples that illustrate the use of Mini-Haskell
+rules for declarations.
+
+Consider the example of Figure \ref{fig:fst-ex}, where $e_1$ is
+assumed to be an expression of type {\tt \Char\ $\rightarrow$ \Int}
+and $e_2$ an expression of type {\tt \Int\ $\rightarrow$ \Bool}.
+
+\begin{figure}
+  \progfig{
+      \module\ $A$ (\=\instance\ $f$ (\Char\ $\rightarrow$ \Int), \+\\
+      \instance\ $f$ (\Int\ $\rightarrow$ \Bool), \\
+      $g$ -- :: $(f\: (a \rightarrow b)) \Rightarrow a\rightarrow b$\\
+      $\!\!$) \where\ \-\\ 
+      xx\+\=\kill                      
+      $f$\,::\,\Char\ $\rightarrow$ \Int\\
+      \instance\ $f$ = $e_1$ \\ 
+      $f$\,::\,\Int\ $\rightarrow$ \Bool\\
+      \instance\ $f$ = $e_2$\\ 
+      $g$ = $f$
+  }
+  \label{fig:fst-ex}
+  \caption{Example for illustrating Mini-Haskell rules for declarations}
+\end{figure}
+
+Let $\Gamma_0$ be the typing context with the (possibly empty) set of
+used variables of predefined library modules, with their types, and
+$P_0$ be the program theory with the set of constraints that
+corresponds to the (possibly empty) set of used prelude instance
+definitions. Let also $\overline{D}$ be the body of \module\ $A$ and:
+  \[ X = \{ \begin{array}[t]{l}
+              \instance\ f\: (\Char\: \rightarrow \Int), 
+              \instance\ f\: (\Int\: \rightarrow \Bool),\, g\: \}
+  \end{array}
+  \]  
+
+We have:
+
+\begin{prooftree}
+  \AxiomC{$P_0;\Gamma_0 \vdash_{\Uparrow}^X \overline{\!D} : (P,\Gamma)$}
+  \RightLabel{(\MODULE)}
+  \UnaryInfC{$P_0;\Gamma_0 \vdash \module\ A\, (X)\ \where\ \overline{\!D} : (P,\Gamma)$}
+%  \DisplayProof
+\end{prooftree}
+where, letting $\theta_1 = f \:(\Char \rightarrow \Int)$ and
+$\overline{\!D_1}$ be the sequence of declarations {\tt \instance\ $f$
+  = $e_2$; $g$ = $f$} (a rewritten version of last three lines in
+Figure \ref{fig:fst-ex}):
+
+
+\begin{prooftree}
+  \AxiomC{
+    $\begin{array}{l}
+            P_0; \Gamma_0 \vdash e_1 : \Char \rightarrow \Int \:\:\:\:\:
+            \gen(\theta_1, \theta_1, \tv(\Gamma_0)) \:\:\:\:\:
+            P_1 = P_0 \cup \{ \theta_1 \} \\[.1cm] 
+            P_1;\Gamma_1 \vdash_{\Uparrow}^X \overline{\!D_1} : (P,\Gamma) \:\:\:\:\:
+            \lcgR(\{ \Char \rightarrow \Int \} \}, \Char \rightarrow \Int)  \\[.1cm]
+           \Gamma_1(M)(y) = \left\{ \begin{array}{ll}
+                                      \Char \rightarrow \Int & \mathrm{ if\ } y = f, (M = A {\rm\ or\ } M = \mbox{\tt{[]}}) \\
+                                      \Gamma_0(M)(y) & \mathrm{ otherwise } 
+                                   \end{array}\right.
+    \end{array}$
+  }
+  \UnaryInfC{$P_0;\Gamma_0 \vdash_{\Uparrow}^X  \instance\ f \mathtt{ = } e_1;\: \overline{\!D_1} : (P,\Gamma)$}
+\end{prooftree}
+
+The derivation of $P_1;\Gamma_1 \vdash_{\Uparrow}^X \overline{\!D_1} : (P,\Gamma)$
+is shown below, letting $\theta_2 = f\:(\Int\!\rightarrow\!\Bool)$
+and using $\lcgR(\{\Int\!\rightarrow\!\Bool, \Char\!\rightarrow\!\Int \}, a\!\rightarrow\!b)$,
+where $a$ and $b$ are fresh type variables: 
+
+\begin{prooftree}
+  \AxiomC{
+    $\begin{array}{l}
+            P_1; \Gamma_1 \vdash e_2 : \Int \rightarrow \Bool \:\:\:\:\:\:
+            \gen(\theta_2, \theta_2, \tv(\Gamma_1)) \:\:\:\:\:\:
+            P = P_1 \cup \{ \theta_2 \} \\[.1cm] 
+            P;\Gamma_2 \vdash_{\Uparrow}^X g\: {\mathtt{ = }}\, f : (P,\Gamma) \:\:\:\:
+        \lcgR(\{ \Int\!\rightarrow\!\Bool, \Char\!\rightarrow\!\Int \}, a\!\rightarrow\!b) \mathrm{\ where\ } a,b \mathrm{\ fresh} \\[.1cm]
+           \Gamma_2(M)(y) = \left\{ \begin{array}{ll}
+              f\:(a \rightarrow b) \Rightarrow a \rightarrow b &
+                                       \mathrm{ if\ } y = f, (M = A {\mathrm{\ or\ }} M = \mbox{\tt{[]}}) \\
+              \Gamma_1(M)(y) & \mathrm{ otherwise } 
+                                   \end{array}\right.
+    \end{array}$
+  }
+  \UnaryInfC{$P_1;\Gamma_1 \vdash \overline{\!D_1} : (P,\Gamma)$}
+\end{prooftree}
+
+We have, also, where $\sigma = \forall a,b.\, f\: (a \rightarrow b)
+\Rightarrow (a\rightarrow b)$:
+
+\begin{prooftree}
+  \AxiomC{
+    $\begin{array}{l}
+      P;\Gamma_2 \vdash f : f\:(a \rightarrow b) \Rightarrow (a\rightarrow b) \:\:\:\:
+         \gen(f\:(a \rightarrow b) \Rightarrow (a\rightarrow b),\sigma,\tv(\Gamma_2)) \\[.1cm]
+      \Gamma(M)(y) = \left\{ \begin{array}{ll}
+        \sigma & \mathrm{if\ } y = f, (M = A \mathrm{\ or\ } M = \mbox{\tt{[]}}) \\
+        \Gamma_2(M)(y) & \mathrm{ otherwise } 
+        \end{array}\right.
+    \end{array}$
+  }
+  \UnaryInfC{$P;\Gamma_2 \vdash g\: \mathtt{ = } f : (P,\Gamma)$}
+\end{prooftree}
+

@@ -1,4 +1,4 @@
-\section{Records with overloaded fields}
+\subsection{Records with overloaded fields}
 \label{sec:overloaded-record-fields}
 
 In this section we describe how the possibility of overloading symbols
@@ -16,29 +16,27 @@ name of the overloaded record field.
 
 Consider a simple example of overloaded record fields: 
 
-\progb{\data\ \Address\ \= = \Address\ \= \{ \id\ :: \Int, \address\ \= :: \String\ \= \kill
-\data\ \Person\  \> = \Person\  \> \{ \id\ :: \Int, \name\    \> :: \String\ \>\}\\
-\data\ \Address\ \> = \Address\ \> \{ \id\ :: \Int, \address\ \> :: \String\ \>\}
+\progb{\data\ \Address\ \= = \Address\ \= \{ \id\ :: \Int, \aaddress\ \= :: \String\ \= \kill
+\data\ \Person\  \> = \Person\  \> \{ \id\ :: \Int, \name\     \> :: \String\ \>\}\\
+\data\ \Address\ \> = \Address\ \> \{ \id\ :: \Int, \aaddress\ \> :: \String\ \>\}
 }
 
-The overloaded \id\ fields of types \Person\ and \Address\ have the
-following types:
+The overloaded \id\ fields of types \Person\ and \Address\ have types:
 
 \progb{\id\ :: \Address\ \= \kill
 \id\ :: \Person\  \>$\rightarrow$ \Int\\
 \id\ :: \Address\ \>$\rightarrow$ \Int
 }
 
-In our approach, we can automatically create following instance
-declarations without declared type classes, that are part of a record
-field name space that is distinct from the variable name space:
+The following instance declarations without declared type classes can
+be automatically created: 
 
 \progb{
 \get\_\id\ :: \Person\ $\rightarrow$ \Int\\
 \instance\ \get\_\id\ (\Person\ \id\ \_\ )  = \id\\ \\
-
 \get\_\id\ :: \Address\ $\rightarrow$ \Int\\
-\instance\ \get\_\id\ (\Address\ \id\ \_\ ) = \id}
+\instance\ \get\_\id\ (\Address\ \id\ \_\ ) = \id
+}
 
 If record field updating is used, updating functions are created, as
 illustrated below. Consider for example that record field updating is
@@ -47,14 +45,13 @@ used as follows:
 \progb{
 \update\_\id\ :: \Person\ $\rightarrow$ \Int\ $\rightarrow$ \Person\\
 \instance\ \update\_\id\ (\Person\ \id\ \name) \new\_\id\ = \Person\ \new\_\id\ \name\\ \\
-
 \update\_\id\ :: \Address\ $\rightarrow$ \Int\ $\rightarrow$ \Address\\
-\instance\ \update\_\id\ (\Address\ \id\ \address) \new\_\id\ = \Address\ \new\_\id\ \address
+\instance\ \update\_\id\ (\Address\ \id\ \aaddress) \new\_\id\ = \Address\ \new\_\id\ \aaddress
 }
 
-Given any expression $p$ of of type \Person, any use of {\tt ($p$ \{
-  \id\ = \new\_\id \})} could then be translated to {\tt
-  (\update\_\id\ $p$ \new\_\id)}. Similarly, given any expression $a$
-of type \Address, any use of {\tt $a$ \{ \id\ = \new\_\id \}} could
+Given any expression $p$ of type \Person, any use of {\tt ($p$
+  \{\id\ = \new\_\id\})} could then be translated to {\tt
+  (\update\_\id\ $p$ \new\_\id)}.  Similarly, given any expression $a$
+of type \Address, any use of {\tt $a\!$ \{\id\ = \new\_\id\}} could
 then be translated to {\tt \update\_\id\ $a$ \new\_\id}.
 

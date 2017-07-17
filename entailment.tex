@@ -1,0 +1,132 @@
+\subsection{Entailment}
+\label{sec:entailment}
+
+We define in this appendix constraint set provability, called
+entailment in Haskell terminology. Entailment of a set of constraints
+is defined with respect to the set of class and instance declarations
+that occur in a program, a so-called program theory
+(cf.~\cite{Understanding-FDs-via-CHRs}).
+
+\begin{Definition}
+
+A program theory $P$ is a set of axioms of first-order logic generated
+from class and instance declarations occurring in the program, as
+follows (where $C \Rightarrow \pi$ is considered syntactically
+equivalent to $\pi$ if $C$ is empty):
+
+\begin{itemize}
+
+\item For each class declaration
+  \vspace*{-.5\baselineskip}
+  \prog{class $C$ $\Rightarrow$ \TCC\ $\overline{a}$ where \ldots}
+  \vspace*{-.5\baselineskip}
+the program theory contains the following formula if $C$ is not empty:
+  \vspace*{-.5\baselineskip}
+    \[ \forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{a}\]
+
+\item For each instance declaration
+  \vspace*{-.5\baselineskip}
+  \prog{instance $C$ $\Rightarrow$ \TCC\ $\overline{t}$ where \ldots}
+  \vspace*{-.5\baselineskip}
+the program theory contains the following formula:
+  \vspace*{-.5\baselineskip}
+               \[ \forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{t} \]
+where $\overline{a} = \tv(\overline{t}) \cup \tv(C)$;
+if $C$ is empty, then the instance declaration is of the form 
+  \vspace*{-.5\baselineskip}
+  \prog{instance \TCC\ $\overline{t}$ where \ldots}
+  \vspace*{-.5\baselineskip}
+and the program theory contains the formula:
+  \vspace*{-.5\baselineskip}
+     \[ \forall\,\overline{a}.\,\TCC\:\: \overline{t} \]
+  \vspace*{-.5\baselineskip}
+\end{itemize}
+\label{program-theory-def}
+\end{Definition}
+
+\vspace*{-.5\baselineskip}
+The property that a set of constraints $C$ is entailed by a program
+theory $P$, written as $P \entail C$, is defined in Figure
+\ref{Entailment-fig}.  Following
+\cite{Associated-types-with-class,Associated-type-synonyms},
+entailment is obtained from closed constraints contained in a program
+theory $P$.
+
+%  (unlike in \cite{MarkJones94a}, entailment and satisfiability rules
+% do not move constraints from types to non-closed constraints in the
+% program theory, nor vice-versa).
+
+\begin{figure}
+   \[ \begin{array}{r}
+         \begin{array}{cr}
+   		\displaystyle\frac{}{P \entail \emptyset} (\ento)\hspace*{.3cm} &
+		\displaystyle\frac
+                        {(\forall\,\overline{a}.\,C\Rightarrow \pi) \in P}
+			{P \entail \{ (C\Rightarrow\pi)[\overline{a}\,\mapsto\,\overline{\tau}] \} }
+			(\entinst)
+         \end{array}\\ \\
+         \begin{array}{cr}
+		\displaystyle\frac
+			{P \entail C \:\:\: P \entail \{C\Rightarrow\pi\} }
+			{P \entail \{ \pi \}} (\entmp)
+			&
+		\displaystyle\frac
+			{P \entail C \:\:\: P \entail D}
+			{P \entail C \cup D} (\entn)
+	 \end{array}
+       \end{array}
+   \]
+\caption{Constraint Set Entailment}
+\label{Entailment-fig}
+\end{figure}
+
+\begin{Definition}[Entailed instances and Entailing Substitutions]
+
+  \normalfont
+  
+$\lfloor C \rfloor_P$ is the set of {\em entailed instances\/} of constraint set
+$C$ with respect to program theory $P$:
+\[ \lfloor C \rfloor_P = \{\,\phi(C) \,\mid\, P\, \entail \phi(C)\, \} \]
+and the corresponding substitutions as {\em entailing substitutions\/}:
+  \[ \entailingSubs(C,P) = \{\,\phi \,\mid\, P\, \entail \phi(C)\, \} \]
+
+%If $\phi(C) \in \lfloor C \rfloor_P$ then $\phi$, denoted by  is called a
+%entailing substitution for $C$ in $P$.
+
+\end{Definition}
+
+\begin{Example} {\rm
+As an example, consider:
+  \[ P = \{ \forall a,b.\,D\, a\,
+             b\Rightarrow C\, \text{\tt{[$a$]}}\, b, D\, \text{\it Bool\/}\,
+             \text{\tt {[{\it Bool\/}]}}\}\]
+We have that
+  $\lfloor C\:\:a\:\:a\rfloor_P$ =
+  $\lfloor C\:\text{\tt{[\it Bool\/}]}\: \text{\tt{[\it Bool\/}]}\rfloor_P$.
+Both constraints
+  $D\:\text{\Bool\ [\Bool]} \Rightarrow C\:\text{\tt{[{\it Bool\/}]}}\: \text{\tt [{\it Bool\/}]}$
+and
+  $C\:\text{\tt{[{\it Bool\/}]}}\: \text{\tt [{\it Bool\/}]}$
+are members of
+  $\lfloor C\:\:a\:\:a\rfloor_P$ and also members of
+  $\lfloor C\:\text{\tt{[\it Bool\/}]}\: \text{\tt{[\it Bool\/}]}\rfloor_P$.
+
+A proof that $P \entail \{ C\:\text{\tt{[\it Bool\/}]}\: \text{\tt{[\it Bool\/}]} \}$
+holds can be given from the entailment rules given in Figure \ref{Entailment-fig},
+since this is the conclusion of rule (\entmp) with premises
+  $P \entail \{ D\:\text{\it Bool\/}\: \text{\tt{[\it Bool\/}]} \}$ and
+  $P \entail \{ D\:\text{\Bool\ [\Bool]} \Rightarrow C\:\text{\tt{[{\it Bool\/}]}}
+                                                                               \:\text{\tt{[{\it Bool\/}]}}\}$,
+and these two premises can be derived by using rule (\entinst).}
+
+\end{Example}
+
+Equality of constraint sets is considered modulo type variable
+renaming. That is, constraint sets $C,D$ are also equal if there
+exists a renaming substitution $\phi$ that can be applied to $C$ to
+make $\phi\,C$ and $D$ equal.
+
+$\phi$ is a renaming substitution if for all $a\in\dom(S)$ we have
+that $\phi(a)=b$, for some type variable $b\not\in\dom{\phi}$.
+
+

@@ -1,0 +1,339 @@
+\subsection{Satisfiability}
+\label{sec:satisfiability}
+
+This subsection contains a description of constraint set
+satisfiability, including a discussion of decidability (taken from
+\cite{Ambiguity-and-context-dependent-overloading}). Constraint set
+satisfiability is in general an undecidable problem
+\cite{Smith-PhD-Thesis91}. It is restricted here so that it becomes
+decidable, as described below. The restriction is based on a measure
+of constraints, a measure of the sizes of types in a constraint head,
+given by a so-called constraint-head-value function. Essentially, the
+sequence of constraints that unify with a constraint axiom in
+recursive calls of the function that checks satisfiability of a type
+constraint is such that either the sizes of types of each constraint
+in this sequence is decreasing or there exists at least one type
+parameter position with decreasing size.
+
+The definition of the constraint-head-value function is based on the
+use of a constraint value $\nu(\pi)$ that gives the number of
+occurrences of type variables and type constructors in $\pi$:
+  \[ \begin{array}{ll}
+        \nu(C\: \overline{\tau}) & = \sum_{i=1}^n \nu(\tau_i)\\
+        \nu(T)                   & = 1\\
+        \nu(\alpha)              & = 1\\
+        \nu(\tau\: \tau')        & = \nu(\tau) + \nu(\tau')
+     \end{array}
+  \]
+
+Consider computation of satisfiability of a given constraint set $C$
+with respect to program theory $P$ and consider that, during the
+process of checking satisfiability of a constraint $\pi\in C$, a
+constraint $\pi'$ unifies with the head of constraint $\forall\,
+\overline{a}.C_0 \Rightarrow \pi_0$ in $P$, with unifying
+substitution $\phi$. Then, for any constraint $\pi_1$ that, in this
+process of checking satisfiability of $\pi$, also unifies with
+$\pi_0$, where the corresponding unifying substitution is $\phi_1$,
+the following is required, for satisfiability of $\pi$ to hold:
+
+\begin{enumerate}
+\item $\nu(\phi\,\pi')$ is less than $\nu(\phi_1\,\pi_1)$ or, if
+  $\nu(\phi\, \pi')=\nu(\phi_1 \pi_1)$, then $\phi\,\pi' \not= \pi''$,
+  for all $\pi''$ that has the same constraint value as $\pi'$ and has
+  unified with $\pi_0$ in process of checking for satisfiability of
+  $\pi$, or
+
+\item $\nu(\phi\,\pi')$ is greater than $\nu(\phi_1\,\pi_1)$ but then
+  there is a type argument position such that the number of type
+  variables and constructors of constraints that unify with $\pi_0$ in
+  this argument position decreases.
+
+\end{enumerate}
+
+\label{Phi0}
+More precisely, constraint-head-value-function $\Phi$ associates a
+pair $(I,\Pi)$ to each constraint in P, where $I$ is a tuple of
+constraint values and $\Pi$ is a set of constraints. Let
+$\Phi_0(\pi_0) = (I_0,\emptyset)$ for each constraint axiom
+\mbox{$\forall\,\overline{a}.\,P_0 \Rightarrow\pi_0\in P$}, where
+$I_0$ is a tuple of values filled with any value greater than
+$\nu(\pi)$ for every constraint $\pi$ in the program theory;
+decidability is guaranteed by defining the operation $\Phi[\pi_0,\pi]$
+of updating $\Phi(\pi_0) = (I,\Pi)$ as follows, where $I = (v_0,
+v_1,\ldots, v_n)$ and $\pi = C\,\overline{\tau}$:
+
+\[ \Phi[\pi_0,\pi] = \left\{ \begin{array}{lll}
+                                   \textit{Fail}  & & \text{if } v'_i = -1 \text{ for } i=0,\ldots,n \\
+                                   \Phi'          & & \text{otherwise}
+                             \end{array} \right.
+\]
+where $\begin{array}[t]{ll}
+              \Phi' (\pi_0) &=  ((v'_0,v'_1,\ldots,v'_n), \Pi \cup \{ \pi \} ) \\
+              \Phi' (x)     &= \Phi(x) \text{ for } x  \not= \pi_0
+              \end{array}$
+
+\[ \begin{array}{l}
+   v'_0 = \left\{ \begin{array}{lll}
+                \nu(\pi) & & \text{if } \nu(\pi) < v_0 \text{ or} \\
+                          & & \nu(\pi) = v_0 \text{ and } \pi \not\in \Pi \\
+                -1        & & \text{otherwise}
+              \end{array} \right. \\ \\
+   \text{for $i=1,\ldots,n$ }
+   \hspace{.5cm} v'_i = \left\{ \begin{array}{lll}
+                                           \nu(\tau_i) & & \text{if } \nu(\tau_i) < v_i \\
+                                           -1           & & \text{otherwise}
+                                        \end{array} \right. \\
+   \end{array}
+\]
+$\satsUm\bigl(\pi,P,\Delta)$ is defined to hold if
+\[ \Delta = \left\{ (\phi|_{\tv(\pi)},\phi C_0,\pi_0)\,\,
+					\begin{array}{|l}
+	                  \,\,(\forall\,\overline{a}.\,C_0 \Rightarrow \pi_0) \in P,\\
+                  		\,\,\phi = \mguI(\pi = \pi_0) 
+                  	\end{array} \right\}
+  \]
+
+The set of satisfying substitutions for $C$ with respect to the
+program theory $P$ is given by $\mathbb{S}$, such that $C \sats
+{P,\Phi_0} \mathbb{S}$ holds, as defined in Figure \ref{fig-tsat}.
+The restriction $\phi|_V$ of $\phi$ to $V$ denotes the substitution
+$\phi'$ such that $\phi'(a) = \phi(a)$ if $a\in V$, otherwise $a$.
+
+
+\begin{figure}
+  \[ \begin{array}{cc}
+  	\displaystyle\frac{}{C \sats {P,\Fail} \emptyset} (\SatFailUm)
+  		{} &
+  	\displaystyle\frac{}{\emptyset \sats {P,\Phi} \{ id\}} (\SatEmptyUm)\\ \\ \\
+	\multicolumn{2}{c}{
+    \displaystyle\frac
+    	{\begin{array}{l}
+	     \{ \pi \} \sats {P,\Phi} \mathbb{S}_0 \\[.1cm]
+	     \mathbb{S} = \{ \phi' \circ \phi \,\mid\, \phi \in \mathbb{S}_0,\, \phi' \in \mathbb{S}_1,\:
+                             \phi(C) \sats {P,\Phi} \mathbb{S}_1 \}
+	\end{array}}
+      	{\{\pi\} \cup C \sats {P,\Phi} \mathbb{S}} (\SatConjUm)
+	}\\ \\ \\
+	\multicolumn{2}{c}{
+	\displaystyle\frac
+	{\begin{array}{l}
+	     \satsUm(\pi, P,\Delta) \\[.1cm]
+	     \mathbb{S} = \left\{  \phi'\circ \phi \,\,
+	     				\begin{array}{|c}
+	     					\,\,(\phi,D,\pi') \in \Delta,\, \phi' \in \mathbb{S}_0,\\
+	     					\,\,D  \sats {P,\Phi[\pi',\phi\pi]} \mathbb{S}_0
+	     				\end{array}\right\}
+	 \end{array}}
+	{\{\pi\} \sats {P,\Phi} \mathbb{S}} (\SatInstUm) }
+      \end{array} \]
+\caption{Decidable Constraint Set Satisfiability}
+\label{fig-tsat}
+\end{figure}
+
+The following examples illustrate the definition of constraint set
+satisfiability as defined in Figure~\ref{fig-tsat}.  Let $\Phi(\pi).I$
+and $\Phi(\pi).\Pi$ denote the first and second components of
+$\Phi(\pi)$, respectively, and $v_i$ the $i$-th component of a tuple
+of constraint values $I$: 
+
+\begin{Example}
+\label{EqL}
+{\rm Consider satisfiability of $\pi = \text{{\tt {\it
+        Eq\/}[[\I]]}}$ in $P = \{ \text{\it Eq \I\/},\: \forall\,
+  a.\,\text{\it Eq\/}\: a \Rightarrow \text{{\tt {\it Eq\/}[$a$]}}
+  \}$, letting $\pi_0 = \text{{\tt {\it Eq\/}[$a$]}}$; we have:
+
+  \[ \displaystyle\frac{
+         \begin{array}{l}
+            \satsUm (\pi,P,
+               \{ \bigl( \phi |_\emptyset,
+                         \{ \text{\tt{\Eq[\I]}} \}, \pi_0\bigr) \}), \:\: \phi = [a_1\mapsto \text{\tt [\I]}]\\
+               \mathbb{S}_0 = \{ \phi_1\circ \id \mid \: \phi_1 \in \mathbb{S}_1,\:\:\:
+                \text{\tt{\Eq[\I]}} \sats {P,\Phi_1} \mathbb{S}_1\}
+         \end{array}}
+      {\pi \sats {P,\Phi_0} \mathbb{S}_0} (\SatInstUm)
+  \]
+where $\Phi_1 = \Phi_0[\pi_0,\pi]$, which implies that $\Phi_1(\pi_0) = ((3, 3), \{ \pi \} )$,  since
+      $\nu(\pi) = 3$, and
+      $a_1$ is a fresh type variable; then:
+  \[ \displaystyle\frac{
+         \begin{array}{l}
+            \satsUm(\text{\tt {\it Eq\/}[\I]},P,
+              \{\bigl(\phi'|_\emptyset,
+                     \{ \text{{\tt {\it Eq\/}}}\,\I \}, \pi_0\bigr)\}), \:\: \phi' = [a_2\mapsto \I]\\
+            \mathbb{S}_1 = \{ \phi_2\circ \id \mid \: \phi_2 \in \mathbb{S}_2,\:\:\:
+             \text{\it Eq\/}\,\I \sats {P,\Phi_2} \mathbb{S}_2\}
+         \end{array}}
+      {\text{{\tt {\it Eq\/}[\I]}} \sats {P,\Phi_1} \mathbb{S}_1} (\SatInstUm)
+  \]
+where $\Phi_2 = \Phi_1[\pi_0,\text{\tt {\it Eq\/}[\I]}]$, which implies that
+      $\Phi_2(\pi_0) = ((2,2), \Pi_2)$, with $\Pi_2 = \{ \pi, \text{\tt{\it Eq\/}[\I]}  \}  )$, since
+      $\nu(\text{\tt{\it Eq\/}[\I]}) = 2$ is less than
+       $\Phi_1(\pi_0).I.v_0 = 3$; then:
+  \[ \displaystyle\frac{
+         \begin{array}{l}
+            \satsUm\bigl(\text{\it Eq\/}\,\I,P, \{ (\id, \emptyset, \text{\it Eq\/}\,\I ) \}\bigr)\\
+            \mathbb{S}_2 = \{ \phi_3\circ \id \mid \: \phi_3 \in \mathbb{S}_3,\:\:\:
+            \emptyset \sats {P,\Phi_3} \mathbb{S}_3\}
+         \end{array}}
+      {\text{\it Eq\/}\,\I \sats {P,\Phi_2} \mathbb{S}_2} (\SatInstUm)
+  \]
+where $\Phi_3 = \Phi_2[\text{\it Eq\/}\,\I,\text{\it Eq\/}\,\I]$
+      and $\mathbb{S}_3 = \{ \id\}$ by ($\text{\tt SEmpty}_1$).}
+\end{Example}
+
+The following illustrates a case of satisfiability involving a
+constraint $\pi'$ that unifies with a constraint head $\pi_0$ such
+that $\nu(\pi')$ is greater than the upper bound associated to
+$\pi_0$, which is the first component of $\Phi(\pi_0).I$.
+
+\begin{Example}
+\label{sat-eta-greater} {\rm
+
+Consider satisfiability of $\pi=A\,\I\,(T^3\,\I)$ in program theory $P
+= \{ A\,(T\,a)\,\I, \forall\, a,b.\,A\,(T^2\, a)\,b \Rightarrow
+A\,a\,(T\,b)\}$. We have, where $\pi_0 = A\,a\,(T\,b)$:
+
+\[
+	\displaystyle\frac
+		{\begin{array}{c}
+            \satsUm\bigl(\pi,P,\{ ( \phi\,|_\emptyset, \{ \pi_1 \}, \pi_0 ) \}\bigr) \\
+            \phi = [a_1\mapsto \I, b_1\mapsto T^2\:\I] \\
+            \pi_1 = A\:(T^2\,\I)\:(T^2\,\I)\\
+            \mathbb{S}_0 = \{ \phi_1\circ \id \mid \phi_1 \in \mathbb{S}_1,\:\:\:
+            \pi_1 \sats {P,\Phi_1} \mathbb{S}_1\}
+         \end{array}}
+		{\pi \sats {P,\Phi_0} \mathbb{S}_0} (\SatInstUm)
+\]
+where $\Phi_1 = \Phi_0 [\pi_0, \pi]$, which implies that $\Phi_1(\pi_0).I = (5,1,4)$; then:
+
+\[
+	\displaystyle\frac
+		{\begin{array}{c}
+            \satsUm\bigl(\pi_1,P, \{ ( \phi'\,|_\emptyset, \{\pi_2\}, \pi_0 ) \}\bigr)\\
+            \phi' = [a_2\mapsto T^2\,\I, b_2\mapsto T\,\I] \\
+	    \pi_2 = A\:(T^4\,\I)\:(T\,\I)\\
+            \mathbb{S}_1 = \{ \phi_2\circ [a_1\mapsto T^2\,a_2] \mid \phi_2 \in \mathbb{S}_2,\:\:
+            \pi_2 \sats {P,\Phi_2} \mathbb{S}_2\}
+         \end{array}}
+		{\pi_1 \sats {P,\Phi_1} \mathbb{S}_1} (\SatInstUm)
+\]
+where  $\Phi_2 = \Phi_1 [\pi_0, \pi_1]$.
+Since $\nu(\pi_1) = 6 > 5 = \Phi_1(\pi_0).I.v_0$,
+we have that $\Phi_2(\pi_0).I = (-1,-1,3)$.
+
+Again, $\pi_2$ unifies with $\pi_0$, with unifying substitution
+$\phi' =  [a_3\mapsto T^4\,\I, b_2\mapsto \I] $, and
+updating $\Phi_3 = \Phi_2[\pi_0,\pi_2]$ gives $\Phi_3(\pi_0).I = (-1,-1,2)$.
+Satisfiability is then finally tested for $\pi_3 = A\,(T^6\,\I) \I$, that unifies with
+$A\,(T\,a)\,\I$, returning $\mathbb{S}_3 = \{ [a_3\mapsto
+  T^5\,\I]|_\emptyset\} = \{ \id\}$.  Constraint $\pi$ is thus
+satisfiable, with $\mathbb{S}_0 = \{\id\}$.}
+\end{Example}
+
+The following example illustrates a case where the information kept in
+the second component of $\Phi(\pi_0)$ is relevant.
+
+\begin{Example}
+\label{Paterson-condition-failure-example}
+{\rm Consider the satisfiability of $\pi = A\,(T^2\,\I)\,\F$ in
+  program theory $P = \{ A\,\I\,(T^2\,\F), \forall\,a,b.\,A\,a\,(T\,b)
+  \Rightarrow A\,(T\,a)\,b\}$ and let $\pi_0 = A\,(T\,a)\,b$. Then:}
+
+\[
+	\displaystyle\frac
+		{\begin{array}{c}
+            \satsUm(\pi,P,\{ \bigl( \phi\,|_\emptyset, \{ \pi_1 \}, \pi_0 \bigr) \}) \\
+            \phi = [a_1\mapsto (T\,\I), b_1 \mapsto \F] \\ \pi_1 = A\,(T\:\I)\,(T\:\F)\\
+            \mathbb{S}_0 = \{ \phi_1\circ \id \mid \: \phi_1 \in \mathbb{S}_1,\:\:\:
+                                                \pi_1 \sats {P,\Phi_1} \mathbb{S}_1\}
+         \end{array}}
+		{\pi \sats {P,\Phi_0} \mathbb{S}_0} (\SatInstUm)
+\]
+{\rm where $\Phi_1 = \Phi_0[\pi_0,\pi]$, giving $\Phi_1(\pi_0) = ((4,3,1), \{ \pi \})$; then:
+\[
+	\displaystyle\frac
+		{\begin{array}{c}
+            \satsUm(\pi_1,P,\{ \bigl( \phi'\,|_\emptyset, \{ \pi_2 \}, \pi_0 \bigr) \})\\
+            \phi' = [a_2\mapsto \text{\tt \I}, b_2 \mapsto T\,\F],\,\,\,\,\,\,\, \pi_2 = A\,\I\, (T^2\,\F)\\
+            \mathbb{S}_1 = \{ \phi_2\circ \id \mid \: \phi_2 \in \mathbb{S}_2,\:\:\:
+            \pi_2 \sats {P,\Phi_2} \mathbb{S}_2\}
+         \end{array}}
+		{\pi_1 \sats {P,\Phi_1} \mathbb{S}_1} (\SatInstUm)
+\]
+where $\Phi_2 = \Phi_1[\pi_0,\pi_1]$. Since
+      $\nu(\pi_1) = 4$, which is equal to the first component of $\Phi_1(\pi_0).I$,
+      and
+      $\pi_1$ is not in $\Phi_1(\pi_0).\Pi$, we obtain that
+ $\mathbb{S}_2 = \{ \id \}$ and $\pi$ is thus satisfiable
+ (since $\satsUm(A\,\I\,(T^2\,\F),P) =
+   \{ (\id, \emptyset, A\,\I\,(T^2\,\F)\}$). }
+\end{Example}
+
+Since satisfiability of type class constraints is in general
+undecidable \cite{Smith-PhD-Thesis91}, there exist satisfiable
+instances which are considered to be unsatisfiable according to the
+definition of Figure \ref{fig-tsat}. Examples can be constructed by
+encoding instances of solvable Post Correspondence problems by means
+of constraint set satisfiability, using G.~Smith's scheme
+\cite{Smith-PhD-Thesis91}.
+
+%\begin{example}\label{PCP-Example}
+%{\rm This example uses a PCP instance taken from
+%\cite{Ling-Zhao-Master-Thesis}. A PCP instance can be defined as
+%composed of pairs of strings, each pair having a top and a bottom
+%string, where the goal is to select a sequence of pairs such that the
+%two strings obtained by concatenating top and bottom strings in such
+%pairs are identical. The example uses three pairs of strings: $p_1 =
+%(\text{\tt{100}}, \text{\tt{1}})$ (that is, pair 1 has string {\tt
+%  100} as the top string and {\tt 1} as the bottom string), $p_2 =
+%(\text{{\tt 0}}, \text{\tt{100}})$ and $p_3 =
+%(\text{\tt{1}},\text{\tt{00}})$.}
+
+%{\rm This instance has a solution: using numbers to represent corresponding
+%pairs (i.e. {\tt 1} represents pair 1 and analogously for {\tt 2} and
+%{\tt 3}), the sequence of pairs {\tt 1311322} is a solution.}
+
+%{\rm A satisfiability problem that has a solution if and only if the
+%  PCP instance has a solution can be constructed by adapting
+%  G.~Smith's scheme to Haskell's notation. We consider for this a
+%  two-parameter class $C$, and a constraint context such that $\Theta
+%  = \Theta_1 \cup \Theta_2 \cup \Theta_3$, where $\Theta_i$ is
+%  constructed from pair $i$, for $i=1,2,3$:}
+%  \[ \begin{array}{l}
+%     \Theta_1 = \{ \begin{array}[t]{l}
+%                     C\, (1 \rightarrow 0 \rightarrow 0) \, 1, \\
+%                     \forall\, a,b.\, C\, a\, b \Rightarrow
+%                                      C\, (1 \rightarrow 0 \rightarrow 0 \rightarrow a) \, (1 \rightarrow b)\: \}
+%                   \end{array} \\
+%     \Theta_2 = \{ \begin{array}[t]{l}
+%                    C\, 0\, (1 \rightarrow 0 \rightarrow 0), \\
+%                    \forall\, a,b.\, C\, a\, b \Rightarrow
+%                    C\, (0 \rightarrow a) \,  (1 \rightarrow 0 \rightarrow 0 \rightarrow b)\: \}
+%                    \end{array} \\
+%     \Theta_3 = \{ \begin{array}[t]{l}
+%                     C\, 1\: (0 \rightarrow 0), \\
+%                    \forall\, a,b.\, C\, a\, b \Rightarrow
+%                    C\, (1 \rightarrow a)\, (0 \rightarrow 0 \rightarrow b)\: \}
+%                    \end{array}
+%     \end{array}
+%\]
+%{\rm We have that constraint $C\:a\:a$ is satisfiable, with a solution
+%constructed from solution {\tt 1311322} of the PCP
+%instance. Computation by our algorithm terminates, erroneously
+%reporting unsatisfiability. The steps of the computation are
+%omitted. The computation proceeds until {\tt 131}, when updating parameter
+%$\Phi$ results in {\it Fail}.}
+%\end{example}
+
+To prove that satisfiability as defined in Figure~\ref{fig-tsat} is
+decidable, consider that there exist finitely many constraints in
+program theory $P$, and that, for any constraint $\pi$ that unifies
+with $\pi_0$, we have, by the definition of $\Phi[\pi_0,\pi]$, that
+$\Phi(\pi_0)$ is updated so as to include a new value in its second
+component (otherwise $\Phi[\pi_0,\pi] = \text{\it Fail\/}$ and
+satisfiability yields $\emptyset$ as the set of satisfying
+substitutions for the original constraint). The conclusion follows
+from the fact that $\Phi(\pi_0)$ can have only finitely many distinct
+values, for any $\pi_0$.
+

@@ -1,0 +1,192 @@
+\section{Type inference}
+\label{sec:type-inference}
+
+In this section we present a type inference algorithm for
+mini-Haskell, and discuss soundness and completeness of type inference
+with respect to the type system.
+
+For this, we need to consider functional counterparts of relations
+used in the type system (Section \ref{Optional-type-classes}). The
+main one is satisfiability, the counterpart of entailment (Subsection
+\ref{sec:satisfiability}).  We do not consider in this paper
+algorithms for constraint set simplification; interested readers may
+consult~\cite{OutsideIn2011}. In an abuse of notation the same symbols
+are used in this section for functions corresponding to the relations
+of constraint set simplification ($\simplifies{P}$, where $P$ is a
+program theory) and type generalization (\gen).
+
+We use partial orders on types, constraints, substitutions, and typing
+contexts with program theories, defined in Figure \ref{Order}.
+
+Type ordering disregards constraint set entailment, which is important
+only for considering whether a constraint $\pi$ can be removed from a
+constraint $C$ occurring in a constrained type $C \Rightarrow \tau$;
+$\pi$ can be removed if and only if overloading for $\pi$ has been
+resolved and there exists a single entailing substitution for $C$, as
+defined in Figure \ref{fig:constraint-set-improvement}, page
+\pageref{fig:constraint-set-improvement}.
+
+\begin{figure}
+   \[ \begin{array}{cc}
+   	\displaystyle\frac
+          {}
+          {\sigma \leq \phi\,\sigma}
+   	  & 
+   	\displaystyle\frac
+   	  {}
+   	  {\pi \leq \phi\,\pi} \\[.4cm]
+        \multicolumn{2}{c}{
+          \displaystyle\frac
+	    {\Gamma(x) \leq \Gamma'(x) \text{ for all } x\in \dom{\Gamma}}
+	    {P;\Gamma \leq P;\Gamma'}}\\[.4cm]
+        \multicolumn{2}{c}{
+          \displaystyle\frac
+          {\text{there exists $\phi_1$ such that $\phi = \phi_1 \circ \phi'$}}
+          {\phi\leq \phi'}}
+  \end{array} \]
+\caption{Partial orders}
+\label{Order}
+\end{figure}
+
+A type inference algorithm for core-Haskell is presented in Figure
+\ref{Type-inference-fig}, using rules of the form $P;\Gamma \ti
+e:(\delta,\phi)$, which means that $\delta$ is the least (principal)
+type derivable for $e$ in typing context $\phi\Gamma$ and program
+theory $P$, where $\phi\Gamma \leq \Gamma$ and, whenever $\Gamma' \leq
+\Gamma$ is such that $P;\Gamma' \ti e: (\delta',\phi')$, we have that
+$\phi\Gamma \leq \Gamma'$ and $\delta' \leq \phi\delta$. Furthermore,
+we have that $P;\phi\,\Gamma \ti e:(\delta,\phi')$ holds whenever
+$P;\Gamma \ti e:(\delta,\phi)$ holds, where $\phi'\leq \phi$
+(cf.~theorem \ref{Minimal-type-minimal-typing-context} below).
+
+\begin{Example} {\rm
+Consider expression $x$ and ty\-ping context $\Gamma = \{ f: \Int
+\rightarrow {\it Int}, x:\alpha \}$; we can derive $\Gamma \ti f\: x:
+(\Int, \phi)$, where $\phi = [\alpha \mapsto \Int]$. From
+$\phi\,\Gamma = \{ f: \Int \rightarrow \Int, x:\Int \}$, we can derive
+$\phi\,\Gamma \ti f\: x:(\Int,\id)$.}
+\end{Example}
+
+\begin{Theorem}
+
+If $P;\Gamma \ti e:(\delta,\phi)$ holds then $P;\phi\,\Gamma \ti
+e:(\delta,\phi')$ holds, where $\phi'\leq \phi$.
+
+\label{Minimal-type-minimal-typing-context}
+\end{Theorem}
+
+\begin{figure}
+\[ \begin{array}{cc}
+      \displaystyle\frac
+        {\begin{array}[t]{ll}
+            (\Gamma(\self)(x) = \forall\,\overline{a}.\,\delta) \in \Gamma &
+            \overline{b} \mbox{{\rm fresh}}
+         \end{array}}
+        {P;\Gamma \ti x: (\delta[\overline{a} \mapsto \overline{b}], \id)} (\VVARi) \\ \\
+
+	\displaystyle\frac
+          {\begin{array}[t]{lll}
+            P;(\Gamma,x:a) \ti e: (C \Rightarrow \tau,\phi) & a\: \mbox{{\rm fresh}} & \tau' = \phi\,a
+           \end{array}}
+	  {P;\Gamma \ti \lambda x.\:e: (C\Rightarrow \tau' \rightarrow \tau, \phi)} (\ABSi) \\ \\
+
+	\displaystyle\frac
+	 {\begin{array}[t]{ll}
+             P;\Gamma \ti e: (C \Rightarrow \tau_1, \phi_1) & P;\phi_1\Gamma \ti e': (C' \Rightarrow \tau_2, \phi_2)\\
+             \phi' = \mguI(\tau_1 = \tau_2\rightarrow a) & a\: \mbox{{\rm fresh}}, \:
+                \phi = \phi' \circ \phi_2 \circ \phi_1\:\: \  \\
+             \tau = \phi\:a, \: V = \tv(\tau) \cup \tv(\phi C) & (\phi C \oplus_V\,\phi C') \simplifies{P_\Gamma} D
+           \end{array}}
+	  {\Gamma \ti e\:e': (D\Rightarrow \tau,\phi)} (\APPi) \\ \\
+
+	\displaystyle\frac
+	  {\begin{array}{ll}
+             \Gamma \ti e\!:(C\Rightarrow \tau,\phi_1) & C \simplifies {P_\Gamma} C' \\
+             \gen(\sigma,C'\Rightarrow \tau,\tv(\phi_1\Gamma)) & \phi_1\Gamma,\,x\!:\!\sigma \ti e_2\!:(\delta,\phi)
+          \end{array}}
+	 {\Gamma \ti \mlet\ x=e\ \iin\ e':(\delta,\phi)} (\LETi)
+\end{array} \]
+\caption{Type Inference}
+\label{Type-inference-fig}
+\end{figure}
+
+Relation $\mgu$ is the most general (least) unifier
+relation~\cite{Robinson65}: $\mgu(\Tau,\phi)$ is defined to hold
+between a set of pairs of simple types $\Tau$ and a substitution
+$\phi$ if i) $\phi$ is a unifier of every pair in $\Tau$ (i.e.~$\phi
+\tau = \phi\tau'$ for every $(\tau,\tau')\in \Tau$), and ii) it is the
+least such unifier (i.e.~if $\phi'$ is a unifier of all pairs in
+$\Tau$, then $\phi\leq \phi'$). The relation holds similarly for
+constraints instead of types.
+
+$\mguI$ is a function that gives a most general unifier of a set of
+pairs of simple types (or simple constraints). We define also that
+$\phi = \mguI(\tau = \tau')$ is an alternative notation for
+$\phi = \mguI(\{(\tau, \tau')\})$. We have:
+
+\begin{Theorem}[Soundness]
+
+If $P;\Gamma \ti e: (\delta,\phi)$ holds then $P;\phi\Gamma \vdash e: \delta$ holds.
+
+\label{thm:type-inference-sound}
+\end{Theorem}
+
+\begin{Theorem}[Principal type]
+
+If $P;\Gamma \ti e: (\delta,\phi)$ holds then, for all $\delta'$ such
+that $P;\phi\Gamma \vdash e: \delta'$ holds, we have that $\delta \leq
+\delta'$.
+
+\label{thm:principal-type}
+\end{Theorem}
+
+A completeness theorem does not hold. For example, the canonical
+Haskell ambiguity example of expression $e_0 = (\sshow\ $\!\!$.$\!\!$
+\rread))$ --- where \sshow\ has type \SShow a $\Rightarrow$ $a
+\rightarrow$ \String, and \rread\ has type \RRead a $\Rightarrow$
+\String $\rightarrow a$ ---, we have that there exists $P$ and
+$\Gamma$ such that $P;\Gamma \vdash e_0: \String \rightarrow \String$
+holds, but there is no $\delta,\phi$ such that $P;\Gamma \vdash e_0:
+(\delta,\phi)$ holds.
+
+The greater simplicity obtained by allowing type instantiation to
+occurr in a context-independent way, in a type system for a language
+with support for context-dependent overloading, has significant
+counterparts. The disadvantages are: ambiguous expressions are allowed
+to be well-typed, and there exist several translations for
+expressions, one of them a principal translation, for a semantics
+defined inductively on the type system rules.
+
+A declarative specification of type inference, with a unique type
+derivable for each expression, where type instantiation is restricted
+to be done only in a context-dependent way, defined by considering
+functions used in the type inference algorithm as relations, is a
+possible alternative. In this case, the type inference algorithm is
+obtained directly from a declarative specification of the type system
+by transforming relations used into functions. The fact that every
+element has a unique type is consonant with everyday spoken
+language. It is straightforward to define, a posteriori, the set of
+types that are valid instances of the type of an expression.
+
+The fact that only a single type can be derived for each expression
+rules out the possibility of having distinct derivations for an
+expression's type. Thus, an error message for an expression such as
+{\tt (\sshow\ $\!\!$.$\!\!$ \rread)}, in a context with more than one
+instance for \SShow\ and \RRead, should be that the expression can not
+be given a well-defined semantics (there is no type that would allow
+it to have a well-defined semantics). Distinct meanings of {\tt
+  (\sshow\ $\!\!$.$\!\!$ \rread)} would be obtained from distinct
+instance types of \sshow\ and \rread.
+
+In the next section we give a semantics by induction on the derivation
+of the type of an expression by considering functions used in the type
+inference algorithm as relations.
+
+Type inference for mini-Haskell is obtained by extending type
+inference for core-Haskell in straightforward way, namely by directly
+using the rules of Subsection \ref{sec:mini-Haskell} (Figures
+\ref{fig:mini-haskell-module-rule}, \ref{fig:import-relation} and
+\ref{fig:mini-haskell-rules-for-declarations}), by replacing relations
+with functions.
+
+\input{satisfiability}

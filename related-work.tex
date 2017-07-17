@@ -1,44 +1,44 @@
 \section{Related Work}
 \label{sec:related-work}
 
-Haskell type system has been extended with several advanced typing
-features such as functional dependencies~\cite{Jones2008}, type
-families~\cite{Chakravarty2005} and GADTs~\cite{Chen2016}, just to
-name a few. To the best of our knowledge, there's no previous work on
-optional declaration of type classes. In this section, we summarize
-some recent Haskell type system extensions.
+Principal type schemes for overloading and subtyping were studied
+since more than two decades \cite{Smith-Phd, VolpanoSmith91,
+  Smith94principaltype}. These first works have proven undecidability
+of unrestrictive constraint set satisfiability (CS-SAT), by a
+reduction from the Post Correspondence Problem. The CS-SAT problem was
+firstly defined in terms of provability in the type system.
 
-Functional dependencies (FDs) were introduced by Mark Jones as a way
-to specify type class parameter dependencies in order to avoid
-ambiguity and to improve inferred types in the context of MPTCs. FDs
-where also used to support some form of type level
-programming~\cite{Hallgren2000} and to define heterogeneous lists and
-extensible records~\cite{KiselyovLS04}.
+Mark Jones defined predicate entailment as a relation, viewing CS-SAT
+as a problem separated from the type system, but did not discuss
+decidability \cite{MarkJones94a, SIQT}.
 
-Type families~\cite{Chakravarty2005} (TFs) where introduced as a
-``more functional'' alternative to FDs (which is relational in
-nature). However, there are some issues with type family
-injectivity~\cite{Eisenberg2014} that motivated so-called closed type
-families and type family dependencies~\cite{Eisenberg2014a}. Closed
-type families define all possible instances of a type family a priori
-and type family dependencies allows the specification of parameter
-dependencies, in a similar way of FDs.  All type family related
-extensions cater to better type improvement.
+CS-SAT was later defined in terms of anti-unification and least common
+generalisation in \cite{CS-SAT-PPDP04}, where an algorithm for testing
+satisfiability used an iteration limit for termination, the limit not
+being reached in practical cases. CS-SAT was restricted, using a
+termination criterion based on a measure of the size of types in
+constraints, to define an algorithm for CS-SAT that always terminates
+\cite{JBCS-Terminating-CS-SAT}, which has been used only in a
+prototype implementation (available at {\tt
+  http://github.com/rodrigogribeiro/mptc}).
 
-Datatype promotion~\cite{Yorgey2012,Eisenberg2014} lifts user defined
-algebraic datatypes to kinds and data constructors to types. It allows
-the definition of some dependently typed programs.  Singleton types
-and promoted functions~\cite{Eisenberg2012} have been used to automate
-(through Template Haskell) some constructions commonly needed in
-Haskell-style dependent types. Lindley and McBride~\cite{Lindley2013}
-describe some dependently typed programs in Haskell and how to use
-GHC's constraint solver as a theorem prover to discharge proof
-obligations in an implementation of a merge-sort algorithm.
+Constraint-handling rules (CHRs) were used to describe the programming
+language Mercury, where context-dependent overloading is supported
+\cite{TheoryOfOverloading}. Open-world ambiguity and FDs were defined
+via CHRs in \cite{TheoryOfOverloading}, constituting the basis of
+GHC's implementation.
 
-Type level literals is an extension that complements datatype
-promotion to numeric and string types. The Haskell prime proposal for
-overloaded record fields relies on this extension to overload field
-access and update functions. Our approach, based on optional
-declaration of type classes, does not demand type promotion features
-and does not need to create an instance for each record field
-(overloaded or not).
+Expression ambiguity for context-dependent overloading was firstly
+presented in \cite{Solution-to-MPTC-SBLP-09}, as a proposal for the
+introduction of MPTCs in Haskell without the need for FDs and type
+families.  A comparison between open-world ambiguity and expression
+ambiguity is presented in
+\cite{JBCS-Ambiguity-and-constrained-polymorphism}.
+
+Work on instance modularization with names given to instance
+definitions was presented in \cite{Named-instances-2001}. A more
+radical change to the module system of Haskell, more in the direction
+of the module system of SML, was proposed in
+\cite{Modular-type-classes-07}.  The subject of controlling the scope
+of instances in Haskell is discussed in
+\cite{Controlling-scope-instances,Extensible-superclasses-06}.

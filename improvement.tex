@@ -1,0 +1,35 @@
+\subsubsection{Improvement}
+\label{sec:improvement}
+
+Improvement removes constraints with unreachable type variables from a
+constraint $C$ that occurs on a constrained type $C\Rightarrow \tau$,
+based on constraint set entailment: improvement consists of removing
+each constraint in $C$ that has unreachable type variables and for
+which there exists a single entailing substitution. Improvement is
+defined in Figure \ref{fig:constraint-set-improvement}.
+If the set $\mathbb{S}$ of entailed instances of
+$\unreachableVars(C,\tv(\tau))$ has more than one element, or if it is
+empty, there is no improved constraint (improvement is a partial
+relation).
+
+%Improvement as defined in this paper is not a satisfiability
+%preserving relation. The satisfiable instances of $C_{\tv(\tau)}^u$
+%are not part of the constraint set obtained after improvement of $C$,
+%if this improved constraint set exists.
+
+%In \ref{sec:satisfiability}, page \pageref{Phi0}, we show how to
+%define $\Phi_0$ and the initial program theory $P$ from the class and
+%instance declarations that are visible in a program module.
+
+\begin{figure}
+   \[ \displaystyle
+       \frac{
+        \begin{array}{l}
+           C' = \{ \pi \mid tv(\pi) \subseteq \unreachableVars(C, \tv(\tau))\} \\
+           \entailingSubs(C', P) = \{ \phi \}
+        \end{array} }
+      {C \Rightarrow \tau \improves {P} (C - C') \Rightarrow \tau}  \]
+\caption{Constraint Set Improvement}
+\label{fig:constraint-set-improvement}
+\end{figure}
+

@@ -4,127 +4,116 @@
 This section presents the simple modifications to Haskell's module
 system that are necessary to allow instances to have a modular scope
 (we do not attempt to discuss any major revision to Haskell's module
-system). This is based on previous work presented in
-\cite{Controlling-scope-instances}, that allows a modular control of
-the visibility of instance definitions.
+system). This is based on previous work, presented in
+\cite{Controlling-scope-instances}.
 
 Essentially, import and export clauses can specify, instead of just
 names, also {\tt instance $A$ $\overline{\tau}$}, where
 $\overline{\tau}$ is a (non-empty) sequence of types and $A$ is a
 class name:
-
-  \[ \text{\module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots} \]
+  \[ \parbox{\textwidth}{\rm{ \module\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots) \where\ \ldots}} \]
 specifies that the instance of $\overline{\tau}$ for class $A$ is
 exported in module $M$.
 
-  \[ \text{\import\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots)} \]
+  \[ \parbox{\textwidth}{\rm{ \import\ $M$ (\instance\ $A$ $\overline{\tau}$, \ldots)}} \]
 specifies that the instance of $\overline{\tau}$ for class $A$ is
 imported from $M$, in the module where the import clause occurs.
 
-The single additional rule to the work presented in
-\cite{Controlling-scope-instances} that enables type classes to be
-optionally declared by programmers is the following:
-
-\begin{Definition}[Type of overloaded variable]
-If the type of an overloaded variable --- i.e.~a variable that is
-introduced in an instance definition --- is not explicitly annotated
-in a type class declaration, then the variable's type is the
-anti-unification of instance types defined for the variable in the
-current module; otherwise, it is the annotated type.
-
-\label{overloaded-variable-type}
-\end{Definition}
-
-%Alternatively, we can simply give a name to an instance, in an
-%instance declaration, and use that name in import and export clauses
-%(see \cite{Controlling-scope-instances}). However, this will not be
-%used in this paper, since we only consider instances of undeclared
-%classes, which have a single member, and thus the name of the member
-%can be used as the instance name.
-
-%For example, 
-%we can have:
-%  \progb{
-%   \instance\ $x$ = '1';\\
-%   \instance\ $x$ = \True;
-%  }    
-
 \subsection{Pros and Cons of Instance Modularization}
 
-Among the advantages of this simple change, we cite (following
-\cite{Controlling-scope-instances}):
+Among the advantages of having instances with modular scope, we cite
+(following \cite{Controlling-scope-instances}):
 
 \begin{itemize}
 
-  \item Programmers have better control of which entities are
-    necessary and should be in the scope of each module in a program.
+  \item The types of all names, overloaded or not, and of all
+    expressions in a module depend on the scope of variables imported
+    by the module.
 
   \item It is possible to define and use more than one instance for
-    the same type in a program.
-
-  \item Problems with orphan instances do not occur (orphan instances
-    are instances defined in a module where neither the definition of
-    the data type nor the definition of the type class occur). For
+    the same type or for the same type constructor in a program. For
     example, distinct instances of \Either\ for class \Monad, say one
     from package \mtl\ and another from \transformers, can be used in
     a program.
 
-  \item The introduction of newtypes, as well as the use of functions
-    that include additional (-by) parameters, such as e.g.~the (first)
-    parameter of function \sortBy\ in module \Data.\List\ can be
-    avoided.
+  \item Use of newtypes to wrap distinct instance definitions can be
+    avoided, if the distinct instances are not used in the same
+    module. For example, newtypes to wrap distinct instances of
+    Monoids for integer types, one for handling addition and one for
+    for handling multiplication.
+    
+  \item Modularized instance scopes and optional type classes with a
+    revised ambiguity rule can avoid the use of functions that include
+    additional (-by) parameters, such as e.g.~the (first) parameter of
+    function \sortBy\ in module \Data.\List.
 
+  \item Modularized instance scopes with a revised ambiguity rule and
+    optional type classes can be used to support overloaded record
+    fields in a simple way, based on the automatic creation of a type
+    class for each overloaded record field (Section
+    \ref{sec:overloaded-record-fields}).
+
+  \item The need for type-directed name resolution fades with modular
+    instance scopes, a revised ambiguity rule and optional type
+    classes (Section \ref{sec:type-directed-name-resolution}).
+    
+  \item Modularized instance scopes with a revised ambiguity rule and
+    optional type classes may avoid the use of qualified imports (as
+    used e.g.~in the {\em classy-prelude}, used in e.g.~Yesod
+    \cite{Yesod}).
+
+  \item Compile time consumed because the use of orphan instances can
+    be avoided.  Orphan instances are instances defined in a module
+    where neither the definition of the data type nor the definition
+    of the type class occur. When compiling a module $M$, any instance
+    declaration in any module imported by $M$, directly or indirectly,
+    is visible, in Haskell. In principle, a Haskell compiler must then
+    read the interface files of each module imported by $M$, directly
+    or indirectly, to check if it contains an instance declaration
+    used in $M$, which can consume significant compile time.
+    
 \end{itemize}
 
-With instance modularization, programmers need to be aware of which
-entities are exported and imported --- i.e.~which entities are visible
-in the scope of a module --- {\em and their types}, in particular
-whether they are or not overloaded. A simple change like a type
-annotation for a variable exported from a module, can lead to a change
-in the semantics of using this variable in another module.
+However, with instance modularization, programmers need to be aware of
+which entities are exported and imported --- i.e.~which entities are
+visible in the scope of a module --- and their types.  A simple
+change, like a type annotation for a variable exported from a module,
+can lead to a change in the semantics of using this variable in
+another module.
 
-% The change is very significant if the type annotation instantiates
-% the type of $x$ so that overloading of $x$ is resolved in $A$, since
-% this leads to a change in the type (and meaning) of $x$ in module
-% $B$.
-
-Instance modularization and the rule of expression ambiguity, that
-considers the context where an expression occurs to detect whether an
-expression is ambiguous or not, has profound consequences. Consider,
-for example:
-
+Consider the canonical ambiguity example in Haskell, of {\tt
+  (\sshow\ $\!$.$\!$ \rread)}, but considering instances without type
+classes and with a modular scope:
 
 \proga{xxxxxxxxxxxxxxxxx\=xx\= \+\kill
 \module\ $M$ where\+\\
-  \class\ \SShow\ $t$ \ldots\\
-  \class\ \RRead\ $t$ \ldots\\
-  \instance\ \SShow\ \Int\ \ldots\\
-  \instance\ \RRead\ \Int\ \ldots\\
-  $f$ = \sshow $\:$.$\:$\rread\-\\ \\
+  \myshow$\,$::$\,$\Int\ $\rightarrow$ \String\\
+  \myshow\ = \ldots \\ 
+  \myread$\,$::$\,$\String\ $\rightarrow$ \Int\\
+  \myread\ = \ldots\\
+  $f$ = \myshow $\:$.$\:$\myread\-\\ \\
 
 \module\ $N$ \where\+\\
   \import\ $M$\\
-  \instance\ \RRead\ \Bool\ \ldots\\
-  \instance\ \SShow\ \Bool\ \ldots\\
+  \myshow$\,$::$\,$\Bool\ $\rightarrow$ \String\\
+  \myshow\ = \ldots\\
+  \myread$\,$::$\,$\String\ $\rightarrow$ \Bool\\
+  \myread\ = \ldots\\
   $g$ = $f$ "123"
 }
 
-
-The definition of $f$ in module $M$ is not well-typed in Haskell, since type {\tt
- (\SShow\ $a$, \RRead\ $a$) $\Rightarrow$ \String} is ambiguous. 
-In our approach (i.e.~considering ambiguity as a property of an
-expression, not of a type), the definition of $f$ in module $M$ is
-well-typed, because constraints
-(\SShow\ $a$, \RRead\ $a$) can be removed; these
-can be removed because there exists a single instance, in
-module $M$, for each constraint, that entails it. As a result, $f$ has
-type \String $\rightarrow$ \String. Its use in module $N$ is (then)
-also well-typed. That means: $f$'s semantics is a function that
-receives a value of type \String\ and returns a value of type \String,
-according to the definition of $f$ given in module $M$. The semantics
-of an expression involves passing a (dictionary) value that is given
-in the context of usage {\em only if} the expression has a
-constrained type.
-
+In Haskell, any use of {\tt (\sshow\ $\!$.$\!$ \rread)} leads to a
+type error, since the type {\tt (\SShow\ $a$, \RRead\ $a$)
+  $\Rightarrow$ \String} is ambiguous. In our approach, the definition
+of $f$ in module $M$ is well-typed: there exists in module $M$ a
+single instance of \myshow\ and \myread. As a result, $f$ has type
+\String\ $\rightarrow$ \String. Its use in module $N$ is (then) also
+well-typed ($f$ is a function that receives a value of type
+\String\ and returns a value of type \String, according to the
+definition of $f$ given in module $M$), even though {\tt (\myshow
+  $\:$.$\:$\myread)\ "123"} is not well-typed in module $N$, since
+{\tt (\myshow $\:$.$\:$\myread)} is ambiguous in $N$. Explicit
+annotation of types of imported names would make module interfaces
+clearer.
 
 

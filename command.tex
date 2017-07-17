@@ -8,29 +8,595 @@
 
 %% notations
 
-\newcommand{\id}{\text{\it id\/}}
-\newcommand{\dom}[1]{\ensuremath{\textit{dom}(#1)}}
-\newcommand{\unify}{\text{\it unify\/}}
-\newcommand{\tv}{\text{\it tv\/}}
-\newcommand{\gtv}{\text{\it gtv\/}}
-\newcommand{\gtc}{\text{\it gtc\/}}
-\newcommand{\rtv}{\text{\it rtv \/}}
-\newcommand{\specialize}{\text{\it specialize\/}}
+\newcommand{\id}{{\it id\/}}
+\newcommand{\dom}[1]{\ensuremath{\mathit{dom}(#1)}}
+\newcommand{\CO}{\ensuremath{\mathit{C\/}}}
+\newcommand{\entailingSubs}{\ensuremath{\mathit{entailingSubs\/}}}
+\newcommand{\unify}{{\it unify\/}}
+\newcommand{\tv}{{\it tv\/}}
+\newcommand{\gtv}{{\it gtv\/}}
+\newcommand{\gtc}{{\it gtc\/}}
+\newcommand{\rtv}{{\it rtv \/}}
+\newcommand{\specialize}{{\it specialize\/}}
 
-%% keywords
+%\newcommand{\haskell}[1]{\mintinline{haskell}{#1}}
+\newcommand{\haskell}[1]{\tt{#1}}
 
-\newcommand{\mif}{{\tt if}\ }
-\newcommand{\mthen}{\ {\tt then}\ }
-\newcommand{\melse}{\ {\tt else}\ }
+\newcommand{\SSS}{\mathcal{S}}
+
+\newcommand{\err}{{\bf W}}
+\newcommand{\VV}{{\cal V}}
+\newcommand{\GT}{{\cal T}_G}
+\newcommand{\KK}{{\cal K}}
+\newcommand{\TT}{{\cal T}}
+% conflict with pstree
+\newcommand{\TCC}{\mbox{\it TC}}
+\newcommand{\UL}{\mbox{UL}}
+\newcommand{\sUL}{\mbox{\scriptsize UL}}
+\newcommand{\true}{\mbox{\sf true}}
+\newcommand{\SF}{\mbox{$\cal S$}}
+\newcommand{\tauvec}{\bar{\tau}}
+\newcommand{\tvec}{\bar{t}}
+\newcommand{\kvec}{\bar{k}}
+\newcommand{\xvec}{\bar{x}}
+\newcommand{\muvec}{\bar{\mu}}
+\newcommand{\alphavec}{\bar{\alpha}}
+\newcommand{\betavec}{\bar{\beta}}
+\newcommand{\gammavec}{\bar{\gamma}}
+\newcommand{\thetavec}{\bar{\theta}}
+\newcommand{\deltavec}{\bar{\delta}}
+\newcommand{\bvec}{\bar{b}}
+\newcommand{\typo}{\Gamma}
+\newcommand{\tenv}{\Gamma}
+\newcommand{\typoinit}{\typo_0}
+\newcommand{\static}{S}
+\newcommand{\dynamic}{D}
+\newcommand{\sstatic}{{\scriptstyle S}}
+\newcommand{\sdynamic}{{\scriptstyle D}}
+\newcommand{\BTA}{\mbox{BTA}}
+\newcommand{\baseshape}{\bot}
+\newcommand{\TCT}{P}
+\newcommand{\Haskell}{H98}
+\newcommand{\TCTinit}{P_o}
+
+% figures, rules
+
+\newcommand{\tlabel}[1]{\mbox{(#1)}}
+\newcommand{\fig}[3]
+        {\begin{figure*}[t]#3\
+        \caption{\label{#1}#2}\  \end{figure*}}
+\newcommand{\figurebox}[1]
+        {\fbox{\begin{minipage}{\textwidth} #1 \end{minipage}}}
+\newcommand{\boxfig}[3]
+        {\begin{figure*}\figurebox{#3\caption{\label{#1}#2}}\end{figure*}}
+\newcommand{\myirule}[2]{{\renewcommand{\arraystretch}{1.2}\ba{c} #1
+                      \\ \hline #2 \ea}}
+
+\newcommand{\sirule}[2]{{\renewcommand{\arraystretch}{1.2}\ba{c}
+                      \\ \hline #1 \ea}}
+
+% relations, operators
+
+\newcommand{\ti}{\vdash_i}
+\newcommand{\sem}{\vdash_a}
+\newcommand{\unambig}{\mbox{\it unambig}}
+\newcommand{\complete}{\mbox{\it complete}}
+
+\newcommand{\projexclusion}[1]{\mbox{$\bar{\exists}#1$}}
+\newcommand{\funinst}{\mbox{\it inst}}
+%%\renewcommand{\inst}{\, \vdash^{\scriptstyle i} \,}
+%%\newcommand{\inst}{\, \vdash \,}
+\newcommand{\ileq}{\preceq}
+\newcommand{\ieq}{\simeq}
+\newcommand{\topannot}[1]{|#1|}
+\newcommand{\gendelta}{\mbox{\it gen}_{\delta}}
+\newcommand{\genbeta}{\mbox{\it gen}_{\beta}}
+\newcommand{\normalize}{\mbox{\it normalize}}
+\newcommand{\fail}{\mbox{\it fail}}
+\newcommand{\fixpt}{\mbox{${\cal F}$}}
+\newcommand{\testpa}{\mbox{${\cal T}$}}
+\newcommand{\addpa}{\mbox{${\cal A}$}}
+\newcommand{\matchpa}{\mbox{${\cal M}$}}
+\newcommand{\refmatchpa}{\mbox{${\cal R}$}}
+\newcommand{\wft}[1]{\mbox{\it wft}(#1)}
+\newcommand{\stv}{\mbox{\it semfv}}
+\newcommand{\range}{\mbox{\it range}}
+\newcommand{\lub}{\wedge}
+\newcommand{\tyrel}[2]{(#1 \preceq #2)}
+\newcommand{\eqty}[2]{#1=#2}
+
+
+\newcommand{\mynote}[1]{$\spadesuit${\bf #1}$\clubsuit$}
+
+\newcommand{\textttnf}[1]{\normalfont \texttt{#1}}
+
+\newcommand{\dunderline}[1]{\underline{\underline{#1}}}
+
+% spacing
+
+\newcommand{\sgap}{\quad}
+\newcommand{\bgap}{\quad\quad}
+
+% reserved words
+
+\newcommand{\mathem}{\sf}
+\newcommand{\IN}{\mbox{\mathem in}}
+\newcommand{\MLET}{\mbox{\mathem mlet}}
+\newcommand{\LETREC}{\mbox{\mathem letrec}}
+\newcommand{\FIX}{\mbox{\mathem fix}}
+\newcommand{\REC}{\mbox{\mathem rec}}
+\newcommand{\TYCASE}{\mbox{\mathem typeCase}}
+\newcommand{\ELSE}{\mbox{\mathem else}}
+\newcommand{\IF}{\mbox{\mathem if}}
+\newcommand{\OF}{\mbox{\mathem of}}
+\newcommand{\TYOF}{\mbox{\underline{\mathem of}}}
+\newcommand{\THEN}{\mbox{\mathem then}}
+\newcommand{\INST}{\mbox{\mathem instance}}
+\newcommand{\OVER}{\mbox{\mathem overload}}
+\newcommand{\CLASS}{\mbox{\mathem class}}
+\newcommand{\WHERE}{\mbox{\mathem where}}
+\newcommand{\OTHERWISE}{\mbox{\mathem otherwise}}
+\newcommand{\NOT}{\mbox{\mathem not}}
+
+\newcommand{\search}{\text{\it search\/}}
+\newcommand{\unreachableVars}{\text{\it unReachVs\/}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "bta"
+%%% End:
+
+\newcommand{\figuretwo}[1]
+        {\begin{minipage}{8.5cm} #1 \end{minipage}}
+
+\newcommand{\figtwocol}[3]
+        {\begin{figure}\hrulefill\ \figuretwo{#3 \caption{\label{#1}#2}}\end{figure}}
+
+\newcommand{\figtwocolht}[3]
+        {\begin{figure}[ht!]\hrulefill\ \figuretwo{#3 \caption{\label{#1}#2}}\end{figure}}
+
+\newcommand{\pturns}{\vdash_{POSIX}}
+\newcommand{\gturns}{\vdash_{greedy}}
+\newcommand{\gturnst}{\vdash_{greedy2}}
+\newcommand{\glmlturns}{\vdash_{glr}}
+\newcommand{\glmlturnst}{\vdash_{glr2}}
+\newcommand{\lmlturns}{\vdash_{lm}}
+\newcommand{\lmlturnsTop}{\vdash_{lm_{top}}}
+
+\newcommand{\match}[3]{#1 \turns #2 \leadsto #3}
+\newcommand{\posixmatch}[3]{#1 \pturns #2 \leadsto #3}
+\newcommand{\gmatch}[3]{#1 \gturns #2 \leadsto #3}
+\newcommand{\gmatcht}[3]{#1 \gturnst #2 \leadsto #3}
+\newcommand{\glmlmatch}[3]{#1 \glmlturns #2 \leadsto #3}
+\newcommand{\glmlmatcht}[3]{#1 \glmlturnst #2 \leadsto #3}
+\newcommand{\lmlmatch}[3]{#1 \lmlturns #2 \leadsto #3}
+\newcommand{\lmlmatchTop}[3]{#1 \lmlturnsTop #2 \leadsto #3}
+
+\newcommand{\comb}{\diamond} %%{\mbox{\it comb}}
+
+\newcommand{\baseFv}{\mathit{baseFv}}
+\newcommand{\fv}{\mathit{fv}}
+
+\newcommand{\emptySeq}{\epsilon}
+
+\newcommand{\Nturns}{\, \vdash_{\mbox{\scriptsize lnf}} \,}
+\newcommand{\Lturns}{\, \vdash^{L}_{\mbox{\scriptsize lnf}} \,}
+\newcommand{\Rturns}{\, \vdash^{R}_{\mbox{\scriptsize lnf}} \,}
+\newcommand{\norm}{{\leadsto}}
+\newcommand{\lnorm}{{\lhd}}
+\newcommand{\rnorm}{{\rhd}}
+\newcommand{\pt}[1]{{\cal P}(#1)}
+\newcommand{\ty}[1]{{\cal T}(#1)}
+\newcommand{\te}[1]{{\cal G}(#1)}
+\newcommand{\ve}[1]{{\cal D}(#1)}
+\newcommand{\exlang}[1]{{\cal O}(#1)}
+\newcommand{\exsub}[1]{{\cal S}(#1)}
+\newcommand{\turnsF}{\, \vdash^{\mbox{\scriptsize F}} \,}
+%\newcommand{\implies}{\supset}
+\newcommand{\clabel}[1]{\mbox{(#1)}}
+\newcommand{\rat}[1]{\rightarrowtail_{#1}}
+\newcommand{\arr}{\rightarrow}
+\newcommand{\arrow}{\rightarrow}
+\newcommand{\Arr}{\Rightarrow}
+\newcommand{\atsign}{@}
+\newcommand{\simparrow}[0]{\Longleftrightarrow}
+\newcommand{\proparrow}[0]{\Longrightarrow}
+\newcommand{\comment}[1]{}
+\newcommand{\ignore}[1]{}
+\newcommand{\martin}[1]{{\bf Martin:#1}}
+\newcommand{\rodrigo}[1]{{\bf Rodgrio:#1}}
+\newcommand{\carlos}[1]{{\bf Carlos:#1}}
+\newcommand{\apair}[2]{\langle{#1;#2}\rangle}
+
+
+\newcommand{\pow}{\^{}}
+\newcommand{\venv}{\Delta}
+\newcommand{\mleq}{\mbox{\tt leq}}
+\newcommand{\mmleq}{\leq}
+\newcommand{\mas}{\mbox{\tt as}}
+\newcommand{\mfix}{\mbox{\tt regfix}}
+
+\newcommand{\pp}{\texttt{++}}
+
+\newcommand{\mysection}[1]{\vspace*{-2mm}\section{#1}\vspace*{-1mm}}
+\newcommand{\mysubsection}[1]{\vspace*{-1mm}\subsection{#1}\vspace*{-1mm}}
+\newcommand{\mymid}{~\|~}
+\newcommand{\lang}[1]{{\cal L}{(#1)}}
+\newcommand{\bindsto}{\Rightarrow}
+\newcommand{\bindstounder}[1]{\bindsto^{#1}}
+\newcommand{\iproj}[1]{\pi^{-1}({#1})}
+\newcommand{\rev}[1]{{#1}^{\mbox{\scriptsize r}}}
+\newcommand{\lquo}{\backslash}
+\newcommand{\rquo}{/}
+\newcommand{\diff}{-}
+\newcommand{\isect}{\cap}
+\newcommand{\stripv}[1]{({#1})\downarrow_{v}}
+\newcommand{\stript}[1]{({#1})\downarrow_{t}}
+%\renewcommand{\implies}{\Longrightarrow}
+\newcommand{\polyxduce}{XDuce$^{\forall.C}$}
+\newcommand{\deriv}[2]{#1\backslash #2}
+\newcommand{\pderiv}[2]{#1{\backslash}_p #2} %% {#1\backslash_p #2}
+\newcommand{\mkEmp}[1]{{#1}_{\epsilon}}
+\newcommand{\strip}[1]{#1\downarrow}
+%% match environment
+\newcommand{\menv}[1]{{\it env}(#1)}
+\newcommand{\allmatch}[2]{{\it match}(#1,#2)}
+\newcommand{\transition}{\xrightarrow{\hspace*{1.5cm}}}
+\newcounter{cnt}
+
+\newcommand{\iterate}{\mathit{iterate}}
+
+\newcommand{\pset}[1]{{\cal P}(#1)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\mempty}{{\it{empty\/}}}
+\newcommand{\minsert}{{\it{insert\/}}}
+\newcommand{\Coll}{{\it{Coll\/}}}
+
+\newcommand{\ento}{\ensuremath{\texttt{ent}_0}}
+\newcommand{\entinst}{\ensuremath{\texttt{inst}_0}}
+\newcommand{\entmp}{\ensuremath{\texttt{mp}_0}}
+\newcommand{\entn}{\ensuremath{\texttt{conj}_0}}
+
+\newcommand{\redo}{\ensuremath{\texttt{red}}}
+\newcommand{\instum}{\ensuremath{\texttt{inst}}}
+\newcommand{\conj}{\ensuremath{\texttt{conj}}}
+\newcommand{\stopo}{\ensuremath{\texttt{stop}}}
+\newcommand{\stopFail}{\ensuremath{\texttt{stop}_0}}
+\newcommand{\stopNoMatch}{\ensuremath{\texttt{stop}_1}}
+
+\newcommand{\I}{\text{\it I\/}}
+\newcommand{\F}{\text{\it F\/}}
+\newcommand{\B}{\text{\it B\/}}
+\newcommand{\C}{\text{\it C\/}}
+
+\newcommand{\Ifd}{\text{\it I\/}_{\text{Fd}}}
+\newcommand{\Fd}{\text{\it Fd\/}}
+\newcommand{\instf}{\text{\it inst\/}}
+\newcommand{\vS}{\text{\it vSeq\/}}
+\newcommand{\varS}{\text{\it vseq\/}}
+\newcommand{\compose}{\text{\it comp\/}}
+\newcommand{\dc}{\text{\it dc\/}}
+\newcommand{\matches}{\text{\it matches\/}}
+\newcommand{\mgu}{\rm{\it mgu\/}}
+\newcommand{\mgm}{\rm {\it mgm\/}}
+\newcommand{\mguI}{\ensuremath{\mbox{\it mgu}}_I}
+\newcommand{\matchI}{\text{\it match}_I}
+\newcommand{\satI}{\text{\it sat}_I}
+\newcommand{\sattt}{\text{\it sat}_1}
+\newcommand{\lcgI}{\text{\it lcg}_I}
+\newcommand{\lcgp}{\text{\it lcgp\/}}
+\newcommand{\lcgg}{\text{\it lcg'\/}}
+\newcommand{\entails}{\vdash}
+\newcommand{\simp}{\ensuremath{>\!\!\!>}}
+\newcommand{\entailI}{\text{\it entails\/}}
+\newcommand{\simplifiesI}{{\it simpl\/}}
+\newcommand{\wfI}{\text{\it wf}_I}
+\newcommand{\ev}{\text{\it ev\/}}
+\newcommand{\card}{\text{\it card\/}}
+
+\newcommand{\SatFailUm} {{\text{\tt fail}}_1}
+\newcommand{\SatEmptyUm}{{\text{\tt empty}}_1}
+\newcommand{\SatConjUm} {{\text{\tt conj}}_1}
+\newcommand{\SatInstUm} {{\text{\tt inst}}_1}
+
+\newcommand{\Tau}{\ensuremath {\cal T}}
+
+\newcommand{\git}{\text{\it git\/}}
+\newcommand{\ma}{\text{\it m1\/}}
+\newcommand{\mb}{\text{\it m2\/}}
+\newcommand{\mc}{\text{\it m3\/}}
+\newcommand{\NumLit}{\text{\it NumLit\/}}
+\newcommand{\Sum}{\text{\it Sum\/}}
+\newcommand{\Div}{\text{\it Div\/}}
+\newcommand{\Mult}{\text{\it Mult\/}}
+\newcommand{\Vector}{\text{\it Vector\/}}
+\newcommand{\Matrix}{\text{\it Matrix\/}}
+\newcommand{\Ord}{\text{\it Ord\/}}
+\newcommand{\TEqInt}{\text{\it TEqInt\/}}
+\newcommand{\EqChar}{\text{\it EqChar\/}}
+\newcommand{\TEqL}{\text{\it TEqL\/}}
+\newcommand{\TEq}{\text{\it TEq\/}}
+\newcommand{\teq}{\text{\it teq\/}}
+\newcommand{\eq}{\text{\it eq\/}}
+\newcommand{\EqL}{\text{\it EqL\/}}
+\newcommand{\Num}{\text{\it Num\/}}
+\newcommand{\Fail}{\text{\it Fail\/}}
+\newcommand{\Zip}{\text{\it Zip\/}}
+\newcommand{\zip}{\text{\it zip\/}}
+\newcommand{\zipd}{\text{\it zip2\/}}
+\newcommand{\Main}{\text{\it Main\/}}
+\newcommand{\main}{\text{\it main\/}}
+\newcommand{\bs}{\text{\it bs\/}}
+\newcommand{\nott}{\text{\it not\/}}
+\newcommand{\primEqInt}{\text{\it primEqInt\/}}
+\newcommand{\otherw}{\text{\it otherwise\/}}
+
+\newcommand{\sshowL}{\text{\it show'\/}}
+\newcommand{\rreadL}{\text{\it read'\/}}
+
+\newcommand{\classMember}{\text{\it{classMember\/}}}
+\newcommand{\className}{\text{\it{className\/}}}
+\newcommand{\type}{\text{\it{type\/}}}
+
+\newcommand{\toList}{\text{\it toL\/}}
+\newcommand{\foldWithKey}{\text{\it foldWithKey\/}}
+\newcommand{\fold}{\text{\it fold\/}}
+\newcommand{\inter}{\text{\it inter\/}}
+
+\newcommand{\res}{\arrowvert}
+\newcommand{\lb}{\ensuremath {\text{\it lb\/}}}
+
+\newcommand{\Unsat}{\ensuremath{\text{\it Unsat\/}}}
+\newcommand{\Single}{\ensuremath{\text{\it Single\/}}}
+\newcommand{\Ambiguous}{\ensuremath{\text{\it Ambiguous\/}}}
+
+\newcommand{\mif}{{\bf if}\ }
+\newcommand{\mthen}{\ {\bf then}\ }
+\newcommand{\melse}{\ {\bf else}\ }
 
 \newcommand{\mlet}{{\tt let}\ }
 \newcommand{\iin}{\ {\tt in}\ }
 \newcommand{\mwhere}{{\tt where}\ }
-\newcommand{\mcase}{{\tt case}\ }
-\newcommand{\mof}{{\tt of}\ }
+\newcommand{\mcase}{{\bf case}\ }
+\newcommand{\mof}{{\bf of}\ }
+
+\newcommand{\x }{[\![}
+\newcommand{\y }{]\!]}
+\newcommand{\yy }{]\!]}
+
+\newcommand{\Ddelta}{{\scriptsize \Delta}}
 
 
-%% haskell code
 
-%\newcommand{\haskell}[1]{\mintinline{haskell}{#1}}
-\newcommand{\haskell}[1]{\texttt{#1}}
+% \definecolor{mygrey}{gray}{0.85}
+
+\newcommand{\prog}[1]{
+  \normalfont\ttfamily
+  \begin{center}\begin{tabular}{l}
+       #1
+  \end{tabular} \end{center}
+  \normalfont}
+
+\newcommand{\proga}[1]{
+ \normalfont\ttfamily
+  \begin{tabbing}
+        #1
+   \end{tabbing}
+ \normalfont}
+
+\newcommand{\progfig}[1]{\parbox{11cm}{
+  \normalfont
+  \begin{center}
+  \parbox{\textwidth}{\begin{tabbing}
+        #1
+  \end{tabbing}}
+  \end{center}
+  \normalfont}}
+
+\newcommand{\progb}[1]{
+  \normalfont\ttfamily
+  \begin{tabbing}
+        #1
+  \end{tabbing}
+  \normalfont}
+
+\newcommand{\progn}[1]{
+  \begin{center}
+  \parbox{\textwidth}{\begin{tabbing}
+        #1
+  \end{tabbing}}
+  \end{center} }
+
+\newcommand{\progbb}[1]{
+  \normalfont\ttfamily
+  \begin{center}
+  \shadowbox{\parbox{\textwidth}{\begin{tabbing}
+        #1
+  \end{tabbing}}}
+  \end{center}
+  \normalfont}
+
+\newcommand{\progc}[1]{
+  \normalfont\ttfamily
+  \begin{center}
+  \fbox{\parbox{\textwidth}{\begin{tabbing}
+        #1
+  \end{tabbing}}}
+  \end{center}
+  \normalfont}
+
+\newcommand{\progcc}[1]{
+  \normalfont\ttfamily
+  \begin{center}
+  \fbox{\begin{tabular}{p{4cm}}
+        #1
+  \end{tabular}}
+  \end{center}
+  \normalfont}
+
+\newcommand{\progaa}[1]{
+  \normalfont\ttfamily
+  \begin{center}\begin{tabular}{ll}
+       #1
+  \end{tabular} \end{center}
+  \normalfont}
+
+\newcommand{\progaaa}[1]{
+  \normalfont\ttfamily
+  \begin{center}\begin{tabular}{lll}
+       #1
+  \end{tabular} \end{center}
+  \normalfont}
+
+\newcommand{\CT}{{\it CT\/}}
+\newcommand{\CSSAT}{{\it CS-SAT\/}}
+\newcommand{\ssat}{{\tt sat}}
+
+\newcommand{\lcg}{{\it lcg\/}}
+\newcommand{\lcgR}{{\tt lcg}_r}
+
+\newcommand{\Integer}{{\it Integer\/}}
+\newcommand{\Bool}{{\it Bool\/}}
+\newcommand{\Int}{{\it Int\/}}
+\newcommand{\Char}{{\it Char\/}}
+\newcommand{\Float}{{\it Float\/}}
+\newcommand{\Double}{{\it Double\/}}
+
+\newcommand{\True}{{\it True\/}}
+\newcommand{\False}{{\it False\/}}
+
+\newcommand{\Lit}{{\it Lit\/}}
+\newcommand{\Inc}{{\it Inc\/}}
+\newcommand{\IsZ}{{\it IsZ\/}}
+\newcommand{\If}{{\it If\/}}
+\newcommand{\Pair}{{\it Pair\/}}
+\newcommand{\Term}{{\it Term\/}}
+
+\newcommand{\eval}{{\it eval\/}}
+
+\newcommand{\MMo}{{\tt MMo}}
+
+\newcommand{\genn}[1]{\bar{\bar{#1}}}
+\newcommand{\abrgenn}[1]{\|#1\|}
+
+\newcommand{\T}{{\it T\/}}
+\newcommand{\Tu}{{\it T1\/}}
+\newcommand{\Td}{{\it T2\/}}
+\newcommand{\test}{{\it test\/}}
+\newcommand{\sat}{{\it sat\/}}
+
+\newcommand{\Eq}{{\it Eq\/}}
+
+\newcommand{\CASE}{{\tt CASE}}
+\newcommand{\IMPROVE}{{\tt IMPROVE}}
+\newcommand{\ALTSRec}{{\tt ALTSRec}}
+\newcommand{\ALTSEnd}{{\tt ALTSEnd}}
+\newcommand{\ALT}{{\tt ALT}}
+\newcommand{\alt}{{\tt alt}}
+\newcommand{\alts}{{\tt alts}}
+
+\newcommand{\colchetes}{\mbox{\tt []}}
+\newcommand{\module}{\mbox{\tt module}}
+\newcommand{\export}{\mbox{\tt export}}
+\newcommand{\import}{\mbox{\tt import}}
+\newcommand{\data}{{\tt data}}
+\newcommand{\classDecl}{{\it classDecl\/}}
+\newcommand{\instDecl}{{\it instDecl\/}}
+\newcommand{\importC}{I}
+\newcommand{\exportC}{X}
+\newcommand{\class}{\mbox{\tt class}}
+\newcommand{\instance}{{\tt instance}}
+\newcommand{\where}{\mbox{\tt where}}
+\newcommand{\member}{{\it member\/}}
+\newcommand{\iitem}{\iota}
+\newcommand{\iinsert}{{\it insert\/}}
+\newcommand{\eempty}{{\it empty\/}}
+\newcommand{\Either}{{\it Either\/}}
+\newcommand{\Monad}{{\it Monad\/}}
+\newcommand{\mtl}{{\it mtl\/}}
+\newcommand{\transformers}{{\it transformers\/}}
+\newcommand{\Data}{{\it Data\/}}
+\newcommand{\List}{{\it List\/}}
+\newcommand{\Tree}{{\it Tree\/}}
+\newcommand{\sortBy}{{\it sortBy\/}}
+
+\newcommand{\Mum}{{\it M1\/}}
+\newcommand{\SShow}{{\it Show\/}}
+\newcommand{\ShowInt}{{\it ShowInt\/}}
+\newcommand{\RRead}{{\it Read\/}}
+\newcommand{\sshow}{{\it show\/}}
+\newcommand{\rread}{{\it read\/}}
+\newcommand{\myshow}{{\it myshow\/}}
+\newcommand{\myread}{{\it myread\/}}
+\newcommand{\String}{{\it String\/}}
+
+\newcommand{\Collection}{{\it Collection\/}}
+\newcommand{\flip}{{\it flip\/}}
+\newcommand{\map}{{\it map\/}}
+\newcommand{\const}{{\it const\/}}
+\newcommand{\ddom}{\mathit{dom\/}}
+
+\newcommand{\st}{\mathit{st\/}}
+\newcommand{\freshst}{\mathit{freshst\/}}
+
+\newcommand{\MODULE}{\mbox{\tt{\scriptsize{MOD}}}}
+\newcommand{\VAR}{\mbox{\tt{\scriptsize{VAR}}}}
+\newcommand{\APP}{\mbox{\tt{\scriptsize{APP}}}}
+\newcommand{\ABS}{\mbox{\tt{\scriptsize{ABS}}}}
+\newcommand{\LET}{\mbox{\tt{\scriptsize{LET}}}}
+\newcommand{\VVARi}{\ensuremath{\mbox{\tt{\scriptsize{VAR}}}_i}}
+\newcommand{\APPi}{\ensuremath{\mbox{\tt{\scriptsize{APP}}}_i}}
+\newcommand{\ABSi}{\ensuremath{\mbox{\tt{\scriptsize{ABS}}}_i}}
+\newcommand{\LETi}{\ensuremath{\mbox{\tt{\scriptsize{LET}}}_i}}
+\newcommand{\VARs}{\mbox{\tt{\scriptsize{VAR}}}_s}
+\newcommand{\APPs}{\mbox{\tt{\scriptsize{APP}}}_s}
+\newcommand{\ABSs}{\mbox{\tt{\scriptsize{ABS}}}_s}
+\newcommand{\LETs}{\mbox{\tt{\scriptsize{LET}}}_s}
+
+\newcommand{\simplifies}[1]{>\!\!\!>_{#1}}
+
+\newcommand{\fst}{{\it fst\/}}
+\newcommand{\snd}{{\it snd\/}}
+\newcommand{\reachable}{\arrowvert^{\ast}}
+\newcommand{\gen}{\mbox{\it gen}}
+\newcommand{\improves}[1]{\ensuremath{\vdash_{\texttt{impr}}^{#1}}}
+\newcommand{\contextreduces}[1]{\ensuremath{\vdash_{\texttt{red}}^{#1}}}
+\newcommand{\reachableVars}{{\it reachableVs\/}}
+\newcommand{\entail}{\vdash_e}
+\newcommand{\self}{\mathtt{self}}
+
+\newcommand{\satsUm}{\textit{sats\/}_1}
+\newcommand{\satUm}[1]{\ensuremath{\vdash_{\texttt{sat1}}^{#1}}}
+\newcommand{\sats}[1]{\ensuremath{\vdash_{\texttt{sats}}^{#1}}}
+\newcommand{\leqI}{\textit{leq\/}_I}
+\newcommand{\vdashI}{\vdash_I}
+
+\newcommand{\as}{{\it as\/}}
+\newcommand{\Address}{{\it Address\/}}
+\newcommand{\aaddress}{{\it address\/}}
+\newcommand{\Person}{{\it Person\/}}
+\newcommand{\new}{{\it new\/}}
+\newcommand{\get}{{\it get\/}}
+\newcommand{\update}{{\it update\/}}
+\newcommand{\name}{{\it name\/}}
+\newcommand{\fieldname}{{\it fieldname\/}}
+
+\newcommand{\Button}{{\it Button\/}}
+\newcommand{\Canvas}{{\it Canvas\/}}
+\newcommand{\reset}{{\it reset\/}}
+\newcommand{\RReset}{{\it Reset\/}}
+\newcommand{\ddo}{{\tt do}}
+
+\newcommand{\IO}{{\it IO\/}}
+\newcommand{\IORef}{{\it IORef\/}}
+\newcommand{\Ref}{{\it Ref\/}}
+\newcommand{\ST}{{\it ST\/}}
+\newcommand{\STRef}{{\it STRef\/}}
+\newcommand{\newRef}{{\it newRef\/}}
+\newcommand{\readRef}{{\it readRef\/}}
+\newcommand{\writeRef}{{\it writeRef\/}}
+\newcommand{\readAndPrint}{{\it readAndPrint\/}}
+\newcommand{\print}{{\it print\/}}
+

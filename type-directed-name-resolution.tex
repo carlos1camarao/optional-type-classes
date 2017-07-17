@@ -1,3 +1,56 @@
-\section{Type directed name resolution}
+\subsection{Type directed name resolution}
 \label{sec:type-directed-name-resolution}
+
+The proposal for type directed name resolution (TDNR)
+\cite{TDNR-proposal} is similar to overloading, but uses the so-called
+dot notation, as in object-oriented languages, to provide an
+alternative way to specify which function is intended, based on the
+type of the value that occurs before the dot. For example, instead of:
+
+\progb{xx\=\kill
+  \module\ $U$ \where\+\\
+    \import\ \Button\ (\Button, \reset) \as\ $B$\\
+    \import\ \Canvas\ (\Canvas, \reset) \as\ $C$\\ 
+    $f\,$::$\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()\\
+    \instance\ $f$ $b$ $c$ = $B$.\reset\ $b$ >> $C$.\reset\ $c$
+}
+
+TDNR proposes the use of dot notation to enable the definition of $f$
+to be: % (avoiding module qualification)
+
+\progb{
+    $f\,$::$\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()\\
+    $f$ $b$ $c$ = $b$.\reset\ >> $c$.\reset
+}
+
+Optional type classes can avoid module qualification in the definition
+of $f$ and allows it to be named \reset:
+    
+  \progb{xx\=\kill
+      \module\ $U$ \where\+\\
+      \import\ \Button\ (\Button,\reset)\\
+      \import\ \Canvas\ (\Canvas,\reset)\\
+      \reset$\,$::$\,$(\Button, \Canvas) $\rightarrow$ \IO()\\
+      \instance\ \reset\ ($b$,$c$) = \reset\ $b$ >> \reset\ $c$
+  }
+
+The type of \reset, in a module with these overloaded definitions, is:
+\[ \texttt{ \reset\ ($a$ $\rightarrow$ \IO()) => $a$ $\rightarrow$ \IO()} \]
+  
+An overloaded curried instance definition:
+
+  \progb{xx\=\kill
+      \reset$\,$::$\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()\\
+      \instance\ \reset\ $b$ $c$ = \reset\ $b$ >> \reset\ $c$
+  }
+leads to \reset\ having type:
+{\tt \reset\ ($a$ $\rightarrow$ $b$) $\Rightarrow$ $a \rightarrow b$}, where $a\rightarrow b$ can be
+instantiated to {\tt \Button$\,\rightarrow\,$\IO()}, or {\tt \Canvas$\,\rightarrow\,$\IO()}, or
+to {\tt $\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()}.
+  
+The simplification of type \mbox{$\reset\ (\Button\ \rightarrow \IO())
+  \Rightarrow \IO()$} to {\tt \IO()} uses syntactically equivalence
+between constrained types, when {\tt
+  \reset\ (\Button$\,\rightarrow$\,\IO())} is in the program theory
+(when a resolved constraint is in scope, it can be eliminated).
 

@@ -1,0 +1,18 @@
+\subsection{Constraint-set Simplification}
+
+Relation $\simplifies{P}$ is a simplification relation on
+cons\-traints, defined as a composition of improvement and context
+reduction, defined respectively in Subsections \ref{sec:improvement}
+and \ref{sec:context-reduction}.
+
+\begin{figure}
+   \[ \displaystyle \frac
+        {C \improves {P} C' \hspace*{.4cm} C' \contextreduces {P} D}
+        {C \simplifies {P} D}
+  \]
+\caption{Constraint set simplification}
+\label{fig:constraint-set-simplification}
+\end{figure}
+
+\input{improvement}
+\input{context-reduction}

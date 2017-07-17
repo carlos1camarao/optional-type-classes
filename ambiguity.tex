@@ -2,12 +2,12 @@
 \label{sec:ambiguity}
 
 The versions of Haskell supported by GHC \cite{GHC} --- the prevailing
-Haskell compiler --- are becoming complex, to the point of affecting
-the view of Haskell as the best choice for general-purpose software
-development. A basic issue in this regard is the need of extending the
-language to allow multiple parameter type classes (MPTCs). This
-extension is thought to require additional mechanisms, such as
-functional dependencies~\cite{Jones2008} or type families~\cite{Chakravarty2005}. In another paper
+Haskell compiler --- are becoming complex. A basic issue in this
+regard is the need of extending the language to allow multiple
+parameter type classes (MPTCs). This extension is thought to require
+additional mechanisms, such as functional dependencies
+(FDs)~\cite{Jones2008} or type families
+(TFs)~\cite{Chakravarty2005}. In another paper
 \cite{JBCS-Ambiguity-and-constrained-polymorphism}, we have shown that
 the introduction of MPTCs in the language can be done without the need
 of additional mechanisms: a simplifying change is sufficient, to
@@ -15,56 +15,66 @@ Haskell's ambiguity rule. Interested readers are referred to
 \cite{JBCS-Ambiguity-and-constrained-polymorphism}. The main ideas are
 summarized below.
 
-In (GHC) Haskell, ambiguity is a property of a type: a type
+In Haskell, ambiguity is a property of a type: a type
 $\forall\,\overline{a}.\,C \Rightarrow \tau$ is ambiguous if there
-exists a type variable that occurs in the set of constraints ($C$)
-that is not uniquely determined from the set of type variables that
-occur in the simple type ($\tau$). This unique determination is such
-that, for each type variable $a$ that occurs in $C$ but not in $\tau$
-there must exist a functional dependency $b \mapsto a$ for some $b$ in
-$\tau$ (or a similar unique determination specified via type
-families). Notation $b \mapsto a$ is used, instead of $b \rightarrow
-a$, to avoid confusion with the notation used to denote functional
-types.
+exists a type variable that occurs in the set of constraints ($C$) but
+does not occur in $\tau$.  In the presence of FDs or TFs, ``does not
+occur in $\tau$'' is modified to ``is not uniquely determined from the
+set of type variables that occur in $\tau$''. This unique
+determination is such that, for each type variable $a$ that occurs in
+$C$ but not in $\tau$ there must exist a FD $b \mapsto a$ for some $b$
+in $\tau$ (in the case of type familes, a similar unique determination
+is specified). We use $b \mapsto a$, instead of $b \rightarrow a$, to
+avoid confusion with the notation used to denote functional types.
 
-We adopt a slightly modified definition for ambiguity, refered here as
-{\em expression ambiguity\/}\footnote{In
+We adopt a definition for ambiguity, refered here as {\em expression
+  ambiguity\/}\footnote{In
   \cite{JBCS-Ambiguity-and-constrained-polymorphism} it is called {\em
     delayed closure ambiguity\/}.}, that is based on the following
-similar property of variable reachability, which is independent of
-functional dependencies and type families:
+property of variable reachability, that is independent of FDs and TFs:
 
 \begin{Definition}[Reachable Variable]
 
 A variable $a\in \tv(C)$ is {\em reachable} from a set of type
 variables $V$ if $a\in V$ or if $a\in \pi$ for some $\pi\in C$ such
-that there exists $b\in \tv(\pi)$ such that $b$ is reachable. $a\in
-\tv(C)$ is unreachable if it is not reachable. The set of reachable
-type variables of constraint set $C$ {\em from V\/} is denoted by
-$\reachableVars(C,V)$.
+that there exists $b\in \tv(\pi)$ such that $b$ is reachable. Type
+variable $a\in \tv(C)$ is unreachable if it is not reachable.
+
+The set of reachable type variables of constraint set $C$ {\em from
+  V\/} is denoted by $\reachableVars(C,V)$.
+
+The set of unreachable type variables of constraint set $C$ {\em from
+  V\/} is denoted by $\unreachableVars(C,V)$.
 
 \label{def:reachable}
 \end{Definition}
 
 For example, in $(A_1\: a\: b, A_2\: a) \Rightarrow b$, type variable
-$a$ is reachable from the set of type variables in $b$, because $a$
-occurs in constraint $A_1\: a\: b$, and $b$ is reachable. Similarly,
-if $C = (A_1\: a\: b, A_2\: b\: c, A_3\: c)$, then $c$ is reachable
-from $\{a\}$.
+$a$ is reachable $\{b\}$, because $a$ occurs in constraint $A_1\: a\:
+b$, and $b$ is reachable. Similarly, if $C = (A_1\: a\: b, A_2\: b\:
+c, A_3\: c)$, then $c$ is reachable from $\{a\}$.
 
 The presence of unreachable variables in a constraint $\pi\in C$, on a
-type $\sigma = C \Rightarrow \tau$, characterizes {\em overloading
-  resolution\/}; in other words, it means that overloading for $\pi$
-is resolved  --- there is no context in which an
-expression with such a type ($\sigma$) could be placed that could
-instantiate any of the unreachable variables (occurring in
-$\pi$). However, the presence of unreachable variables does not
-necessarily imply ambiguity. Ambiguity is a property of an expression,
-not of a type. It depends on the context in which the expression
-occurs, and on \textit{entailment\/} of the constraints on the expression's type.
-Also, because of Haskell's {\em open-world\/} style of overloading,
-ambiguity can be checked only when there exist unreachable variables;
-when there are no unreachable variables, overloading is yet unresolved.
+type $C \Rightarrow \tau$, characterizes {\em overloading
+  resolution\/} (cf.~Theorem \ref{thm:overloading-resolution}, Section
+\ref{Optional-type-classes}), not ambiguity. More precisely,
+constraint $\pi \in C$ in $C\Rightarrow \tau$ is resolved if and only
+if there exists a variable in $\pi$ that is unreachable, from the type
+variables in $\tau$.
+
+This is motivated by the fact that there is no context in which an
+expression with such a type ($C\Rightarrow \tau$) could be placed that
+could instantiate any of the unreachable variables (occurring in
+$\pi$).
+
+The presence of unreachable variables does not necessarily imply
+ambiguity. Ambiguity is a property of an expression, not of its
+type. It depends on the context where the expression occurs, and on
+\textit{entailment\/} of the constraints on the expression's type.
+Also, by virtue of Haskell's {\em open-world\/} style of overloading,
+ambiguity can be checked only when overloading is resolved, i.e. only
+when there exist unreachable variables. When there are no unreachable
+variables, overloading is yet unresolved.
 
 %In Section \ref{sec:modular-instances} we consider a canonical example
 %of ``ambiguous type'' in Haskell, namely {\tt (\SShow\ $a$,
@@ -72,30 +82,34 @@ when there are no unreachable variables, overloading is yet unresolved.
 %ambiguous if there exists a single constraint for \SShow, and a single
 %constraint for \RRead, in the context where $e$ is used.
 
-Entailment of constraints and its algorithmic (functional) counterpart
-are well-known in the Haskell world (see
+Entailment of constraints and its algorithmic (functional)
+counterpart, satisfiability, are well-known in the Haskell world (see
 e.g.~\cite{MarkJones94a,TheoryOfOverloading,JBCS-Ambiguity-and-constrained-polymorphism}).
+For completeness, the definition of the entailment relation, which is
+used in the type system (Section \ref{Optional-type-classes}), is
+defined in Subsection \ref{sec:entailment}, and satisfability in
+\ref{sec:satisfiability}.
 
 Informally, a set of constraints $C$ is entailed (or satisfied) in a
 program $P$ if there exists a substitution $\phi$ such that $\phi(C)$
 is contained in the set of instance declarations of $P$, or is
 transitively implied by the set of class and instance declarations
-occurring in $P$. For a formal definition, see
-e.g.~\cite{MarkJones94a,JBCS-Ambiguity-and-constrained-polymorphism}. In
+occurring in
+$P$~\cite{MarkJones94a,JBCS-Ambiguity-and-constrained-polymorphism}. In
 this case we say that $C$ is entailed by $\phi$.
 
 For example, {\tt \Eq\ [[\Integer]]} is entailed if we have instances
-{\tt \Eq\ \Integer} and {\tt \Eq\ $a$ => \Eq\ [$a$]}, visible in the
-context where an expression whose type has a constraint {\tt
+{\tt \Eq\ \Integer} and {\tt \Eq\ $a\,$=>$\,$\Eq\ [$a$]}, in the
+context where an expression of a type with constraint {\tt
   \Eq\ [[\Integer]]} occurs.
 
 If overloading is resolved for a constraint $\pi$ occurring in a type
-$\sigma = \pi,C \Rightarrow \tau$ then exactly one of the following
+$\delta = (C,\pi \Rightarrow \tau)$ then exactly one of the following
 holds:
 \begin{itemize}
 
 \item $\pi$ is entailed by a single instance; in this case a type
-  simplification (also called ``improvement'') occurs: $\sigma$ can be
+  simplification (also called ``improvement'') occurs: $\delta$ can be
   simplified to $C \Rightarrow \tau$;
 
 \item $\pi$ is entailed by two or more instances; in this case we have
@@ -106,16 +120,16 @@ holds:
 
 \end{itemize}
 
-Note that variables in a single constraint are either all reachable or
-all unreachable. If they are unreachable, either the constraint can be
+Variables in a single constraint are either all reachable or all
+unreachable. If they are unreachable, either the constraint can be
 removed, in the case of single entailment, or there is a type error
-(either ambiguity, in the case of two or more entailments, or
-unsatisfiability, in the case of no entailment).
+(ambiguity or unsatisfiability).
 
-Instead of being dependent on the specification of functional
-dependencies or type families, ambiguity depends on the existence of
-(two or more) instances in a program context when overloading is
-resolved for a constraint on the type of an expression.
+Instead of a syntactic property of a type, dependent on the
+specification of FDs or TFs, ambiguity is a property of an expression,
+depending on the existence of two or more instances in a context when
+overloading is resolved for a constraint on the type of this
+expression.
 
 The possibility of a modular control of the visibility of instance
 definitions conforms to this simplifying change. This is the subject
