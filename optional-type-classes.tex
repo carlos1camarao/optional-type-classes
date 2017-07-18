@@ -207,12 +207,14 @@ We have the following:
 \label{thm:substitution}
 \end{Theorem}
 
+{\em Proof\/}: By a straightforward induction on the structure of $e$. $\qed$.
+
 The overloading resolution theorem below considers, in addition to the
 normal type system in Figure \ref{fig:core-haskell-type-system}, also
 a type system that differs from the normal type system by disregarding
-(not doing) improvement (that is, by not removing any resolved
-constraint). We also define a program context $\CO[e]$ as any
-expression that has $e$ as a subexpression.
+improvement, and thus not removing any resolved constraint. We also
+define a program context $\CO[e]$ as any expression that has $e$ as a
+subexpression.
 
 \begin{Theorem}[Overloading Resolution]
   For all $P, \Gamma, e, C, \tau, \phi$ such that
@@ -222,7 +224,7 @@ expression that has $e$ as a subexpression.
   $a\in\unreachableVars(\{\phi\pi\},\tv(\phi(C\Rightarrow \tau))$,
   we have that, for all program contexts $\CO[e]$, 
   if $P;\phi\Gamma \vdash_1 \CO[e]: (C'\Rightarrow \tau')$ holds
-  then $a\in \unreachableVars(\tv(\phi'\phi\pi),\tv(C'\Rightarrow \tau'))$.  
+  then $a\in \unreachableVars(\tv(\phi\pi),\tv(C'\Rightarrow \tau'))$.  
 \label{thm:overloading-resolution}
 \end{Theorem}
 
