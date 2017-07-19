@@ -178,15 +178,37 @@ it to have a well-defined semantics). Distinct meanings of {\tt
   (\sshow\ $\!\!$.$\!\!$ \rread)} would be obtained from distinct
 instance types of \sshow\ and \rread.
 
-In the next section we give a semantics by induction on the derivation
-of the type of an expression by considering functions used in the type
-inference algorithm as relations.
-
 Type inference for mini-Haskell is obtained by extending type
 inference for core-Haskell in straightforward way, namely by directly
 using the rules of Subsection \ref{sec:mini-Haskell} (Figures
 \ref{fig:mini-haskell-module-rule}, \ref{fig:import-relation} and
 \ref{fig:mini-haskell-rules-for-declarations}), by replacing relations
 with functions.
+
+The overloading resolution theorem below considers a type inference
+algorithm that differs from mini-Haskell's by only i) disregarding
+improvement, and thus not removing any {\em resolved\/} constraint,
+and ii) not allowing constraints in an argument to be removed, using
+$C \cup C'$ instead of $C \oplus_V C'$ (where $V = \tv(\tau)\cup
+\tv(C)$). We use $\tiUm$ instead of $\ti$ in typing formulas of this
+(mini-Haskell without improvement and constraint selection by
+$\oplus$) type inference algorithm. We also define a program context
+$\CO[e]$ as any expression that has $e$ as a subexpression.
+
+\begin{Theorem}[Overloading Resolution]
+  For all $P, \Gamma, e, C, \tau$ such that $P;\Gamma \tiUm e:
+  C\Rightarrow \tau$ holds, $\pi\in C$ and
+  $a\in\unreachableVars(\{\pi\},\tv(\phi(\tau)))$, then, for all
+  $P;\phi\Gamma\tiUm\CO[e]: C'\Rightarrow \tau'$ that holds, we have
+  that $\pi \in C'$.
+\label{thm:overloading-resolution}
+\end{Theorem}
+
+{\em Proof\/}: By induction on the structure of $\CO[e]$. $\qed$
+
+Informally speaking, theorem \ref{thm:overloading-resolution} shows
+that there is no program context where an expression can be used that
+will cause a constraint with an unreachable type variable to be
+instantiated.
 
 \input{satisfiability}

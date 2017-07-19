@@ -209,40 +209,6 @@ We have the following:
 
 {\em Proof\/}: By a straightforward induction on the structure of $e$. $\qed$.
 
-The overloading resolution theorem below considers a type system that
-differs from the mini-Haskell type system only by disregarding
-improvement, and thus not removing any resolved constraint. We use
-$\vdash_1$ instead of $\vdash$ in typing formulas of this
-(mini-Haskell without improvement) type system. We also define a
-program context $\CO[e]$ as any expression that has $e$ as a
-subexpression.
-
-\begin{Lemma}
-  \label{lemma:unreachable-means-all-unreachable}
-  For all $\pi, V$, we have that $\unreachableVars(\{\pi\},V)\not=\emptyset$
-  if and only if $\unreachableVars(\{\pi\},V)=\tv(\pi)$.
-\end{Lemma}
-
-{\em Proof\/}: Directly from Definition \ref{def:reachable}. $\qed$
-
-\begin{Theorem}[Overloading Resolution]
-  For all $P, \Gamma, e, C, \tau$ such that $P;\Gamma \vdash_1 e:
-  C\Rightarrow \tau$ holds, $\pi\in C$ and
-  $a\in\unreachableVars(\{\pi\},\tv(\phi(\tau)))$, we have that, for
-  all program contexts $\CO[e]$, if $P;\phi\Gamma \vdash_1 \CO[e]:
-  (C'\Rightarrow \tau')$ holds and $\pi \in C'$ then $a\in
-  \unreachableVars(\{\pi\},\tv(\tau'))$.
-\label{thm:overloading-resolution}
-\end{Theorem}
-
-{\em Proof\/}: By induction on the structure of $\CO[e]$, using Lemma
-\ref{lemma:unreachable-means-all-unreachable}. $\qed$
-
-Informally speaking, theorem \ref{thm:overloading-resolution} shows
-that there is no program context where an expression can be used that
-will cause an unreachable type variable to be instantiated, neither a
-constraint with an unreachable type variable to be changed.
-
 \subsection{Mini-Haskell}
 \label{sec:mini-Haskell}
 

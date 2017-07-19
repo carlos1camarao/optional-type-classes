@@ -121,9 +121,19 @@ holds:
 \end{itemize}
 
 Variables in a single constraint are either all reachable or all
-unreachable. If they are unreachable, either the constraint can be
-removed, in the case of single entailment, or there is a type error
-(ambiguity or unsatisfiability).
+unreachable:
+
+\begin{Lemma}
+  \label{lemma:unreachable-means-all-unreachable}
+  For all $\pi, V$, we have that $\unreachableVars(\{\pi\},V)\not=\emptyset$
+  if and only if $\unreachableVars(\{\pi\},V)=\tv(\pi)$.
+\end{Lemma}
+
+{\em Proof\/}: Directly from Definition \ref{def:reachable}. $\qed$
+
+If variables in a constraint are unreachable, either the constraint
+can be removed, in the case of single entailment, or there is a type
+error (ambiguity or unsatisfiability).
 
 Instead of a syntactic property of a type, dependent on the
 specification of FDs or TFs, ambiguity is a property of an expression,
