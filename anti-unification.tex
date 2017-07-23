@@ -28,7 +28,7 @@ $\lcg_2$ computes the generalization of two simple types. For two
 types $\tau_1$ and $\tau_2$ the idea is to recursively traverse the
 structure of both types using a finite map to store previously
 generalized types. Whenever two type expressions $\rho_1 =
-X\_1\:\bar{\tau}_1$ and $\rho_2 = X\_2\:\bar{\tau}_2$ are parameters
+X_1\:\bar{\tau}_1$ and $\rho_2 = X_2\:\bar{\tau}_2$ are parameters
 of $\lcg_2$, it is checked whether the domain of the finite map
 contains a type variable that maps to $(X_1, X_2)$, i.e.~whether there
 has been a previous generalization of $X_1, X_2$. If this is the case,
@@ -114,7 +114,7 @@ domain of the finite map may have distinct arities.
   \prog{\data\ $F$ $a$ = $T$ $a$\\
     \data\ $G$ $f$ = $T'$ ($f$ \Int)
     }
-  and let $\tau_1 = F\: (T\: \Int)$, $\tau_2 = G\: T$. 
+  and let $\tau_1 = F\: (T\: \Int)$, $\tau_2 = G\: F$. 
 
   We have that $\lcg(\{\tau_1,\tau_2\})$ yields the generalization
   $\tau = c\: a$, where $c$ and $a$ are fresh type variables.  In the

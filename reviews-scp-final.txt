@@ -1,0 +1,444 @@
+Handling editor's comments:
+
+The reviewers made a number of observations about this paper. They are concerned about the paper's lack of new content when compared to the SBLP 2016 paper and made a number of suggestions to mitigate this problem. Furthermore, they criticized the lack of discussion about the usefulness of the proposed type system (what kinds of properties it exhibits), informal and incomplete presentation, lack of proofs, and the fact that the paper is not self-contained. Unfortunately, these are problems that I do not think can be addressed within the timespan of this special issue.
+
+Reviewers' comments:
+
+Reviewer #1: The paper describes a proposal for overloaded symbols in Haskell without using type classes.
+The type of an overloaded symbol depends on the context where it is used,
+since it's determined by the anti-unification of the visible instances.
+
+I think this paper is an effort from the authors to make their previously developed
+proposal for overloading in Haskell coexist with the oficial type classe based approach.
+Thus, an user has the option to use either type classes (plus modularized instances) or
+overloaded symbols resolved by anti-unification.
+
+I like the paper, although it is difficult to follow (it has some presentation problems,
+e.g. it mixes introduction with discussion).
+The main ideas have been deeply developed by the authors, challenging the usual way of
+dealing with overloading, and deserve to at least be considered by the Haskell community.
+
+In the example of page 18 it is said that the keyword "instance" is not needed.
+However, I think that is a good idea to make the possibly overloaded symbols explicit.
+Otherwise the approach could become quite impractical, because either all the
+imported variables from a module have to be mentioned explicitly or there is a big risk
+to accidentally capture symbols that were not defined for this purpose.
+
+
+Detailed Comments:
+
+p2,l35: "its global scope" -> "their global scope"
+p2 and p3: "section" -> "Section"
+p3,l17: "motivated, in section" -> "motivated in Section". Furthermore, what about swapping items 4 and 5?
+p8,l23: "we use b |-> a is used" -> "we use b |-> a"
+p8,l49: "C -> \tau" -> "C => \tau"
+p15,l34: You started talking about mini-Haskell, now you present the type system of core-Haskell without previously defining the relationship between both languages.
+p16,l15: There's a missing P;
+p17,l34-44: Nothing is said about the automatically generated class name.
+p17,l50: Shouldn't it be \vdash_0 instead of \vdash ?
+p18,l33: I think Subsection 7.1 should be part of Section 6, since, more than being a use case, this example helps to a better understanding of the rules of mini-Haskell.
+p18,l36: "Keywork" -> "Keyword"
+p18,l44: "Figure 7.1" -> "Figure 8"
+p19,l36: The triple (E,Q',\Gamma') should be a pair (Q',\Gamma'). I've noticed that you removed E from the previous version of the paper, was this a simplification of the type rules? Wasn't E necessary?
+p20,l12-13: Why do you have to use the name of the generated class? I thought that was enough to use the overloaded symbol.
+p20,l35: "Figure 7.1" -> "Figure 8"
+p20,l45: Use the export relation instead of \vdash
+p20,l49: Some more text explaining the derivations would be more "reader-friendly". For example, is important to deepen on the role of anti-unification in the derivations.
+p21,l22: "M = self" -> "M = A"
+p21,l26: I would like to see an example of the use of the type rules for a module that imports the symbols defined in A and uses them.
+p21,l29: Add a reference to the TDNR proposal
+p22,l30: If I understood it well, the type should be "_Reset (a -> b) => a -> b"
+p23,l45: "of of type" -> "of type"
+p25,l12: "overloaded record" -> "type directed name resolution and overloaded record". TDNR should also be mentioned in the abstract.
+References:
+p25,l28: "Machine inteligence" -> "Machine Inteligence"
+p25,l54: change the ands by commas
+p26,l17: pages? editorial?
+p26,l34: volume?
+
+
+
+
+
+Reviewer #2: This paper presents an approach to allow type classes to be optionally declared by Haskell programmers. This allows the developers to declare overloaded symbols without the need to declare their types in type classes. The types can automatically be determined by the authors approach. The authors focus this work on modular instances only. They present the small, but necessary, modifications to the Haskell's module system to support this approach. A few examples of the utility of the approach are presented.
+
+The paper is very well written, structured, and it's quite easy to read and follow. The work itself is quite interesting. However, there's an issue related to the authors' work published on SBLP 16.
+
+This paper was invited to the SCP special issue based on the authors' paper accepted for SBLP 2016 with the same title. In these situations, the authors are suppose to extend their initial work so the publication in a journal such as SCP is justifiable. Unfortunately, apart from the two extra examples in the SCP version, I could not find what are the difference between the two submissions. Moreover, the authors not even cite their own paper from SBLP 2016. This should have been done, making quite clear what is the novelty of this new submission.
+
+I think several extensions are possible:
+
+- The approach requires a change to the Haskell module system. Which are the implications of doing so? What's the extent of the applicability or compatibility of the approach with existing Haskell programs? What's the required effort to make existing programs compatible with this approach?
+
+- The authors write recursive modules are not treated in this paper, but they could have done that. At least, they could have discussed the implications of doing so.
+
+- Some kind of evaluation could be done. For instance, they could compare their approach with others, like type families of FDs, evaluating advantages and disadvantages of programs using the different approaches.
+
+A smaller concern is which problem are the authors solving? Although the technique seems interesting, it is not clear from the paper what's the motivation, what's the problem being solved by this work. This should be part of the abstract and discussed in the introduction.
+
+
+Small issues:
+- page 8, line 23: "We use b |-> a is used", instead -> We use b |-> a instead
+- page 9, line 17: i.t. -> i.e.
+- page 12, line 49, there is a space missing in the f's type
+- in section 7, the references to figure 8 are wrong appearing 7.1
+- a few problems in the references (e.g. 11 doesn't have pages)
+
+
+
+Reviewer #3: The paper describes an alternative mechanism of parametric
+overloading, that sidesteps the need to declare the overloaded
+function with its most general type. Rather, the general type is
+deduced from the instance declarations by means of anti-unification
+(generalization). The paper describes the interaction of this new
+mechanism with the module system.
+
+In this present form, the submission is unpublishable. In addition to
+the technical problem, the submission lacks sufficient
+contribution. It is written as an internal technical report rather
+than a journal article for a wide audience.
+
+
+The main claimed contribution is the new type system for mini-Haskell,
+presented (alas, not completely) as typing rules. Alas, there are no
+formal statements telling us if this type system is any good. Is it even
+sound? What other good properties does it have? What problematic program
+behavior it is meant to statically guard against? If the submission
+does not even bother to state the good properties of the type system,
+why would we use it? We might just as well use an untyped language.
+
+The lack of precise statements of type soundness and beneficial
+properties will doom even a workshop submission. But this is a journal
+submission: we need not just statements but proofs.
+
+The submission is not written as a journal paper for a wide
+audience. It starts with technical jargon without stating what exactly
+is the problem at hand and why it is important, without giving any
+example of that problem, without any motivation.  Calls for papers,
+for example, for Haskell Symposium, say: ``Regular papers should
+explain their research contributions in both general and technical
+terms, identifying what has been accomplished, explaining why it is
+significant, and relating it to previous work, and to other languages
+where appropriate.'' The authors of the present paper should heed this
+advice.
+
+The submission mentions `ambiguity rule' on the third line of the text
+as if everyone knows about it. I have been programming in Haskell for
+more that 15 years and have never heard of that rule. Although Haskell
+Report talks about ambiguity and ambiguous type, there is not a single
+mention of the `ambiguity rule'. Google shows this term appears only
+in the authors work. Don't you think you should define this term
+before using in a paper?  This is just the first, out of many other
+examples of carelessness in presentation, not thinking about the
+reader at all. If the authors don't care if the paper is read,
+why to write it in the first place?
+
+The paper is woefully not self-contained, with constant references to
+[8]. For example, the type system is impossible to understand because
+the key relations >>P and P \vee_e C are not precisely defined (what
+is the subscript e?)
+
+Finally, where is the evaluation section? A couple of trivial examples
+in Sec 7 is all that the new system has been applied to? Have you
+tried to use it for something serious?
+
+
+Now about a technical problem. It has to to with the anti-unification
+(LCG) algorithm in Fig 2. Consider the following data types
+
+        data F1 a = F1 a
+        data F2 f = F2 (f Int)
+
+and the following two types
+        t1 = F1 (Maybe Int)
+        t2 = F2 Maybe
+
+Applying the algorithm to {t1,t2} gives as the generalization c a,
+where c and a are fresh type variables. However, to give t1, the type
+variable a has to be instantiated with Maybe Int :: * whereas to
+get t2, the same variable has to be instantiated with Maybe :: * -> *
+of the different kind. Haskell 2010 type classes are simply
+kinded. Therefore, there could be no class (A c a) whose instances are
+A t1 and A t2. Granted, GHC has an PolyKinds extension. It however
+requires explicit kind annotations. Anyway, the example makes me doubt
+that the presented type system is even sound. I believe the authors
+have to track kinds however they want to resolve the above problem --
+something they explicitly tried to avoid. I don't think they can get
+by without. That is why we need formal statements, and we need proofs.
+
+
+I'm also quite dubious about the merits of the proposed optional type
+classes. It is not clear how this feature plays with polymorphism. For
+example, consider
+
+        module M where
+        show :: [Int]  -> String
+        show :: [Char] -> String
+
+What is the inferred type of
+        foo1 x = show [x]
+?
+How can I write the type signature for foo1 explicitly? Writing type
+signatures is considered a good practice.
+
+Is
+        foo2 x = show (Just x) ++ show [x]
+allowed? What if I do want such a polymorphic function?
+
+I presume
+        foo3 x = show [not x]
+is not allowed. What about
+        foo4 x = show [[x]]
+?
+
+what about show that appears in the definition of another instance of
+show (at a different type)? (This is not a recursion, strictly
+speaking).
+
+
+Finally, any paper that deals with local instances has to explain
+what it does about the incoherence problem (pointed already by Wadler
+and Blott).
+
+
+Small comments
+
+p7, line 46: ``to the point of affecting the view of Haskell
+as the best choice for general-purpose software development.''
+
+The best choice? Really? Was this ever a wide-held view?
+
+p8, line 49:
+>     More precisely, constraint pi \in C in C=>tau is resolved if and
+> only if there exists a variable in pi that is unreachable, from the type
+> variables in tau.
+
+I would have never called this situation `resolved'. One normally
+calls a constraint `resolved' if it is satisfied (and hence
+removed). Where did you find such a non-standard use of `resolve'?
+
+Definition 2: impossible to understand. What do you mean
+``variable that is introduced in an instance definition''
+and ``explicitly annotated in a type class declaration''. That is not
+the standard terminology and it is not defined.
+
+
+
+
+
+Reviewer #4: SUMMARY
+=======
+
+This paper presents a variation on the Haskell type system that allows adhoc
+overloading of function names without the explicit definition of a type class
+that constraints the shape of the functions type. Rather the language
+implicitly introduces a type class for the overloaded function and determines
+the generic type of the function as the least common generalisation of the
+types of the overloaded implementations in scope. As a consequence, the type
+differs depending on the scope.
+The paper combines this with local instances and the possibility of multiple
+instances with the same type in different scopes.
+
+The paper formalises the type system for this language and sketches an application
+to record field overloading.
+
+
+GENERAL COMMENTS
+================
+
+While the idea at the core of this paper is interesting, the paper does not
+meet the quality and polish that I expect from journal articles:
+
+  - The abstract and introduction just state what the paper is about without
+    motivating why this is interesting (e.g., which problems it solves) or
+    relation to the current state of art.
+
+  - The structure of the sections in the paper is not optimal.
+
+    * It would be better to start with examples as found in sections 7.2 and 7.3,
+      as part of an Overview section before diving into the technical details.
+
+    * Section 5 seems to be an orthogonal extension that is not strictly necessary.
+      It could be presented as an extension.
+
+  - The formalisation is not as self-contained as I would expect from a journal
+    article. For several judgements the text refers to other works. Nevertheless
+    these judgements reveal how the overloading is deal with, which is a core
+    aspect of this work.
+
+  - The paper does not state or prove any meta-theoretical properties for the
+    type system.
+
+  - The paper does not present a type inference algorithm.
+
+  - The definition of least-common generalisation function lcg is broken. The
+    problem is that kinds are left implicit. All the same lcg is defined to work
+    with type constructors and the example that illustrates the function uses
+    type constructors of different kinds. Yet, it clearly does not work in
+    cases where the type arguments are not of kind *.
+    For instance, for
+
+      data T1 (a :: *) = ...
+      data T2 (a :: * -> *) = ...
+
+    we get lgc(T1 a,T2 b) = c1 c2, which is clearly cannot be the generalisation
+    of the two types because c1 and c2 would have to have two different kinds
+    at the same time.
+
+
+DETAILED COMMENTS
+=================
+
+ABSTRACT
+
+I am rather unhappy about the quality of writing of the abstract.
+
+-> The abstract fails to mention what problem the paper solves.
+
+-> One should not refer to "previous works by the author" in an abstract.
+   An abstract should be self-contained.
+
+-> "In this paper we concentrate however ..."
+   An abstract should only concentrate on what the paper is about.
+   This goes without saying and of course the abstract should not
+   digress.
+
+INTRODUCTION
+
+-> The introduction fails to provide a context for this work.
+   It immediately starts by stating the contribution of the work.
+
+   What is expected is:
+
+     - a brief indication of the area this paper is situated in
+     - the current state of the art
+     - the shortcomings in the current state of the art /
+       what problem is addressed by this work
+
+   before you state that you solve that problem and how you do it.
+   Without this context, it is very hard to appreciate what your
+   work is about.
+
+-> The link between the different ideas listed is far from clear.
+   For instance, are the generalisation of overloading and the locality two
+   orthogonal ideas? Why are they considered together?
+
+-> "not though"
+   bad grammar
+
+ANTI-UNIFICATION OF INSTANCE TYPES
+
+p.4
+  "there exist_s_ a substitution"
+
+p.5
+
+  -> "that defined" -> who defined
+
+  -> "search on ... if" -> look in ... whether
+
+  -> "either a type constructor_,_ constant or variable"
+
+  -> "types with different number of type arguments"
+      The notion of argument for a type does not make sense.
+      Do you mean type constructors?
+
+p.6
+  -> The use of parentheses is wrong in Theorem 2.
+     It should be "lcg_r(S,lcg(S)) holds (i.e, ... and ...)."
+
+AMBIGUITY RULE
+
+-> At this point in the paper it is entirely unclear why the reader
+   should care about the ambiguity rule.this section
+
+-> The section does not explain how constraints that contain reachable variables are resolved,
+   yet this seems a critical for requirement for checking entailment.
+   E.g. how is the constraint Eq a that arises from "x == x" resolved for the code
+
+    f :: Eq a => a -> Bool
+    f x =  x == x
+
+p.9
+
+  -> "i.t." -> i.e.
+
+MODULARIZATION OF INSTANCES
+
+-> At this point in the paper it is entirely unclear why the reader
+   should care about the modularisation of instances.
+
+-> "Problems with the use of orphan instances"
+   Why? Pleas explain. This does not follow from what you have said so far.
+
+MINI-HASKELL WITH OPTIONAL TYPE CLASSES
+
+-> This section would benefit a lot from being partitioned into subsections.
+
+p.14
+
+  -> In the definition of the Declaration non-terminal I believe that \bar{B} can
+     just be the simpler B.
+
+p.15
+
+  -> The text fails to explain all the type system rules. In particular (Var) and (Abs)
+     are not discussed.
+
+  -> Why does rule (Var) contain a constraint entailment check and at the same time
+     return the entailed constraint? I would expect only one of the two to happen.
+
+  -> What is the point of the _0 subscript on the turnstile?
+
+  -> Rule (Abs) fails to pass the program theory on recursively.
+
+  -> The paper is not sufficiently self-contained without the definitions of
+     constraint entailment and simplification.
+
+p.16
+
+  -> "plus not all ... but only ..."
+     Please rewrite into simpler and clearer sentences.
+
+p.17
+
+  -> "occurr" -> occur
+
+  -> The fourth rule of Fig. 7 is not mentioned in the text.
+
+p.19
+
+  -> The third rule of Fig. 9 erroneously mentions a variable E.
+
+
+EXAMPLES
+
+  -> I don't find Section 7.1 particularly useful in a separate examles section.
+
+     Any examples that illustrate the definitions of Section 8 should be interspersed
+     with those definitions.
+
+p.18
+
+  -> "Figure 7.1" -> Figure 8
+
+p.20
+
+  -> "Figure 7.1" -> Figure 8
+
+p.21
+
+  -> "The proposal for type directed name resolution"
+      Which proposal? A citation is missing.
+
+p.22
+
+  -> "syntactically equivalence" -> syntactic equivalence
+
+p.23
+
+  -> "of of" -> of
+
+p.24
+
+  -> "Instances in Haskell" -> instances in Haskell
