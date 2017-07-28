@@ -19,11 +19,11 @@
 
 \begin{abstract}
 
-This paper presents an approach for allowing programmers to declare
-and use overloaded symbols without declaring their types in type
-classes. An overloaded symbol's type not explicitly defined in a type
-class is automatically determined from the anti-unification of the
-types of visible instances for this symbol in the relevant module.
+This paper presents an approach that allows programmers to declare and
+use overloaded symbols without declaring their types in type
+classes. The type of an overloaded symbol not explicitly defined in a
+type class is automatically determined from the anti-unification of
+the types of visible instances for this symbol in the relevant module.
 Overloaded symbols not declared in a type class have thus a modular
 scope.
 
@@ -46,7 +46,7 @@ unsatisfiability that there are none.
 %context in which the expression could be placed so that the constraint
 %could be removed.
 
-In this approach multi-parameter type classes need not an extra
+In this approach multi-parameter type classes do not need an extra
 mechanism, such as functional dependencies or type families, in order
 to avoid ambiguity, and the additional flexibility to Haskell-style of
 overloading allows, for example, as shown in the paper, overloaded

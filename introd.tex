@@ -23,8 +23,8 @@ consider (where the body of definitions are replaced by {\tt
 The type of \print, defined as: \texttt{\print\ $x$ =
   \putStrLn\ (\sshow\ $x$)} is: \[ \texttt{\SShow\ $a$ $\Rightarrow$
   $a$ $\rightarrow$ \IO\ ()} \] where constraint
-(\texttt{\SShow\ $a$}) occurs due to the use of the overloaded
-function \sshow, of type \SShow\ $a$ $\Rightarrow$ $a$ $\rightarrow$
+(\texttt{\SShow\ $a$}) is due to the use of the overloaded function
+\sshow, of type \SShow\ $a$ $\Rightarrow$ $a$ $\rightarrow$
 \String\ (declared in class \SShow).
 
 A type in Haskell is of the form $\forall\,\overline{a}.\,C
@@ -51,20 +51,21 @@ types {\tt \String\ $\rightarrow$ \Bool}, {\tt \String\ $\rightarrow$
 corresponding type.  More importantly, functions can use overloaded
 functions in the definition of other functions, as well as define
 instances for distinct type constructors. For example, by using
-mapping and folding functions, respectively with types {\tt
-  \Functor\ $f$ $\Rightarrow$ $(a\rightarrow b)\rightarrow
-  f\:a\rightarrow f\:b$} and {\tt \Foldable\ $f$ $\Rightarrow$
-  $(a\rightarrow b\rightarrow b)\rightarrow b\rightarrow
-  f\:a\rightarrow b$}, polymorphic instances of $f$ and other
-higher-order functions can be defined.
+mapping and folding functions, e.g.~with types {\tt \Functor\ $f$
+  $\Rightarrow$ $(a\rightarrow b)\rightarrow f\:a\rightarrow f\:b$}
+and {\tt \Foldable\ $f$ $\Rightarrow$ $(a\rightarrow b\rightarrow
+  b)\rightarrow b\rightarrow f\:a\rightarrow b$}, respectively,
+mapping and folding functions for instances of $f$ as well as other
+higher-order polymorphic functions that use mapping and folding
+functions can be defined.
 
 %Context-dependency allows in this way overloading to have a more
 %prominent role in the presence of parametric polymorphism, as explored
 %mainly in the programming language Haskell.
 
-The fundamental characteristic of overloading in Haskell that supports
-context-dependent overloading is the reliance on an open-world
-approach.
+Another fundamental characteristic of overloading in Haskell, that
+supports context-dependent overloading resolution, is the reliance on
+an open-world approach.
 %In general what is an open-world approach is not very well explained.
 This implies that overloading resolution needs to be checked only when
 there exist variables in constraints that occur only in the
@@ -92,20 +93,20 @@ characterizes that ``the type is ambiguous'', not that overloading
 resolution needs to be checked.  This guarantees that new instances
 can be introduced in well-typed Haskell programs without ever
 introducing a type error. On the other hand, i) it does not consider
-the presence of unreachable type variables in constraints from the set
-of type variables in the simple type (Section \ref{sec:ambiguity}) may
-be used to check overloading resolution, which avoids the need of
-using an extra mechanism for dealing with ambiguity problems in the
-presence of MPTCs; and ii) it does not distinguish overloading
-resolution from ambiguity, and thus cannot recover an intuitive common
-sense meaning of ambiguity as existence of two or more instances that
-can be used for an overloaded name in an expression, when overloading
-is resolved;
-
-The expressivity of overloading obtained with optional type classes is
-illustrated by the support of type directed name resolution
-(Subsection \ref{sec:type-directed-name-resolution}) and overloaded
-record fields (Subsection \ref{sec:overloaded-record-fields}).
+that the presence of unreachable type variables in constraints from
+the set of type variables in the simple type (Section
+\ref{sec:ambiguity}) may be used to check overloading resolution,
+avoiding the need of using an extra mechanism for dealing with
+ambiguity problems in the presence of MPTCs; and ii) it does not
+distinguish overloading resolution from ambiguity, and thus cannot
+recover an intuitive common sense meaning of ambiguity as existence of
+two or more instances that can be used for an overloaded name in an
+expression, when overloading is resolved; iii) the expressivity of
+overloading obtained together with optional type classes a simple
+support of type directed name resolution (Subsection
+\ref{sec:type-directed-name-resolution}) and overloaded record fields
+(Subsection \ref{sec:overloaded-record-fields}).
+%Further examples are envisaged but are left for further work.
 
 The paper presents minimalist modifications to Haskell's module system
 that are necessary for overloaded names to have a modular scope, with
