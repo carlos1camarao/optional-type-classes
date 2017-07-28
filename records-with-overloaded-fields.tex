@@ -2,19 +2,18 @@
 \label{sec:overloaded-record-fields}
 
 In this section we describe how the possibility of overloading symbols
-without the need of declaring type classes allows record fields to be
-overloaded, in an easy way. The idea is simply to transform any access
-to an overloaded record field into an automatically created instance
-of an undeclared type class, and similarly for any use of a record
-update of an overloaded record field. 
+without the need of declaring type classes allows an easy support for
+overloaded record fields. Acccessing of an overloaded record field
+simply leads to the use of an automatic created instance of an
+undeclared type class, and similarly for any update of an overloaded
+record field.
 
-There are certainly design decisions to be made, but below we
-illustrate the proposal by creating instance of \get\_\fieldname\ and
-\update\_\fieldname\ whenever there exists, respectively, an access of
-and an update to an overloaded record field, where \fieldname\ is the
-name of the overloaded record field.
+We illustrate this idea below by creating an instance of
+\get\_\fieldname\ and \update\_\fieldname\ whenever there exists,
+respectively, an access of and an update to an overloaded record
+field, where \fieldname\ is the name of the overloaded record field.
 
-Consider a simple example of overloaded record fields: 
+Consider the following simple example of overloaded record fields:
 
 \progb{\data\ \Address\ \= = \Address\ \= \{ \id\ :: \Int, \aaddress\ \= :: \String\ \= \kill
 \data\ \Person\  \> = \Person\  \> \{ \id\ :: \Int, \name\     \> :: \String\ \>\}\\

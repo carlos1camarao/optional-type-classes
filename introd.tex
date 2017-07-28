@@ -1,127 +1,162 @@
 \section{Introduction}
 \label{sec:intro}
 
-We use the term {\em constrained polymorphism\/} to refer to the
-polymorphism originated by the combination of parametric polymorphism
-and context-dependent overloading.  Context-dependent overloading is
-characterized by the fact that overloading resolution in expressions
-(function calls) $e\: e'$ is based not only on the types of the
-function ($e$) and the argument ($e'$), but also on the context in
-which the expression ($e\: e'$) occurs. This makes overloading much
-more expressive, since:
+The Haskell approach to overloading
+\cite{ghc-users-guide,MarkJones94a} is a distinctive feature of the
+language that has been widely used. In Haskell, the types of
+overloaded names (or symbols) are provided in {\em type class\/}
+declarations and their definitions are introduced in {\em class
+  instance\/} declarations. The type of an expression that uses an
+overloaded symbol is a constrained polymorphic type, that contains a
+type class constraint if the overloading is not resolved. For example,
+consider (where the body of definitions are replaced by {\tt
+  \ldots}):
 
-\begin{itemize}
+\progb{xxxxxxxxxxxxxxxxx\=xx\=  \+ \kill
+   \class\ \SShow\ $a$ \where\+ \\ 
+      \sshow\ :: $a \rightarrow$ \String \-\\ 
+   \instance\ \SShow\ \Int\ \where\+ \\ 
+     \sshow\ = \ldots\-\\
+   \putStrLn\ :: \String\ $\rightarrow$ \IO\ ()\\
+   \putStrLn\ = \ldots
+}
+The type of \print, defined as: \texttt{\print\ $x$ =
+  \putStrLn\ (\sshow\ $x$)} is: \[ \texttt{\SShow\ $a$ $\Rightarrow$
+  $a$ $\rightarrow$ \IO\ ()} \] where constraint
+(\texttt{\SShow\ $a$}) occurs due to the use of the overloaded
+function \sshow, of type \SShow\ $a$ $\Rightarrow$ $a$ $\rightarrow$
+\String\ (declared in class \SShow).
 
-  \item constants can also be overloaded --- for example, literals
-    (like {\tt 1}, {\tt 2} etc.) can be used to represent fixed and
-    arbitrary precision integers as well as fractional numbers, so
-    that they can be used in expressions such as {\tt \mbox{1 + 2.0}}
-    ---, and
+A type in Haskell is of the form $\forall\,\overline{a}.\,C
+\Rightarrow \tau$, where $\overline{a}$ is a possibly empty set of
+type variables, $C$ is a possibly empty set of constraints and $\tau$
+is a simple (unconstrained, unquantified) type. A constraint is a
+class name followed by a sequence of simple types.
 
-  \item overloading resolution for function calls need not occur when
-    the argument is encountered.  Functions with types that differ
-    only on the type of the result can be overloaded, for example {\em
-      read\/} functions with types {\tt \String\ $\rightarrow$ \Bool},
-    {\tt \String\ $\rightarrow$ \Int}, each taking a string and
-    generating the denoted value in the corresponding type ---, and
-    also higher-order curried functions, e.g.~mapping functions with
-    types {\tt $(a\rightarrow b)\rightarrow f\:a\rightarrow f\:b$},
-    folding functions with types {\tt $(a\rightarrow b\rightarrow
-      b)\rightarrow b\rightarrow f\:a\rightarrow b$}, for distinct
-    instances of $f$, can be overloaded.
+Overloading resolution in Haskell is {\em context-dependent}, that is,
+it depends on the context where an expression occurs. For function
+calls, this means that it depends also on the type of the function
+result (i.e.~overloading resolution in an expression $f\:x$ can be
+based also on the type required by the context in which $f\:x$
+occurs). Also, constants can be overloaded --- for example, literals
+like {\tt 1}, {\tt 2} etc.~can be used to represent fixed and
+arbitrary precision integers as well as fractional numbers.
 
-\end{itemize}
+The possibility of using overloading without requiring overloading
+resolution in each function call makes overloading more
+expressive. Functions with types that differ only on the type of the
+result can be overloaded, for example {\em read\/} functions with
+types {\tt \String\ $\rightarrow$ \Bool}, {\tt \String\ $\rightarrow$
+  \Int}, each taking a string and generating the denoted value in the
+corresponding type.  More importantly, functions can use overloaded
+functions in the definition of other functions, as well as define
+instances for distinct type constructors. For example, by using
+mapping and folding functions, respectively with types {\tt
+  \Functor\ $f$ $\Rightarrow$ $(a\rightarrow b)\rightarrow
+  f\:a\rightarrow f\:b$} and {\tt \Foldable\ $f$ $\Rightarrow$
+  $(a\rightarrow b\rightarrow b)\rightarrow b\rightarrow
+  f\:a\rightarrow b$}, polymorphic instances of $f$ and other
+higher-order functions can be defined.
 
-In this way, context-dependency allows overloading to have a much more
-prominent role in the presence of parametric polymorphism, as explored
-mainly in the programming language Haskell.
+%Context-dependency allows in this way overloading to have a more
+%prominent role in the presence of parametric polymorphism, as explored
+%mainly in the programming language Haskell.
 
-The main motivation of this paper is to allow symbols to be overloaded
-in a language that supports constrained polymorphism without requiring
-the types of these symbols to be declared separately in type classes.
-We consider also the following:
+The fundamental characteristic of overloading in Haskell that supports
+context-dependent overloading is the reliance on an open-world
+approach.
+%In general what is an open-world approach is not very well explained.
+This implies that overloading resolution needs to be checked only when
+there exist variables in constraints that occur only in the
+constraints, i.e.~do not occur in the simple (unconstrained part of
+the) type. The fact that overloading resolution does not need to be
+checked in every function application is important not only to defer
+overloading resolution but also for compile time efficiency.  In the
+presence of multi-parameter type classes (MPTCs), functional
+dependencies (FDs) \cite{Type-classes-with-FDs-MarkJones00,Jones:2008}
+or type families (TFs) \cite{Chakravarty2005,Schrijvers:2008} are used
+to avoid ``ambiguity''.  With MPTCs, ``do not occur in the simple
+type'' is modified in GHC \cite{GHC}, the prevailing Haskell compiler,
+to ``is not uniquely determined from the set of type variables that
+occur in the simple type''. This unique determination is such that,
+for each type variable $a$ that occurs in the constraints $C$ but not
+in the simple type $\tau$ of a constrained type $C\Rightarrow \tau$,
+there must exist a FD $b \mapsto a$ for some $b$ in $\tau$ (in the
+case of TFs, a similar unique determination is specified). We use $b
+\mapsto a$ for a FD, instead of $b \rightarrow a$, to avoid confusion
+with the notation used to denote functional types.
 
-\begin{description}
+However, in Haskell the presence of type variables in constraints that
+are not uniquely determined from type variables in the simple type
+characterizes that ``the type is ambiguous'', not that overloading
+resolution needs to be checked.  This guarantees that new instances
+can be introduced in well-typed Haskell programs without ever
+introducing a type error. On the other hand, i) it does not consider
+the presence of unreachable type variables in constraints from the set
+of type variables in the simple type (Section \ref{sec:ambiguity}) may
+be used to check overloading resolution, which avoids the need of
+using an extra mechanism for dealing with ambiguity problems in the
+presence of MPTCs; and ii) it does not distinguish overloading
+resolution from ambiguity, and thus cannot recover an intuitive common
+sense meaning of ambiguity as existence of two or more instances that
+can be used for an overloaded name in an expression, when overloading
+is resolved;
 
-\item[Expression Ambiguity:] Ambiguity is defined according to an
-  intuitive notion of the existence of two or more distinct instances
-  of an overloaded name used when overloading is resolved. It is not
-  as a syntactic property of a type, as it is defined in Haskell.
-  Ambiguity is discussed in Section \ref{sec:ambiguity}. This
-  modification is not necessary for optional type classes to work, but
-  allows greater flexibility; together with optional type classes it
-  enables, for example, type directed name resolution to be obtained
-  for free (Subsection \ref{sec:type-directed-name-resolution}) and
-  allows also an easy support of overloaded record fields (Subsection
-  \ref{sec:overloaded-record-fields}).
+The expressivity of overloading obtained with optional type classes is
+illustrated by the support of type directed name resolution
+(Subsection \ref{sec:type-directed-name-resolution}) and overloaded
+record fields (Subsection \ref{sec:overloaded-record-fields}).
 
+The paper presents minimalist modifications to Haskell's module system
+that are necessary for overloaded names to have a modular scope, with
+types annotated or not in type classes. Benefits and drawbacks of
+instance modularization are discussed in Section
+\ref{sec:modular-instances}.
 
-\item[Modular Instance Scope:] Overloaded names with modular scope, as
-  occurs with non-overloaded names. The paper presents minimalist
-  modifications to Haskell's module system that are necessary for
-  overloaded names to have a modular scope, whether their types are
-  annotated or not in type classes. This modification is also not
-  necessary for optional type classes to work. Instances with a type
-  class can maintain their global scope; instances without a type
-  class could as well have a global scope, though that design decision
-  would be rather peculiar. In our view the benefits of instance
-  modularization outweigh its possible drawbacks. This is discussed in
-  Section \ref{sec:modular-instances}.
+The mechanism of optional type classes presented allows instance
+declarations of the form $\instance\ x=e$, without explicitly
+declaring $x$'s type in a type class.  Its type is determined from the
+anti-unification of visible instance types for $x$. The algorithm
+used for computing the type of $x$ is presented in
+Section~\ref{sec:anti-unif}.
 
-\end{description}
-
-The mechanism of optional type classes presented in this paper is
-based on the following:
-
-\begin{enumerate}
-
- \item The type of an overloaded symbol is, as usual, a constrained
-   type, of the form $\forall\,\overline{a}.\,C \Rightarrow \tau$,
-   where $C$ is a set of constraints and $\tau$ is a simple
-   (unquantified and unconstrained) type. A constraint is a class name
-   followed by a sequence of simple types.
-
-\item An overloaded symbol $x$ can be defined by instance declarations
-  of the form $\instance\ x=e$, without explicitly declaring its type
-  in a type class.
-  
-\item The type of $x$ is automatically determined from the
-  anti-unification of the instance types for $x$ that are visible in a
-  module, by creating a type class with a single member ($x$). The
-  algorithm used for computing the type of $x$ is presented in
-  Section~\ref{sec:anti-unif}.
-
-\end{enumerate}
+The automatic creation of a type class for $x$ simply uses $x$ also as
+the name of the class. The initial constraint introduced when $x$ is
+used is $x\:\tau$, where $\tau$ is the anti-unification of visible
+instance types of $x$. This was preferred to the use of a single
+parameter type class $x\: a$, or a possibly MPTC $x\:\overline{a}$,
+where $\overline{a}$ is a sequence of parameters that corresponds to
+the sequence of type variables that occur in the the anti-unification
+of visible instance types of $x$, ordered (say) lexicographically.
 
 The proposed approach is formalized in
-Section~\ref{Optional-type-classes}, where a type system for a
-core-Haskell language where type classes can be optionally declared is
-presented.
+Section~\ref{Optional-type-classes}, where a type system is presented
+for a mini-Haskell language with type classes optionally declared.
 
-The added flexibility of the overloading mechanism, with respect to
-Haskell, is illustrated by the enabled simple support for overloaded
-record fields (Section \ref{sec:overloaded-record-fields}) and type
-directed name resolution (Section
-\ref{sec:type-directed-name-resolution}).
+%The added flexibility of the overloading mechanism, with respect to
+%Haskell, is illustrated by the enabled simple support for overloaded
+%record fields (Section \ref{sec:overloaded-record-fields}) and type
+%directed name resolution (Section
+%\ref{sec:type-directed-name-resolution}).
 
 A type inference algorithm is presented in Section
-\ref{sec:type-inference}, which is proved to be sound and to infer,
-for a given expression in a given typing context, a type that is a
-minimal generalization of types derivable in the type system.
+\ref{sec:type-inference}. It is proved to be sound and to infer, for a
+given expression in a given typing context, a type that is a minimal
+generalization of types derivable in the type system.
 
 % A semantics is presented in Section \ref{sec:semantics}. 
 
 Related work is outlined in Section \ref{sec:related-work} and Section
 \ref{sec:conclusion} concludes.
 
-Appendices include the definition of the entailment relation
-(\ref{sec:entailment}), used in the type system, the improvement and
-context-reduction relations
-(\ref{sec:improvement},\ref{sec:context-reduction}), whose composition
-yield the constraint-set simplification relation, also used in the
-type system, and the constraint-set satisfiability function
-(\ref{sec:satisfiability}), used in the improvement relation and in
-the type inference algorithm.
+%Appendices include the definition of the entailment relation
+%(\ref{sec:entailment}), used in the type system, the improvement and
+%context-reduction relations
+%(\ref{sec:improvement},\ref{sec:context-reduction}), whose composition
+%yield the constraint-set simplification relation, also used in the
+%type system, and the constraint-set satisfiability function
+%(\ref{sec:satisfiability}), used in the improvement relation and in
+%the type inference algorithm.
 
 A prototype implementation of a type inference algorithm for Haskell
 supporting overloading without the need of defining a type class is

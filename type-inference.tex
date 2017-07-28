@@ -1,23 +1,22 @@
 \section{Type inference}
 \label{sec:type-inference}
 
-In this section we present a type inference algorithm for
-mini-Haskell, and discuss soundness and completeness of type inference
-with respect to the type system.
+This section presents a type inference algorithm for mini-Haskell, and
+presents theorems of soundness and principal type with respect to the
+type system.
 
-For this, we need to consider functional counterparts of relations
-used in the type system (Section \ref{Optional-type-classes}). The
-main one is satisfiability, the counterpart of entailment (Subsection
+For this, functional counterparts of relations used in the type system
+(Section \ref{Optional-type-classes}) need to be defined. The main one
+is satisfiability, the counterpart of entailment (Subsection
 \ref{sec:satisfiability}).  We do not consider in this paper
 algorithms for constraint set simplification; interested readers may
-consult~\cite{OutsideIn2011}. In an abuse of notation the same symbols
-are used in this section for functions corresponding to the relations
-of constraint set simplification ($\simplifies{P}$, where $P$ is a
-program theory) and type generalization (\gen).
+consult e.g.~\cite{OutsideIn2011}. In an abuse of notation the same
+symbols are used in this section for functions corresponding to the
+relations of constraint set simplification ($\simplifies{P}$, where
+$P$ is a program theory) and type generalization (\gen).
 
-We use partial orders on types, constraints, substitutions, and typing
-contexts with program theories, defined in Figure \ref{Order}.
-
+Partial orders on types, constraints, substitutions, and typing
+contexts with program theories are defined in Figure \ref{Order}.
 Type ordering disregards constraint set entailment, which is important
 only for considering whether a constraint $\pi$ can be removed from a
 constraint $C$ occurring in a constrained type $C \Rightarrow \tau$;
@@ -54,10 +53,10 @@ e:(\delta,\phi)$, which means that $\delta$ is the least (principal)
 type derivable for $e$ in typing context $\phi\Gamma$ and program
 theory $P$, where $\phi\Gamma \leq \Gamma$ and, whenever $\Gamma' \leq
 \Gamma$ is such that $P;\Gamma' \ti e: (\delta',\phi')$, we have that
-$\phi\Gamma \leq \Gamma'$ and $\delta' \leq \phi\delta$. Furthermore,
-we have that $P;\phi\,\Gamma \ti e:(\delta,\phi')$ holds whenever
-$P;\Gamma \ti e:(\delta,\phi)$ holds, where $\phi'\leq \phi$
-(cf.~theorem \ref{Minimal-type-minimal-typing-context} below).
+$\phi\Gamma \leq \Gamma'$ and $\delta' \leq \phi\delta$
+hold. Furthermore, we have that $P;\phi\,\Gamma \ti e:(\delta,\phi')$
+holds whenever $P;\Gamma \ti e:(\delta,\phi)$ holds, where $\phi'\leq
+\phi$ (cf.~theorem \ref{Minimal-type-minimal-typing-context} below).
 
 \begin{Example} {\rm
 Consider expression $x$ and ty\-ping context $\Gamma = \{ f: \Int
@@ -140,20 +139,21 @@ that $P;\phi\Gamma \vdash e: \delta'$ holds, we have that $\delta \leq
 \label{thm:principal-type}
 \end{Theorem}
 
-A completeness theorem does not hold. For example, the canonical
-Haskell ambiguity example of expression $e_0 = (\sshow\ $\!\!$.$\!\!$
-\rread))$ --- where \sshow\ has type \SShow a $\Rightarrow$ $a
-\rightarrow$ \String, and \rread\ has type \RRead a $\Rightarrow$
-\String $\rightarrow a$ ---, we have that there exists $P$ and
+A completeness theorem does not hold. The canonical Haskell ambiguity
+example of expression $e_0 = (\sshow\ . \rread)$ (where \sshow\ has
+type \SShow\ $a$ $\Rightarrow$ $a \rightarrow$ \String\ and
+\rread\ has type \RRead\ $a$ $\Rightarrow$ \String $\rightarrow a$) is
+such that, whenever there exist two or more entailing instances for
+$\SShow\ a$ and $\RRead\ a$, for some $a$, there exists $P$ and
 $\Gamma$ such that $P;\Gamma \vdash e_0: \String \rightarrow \String$
 holds, but there is no $\delta,\phi$ such that $P;\Gamma \vdash e_0:
 (\delta,\phi)$ holds.
 
 The greater simplicity obtained by allowing type instantiation to
-occurr in a context-independent way, in a type system for a language
+occur in a context-independent way, in a type system for a language
 with support for context-dependent overloading, has significant
-counterparts. The disadvantages are: ambiguous expressions are allowed
-to be well-typed, and there exist several translations for
+counterparts. The disadvantages are that ambiguous expressions are
+allowed to be well-typed, and there exist several translations for
 expressions, one of them a principal translation, for a semantics
 defined inductively on the type system rules.
 
@@ -166,24 +166,23 @@ obtained directly from a declarative specification of the type system
 by transforming relations used into functions. The fact that every
 element has a unique type is consonant with everyday spoken
 language. It is straightforward to define, a posteriori, the set of
-types that are valid instances of the type of an expression.
-
-The fact that only a single type can be derived for each expression
+types that are valid instances of the type of an expression.  Also,
+the fact that only a single type can be derived for each expression
 rules out the possibility of having distinct derivations for an
 expression's type. Thus, an error message for an expression such as
 {\tt (\sshow\ $\!\!$.$\!\!$ \rread)}, in a context with more than one
-instance for \SShow\ and \RRead, should be that the expression can not
-be given a well-defined semantics (there is no type that would allow
-it to have a well-defined semantics). Distinct meanings of {\tt
-  (\sshow\ $\!\!$.$\!\!$ \rread)} would be obtained from distinct
-instance types of \sshow\ and \rread.
+instance for (\SShow\ $a$) and (\RRead\ $a$), for some $a$, whose type
+is \SShow\ $a$, \RRead\ $a$ $\Rightarrow$ $a$), should be that the
+expression can not be given a well-defined semantics: distinct
+meanings of {\tt (\sshow\ $\!\!$.$\!\!$ \rread)} would be obtained
+from distinct instance types of \sshow\ and \rread.
 
 Type inference for mini-Haskell is obtained by extending type
-inference for core-Haskell in straightforward way, namely by directly
-using the rules of Subsection \ref{sec:mini-Haskell} (Figures
+inference for core-Haskell straightforwardly, namely by directly using
+the rules of Subsection \ref{sec:mini-Haskell} (Figures
 \ref{fig:mini-haskell-module-rule}, \ref{fig:import-relation} and
-\ref{fig:mini-haskell-rules-for-declarations}), by replacing relations
-with functions.
+\ref{fig:mini-haskell-rules-for-declarations}), replacing relations by
+functions.
 
 The overloading resolution theorem below considers a type inference
 algorithm that differs from mini-Haskell's by only i) disregarding

@@ -4,9 +4,7 @@
 This section presents the simple modifications to Haskell's module
 system that are necessary to allow instances to have a modular scope
 (we do not attempt to discuss any major revision to Haskell's module
-system). This is based on previous work, presented in
-\cite{Controlling-scope-instances}.
-
+system), based on previous work \cite{Controlling-scope-instances}.
 Essentially, import and export clauses can specify, instead of just
 names, also {\tt instance $A$ $\overline{\tau}$}, where
 $\overline{\tau}$ is a (non-empty) sequence of types and $A$ is a
@@ -21,26 +19,25 @@ imported from $M$, in the module where the import clause occurs.
 
 \subsection{Pros and Cons of Instance Modularization}
 
-Among the advantages of having instances with modular scope, we cite
-(following \cite{Controlling-scope-instances}):
+Among the advantages of having instances with modular scope, we cite:
 
 \begin{itemize}
 
   \item The types of all names, overloaded or not, and of all
     expressions in a module depend on the scope of variables imported
-    by the module.
+    by the module, and can be inferred if not explicitly annotated.
 
   \item It is possible to define and use more than one instance for
     the same type or for the same type constructor in a program. For
-    example, distinct instances of \Either\ for class \Monad, say one
-    from package \mtl\ and another from \transformers, can be used in
+    example, distinct instances of \Either\ for class \Monad\ (say one
+    from package \mtl\ and another from \transformers), can be used in
     a program.
 
   \item Use of newtypes to wrap distinct instance definitions can be
     avoided, if the distinct instances are not used in the same
     module. For example, newtypes to wrap distinct instances of
     Monoids for integer types, one for handling addition and one for
-    for handling multiplication.
+    handling multiplication.
     
   \item Modularized instance scopes and optional type classes with a
     revised ambiguity rule can avoid the use of functions that include
@@ -65,16 +62,16 @@ Among the advantages of having instances with modular scope, we cite
   \item Compile time consumed because the use of orphan instances can
     be avoided.  Orphan instances are instances defined in a module
     where neither the definition of the data type nor the definition
-    of the type class occur. When compiling a module $M$, any instance
-    declaration in any module imported by $M$, directly or indirectly,
-    is visible, in Haskell. In principle, a Haskell compiler must then
-    read the interface files of each module imported by $M$, directly
-    or indirectly, to check if it contains an instance declaration
-    used in $M$, which can consume significant compile time.
+    of the type class occur. Any instance declaration in any module
+    imported directly or indirectly by a module $M$ is visible in
+    Haskell; in principle, a Haskell compiler must then read the
+    interface files of each module imported by $M$, directly or
+    indirectly, to check if it contains an instance declaration used
+    in $M$, which can consume significant compile time.
     
 \end{itemize}
 
-However, with instance modularization, programmers need to be aware of
+However, instance modularization requires programmers to be aware of
 which entities are exported and imported --- i.e.~which entities are
 visible in the scope of a module --- and their types.  A simple
 change, like a type annotation for a variable exported from a module,
@@ -88,28 +85,28 @@ classes and with a modular scope:
 \proga{xxxxxxxxxxxxxxxxx\=xx\= \+\kill
 \module\ $M$ where\+\\
   \myshow$\,$::$\,$\Int\ $\rightarrow$ \String\\
-  \myshow\ = \ldots \\ 
+  \instance\ \myshow\ = \ldots \\ 
   \myread$\,$::$\,$\String\ $\rightarrow$ \Int\\
-  \myread\ = \ldots\\
+  \instance\ \myread\ = \ldots\\
   $f$ = \myshow $\:$.$\:$\myread\-\\ \\
 
 \module\ $N$ \where\+\\
   \import\ $M$\\
   \myshow$\,$::$\,$\Bool\ $\rightarrow$ \String\\
-  \myshow\ = \ldots\\
+  \instance\ \myshow\ = \ldots\\
   \myread$\,$::$\,$\String\ $\rightarrow$ \Bool\\
-  \myread\ = \ldots\\
+  \instance\ \myread\ = \ldots\\
   $g$ = $f$ "123"
 }
 
 In Haskell, any use of {\tt (\sshow\ $\!$.$\!$ \rread)} leads to a
 type error, since the type {\tt (\SShow\ $a$, \RRead\ $a$)
-  $\Rightarrow$ \String} is ambiguous. In our approach, the definition
-of $f$ in module $M$ is well-typed: there exists in module $M$ a
-single instance of \myshow\ and \myread. As a result, $f$ has type
-\String\ $\rightarrow$ \String. Its use in module $N$ is (then) also
-well-typed ($f$ is a function that receives a value of type
-\String\ and returns a value of type \String, according to the
+  $\Rightarrow$ \String $\rightarrow$ \String} is ambiguous. In our
+approach, the definition of $f$ in module $M$ is well-typed: there
+exists in module $M$ a single instance of \myshow\ and \myread. As a
+result, $f$ has type \String\ $\rightarrow$ \String. Its use in module
+$N$ is (then) also well-typed ($f$ is a function that receives a value
+of type \String\ and returns a value of type \String, according to the
 definition of $f$ given in module $M$), even though {\tt (\myshow
   $\:$.$\:$\myread)\ "123"} is not well-typed in module $N$, since
 {\tt (\myshow $\:$.$\:$\myread)} is ambiguous in $N$. Explicit

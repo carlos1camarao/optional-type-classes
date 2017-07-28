@@ -2,29 +2,28 @@
 \label{Optional-type-classes}
 
 In this section we present a type system for mini-Haskell, where type
-class declaration is optional. Programmers can overload symbols
-without declaring their types in type classes. The type of an
+class declaration is optional (programmers can overload symbols
+without declaring their types in type classes). The type of an
 overloaded symbol is, if not explicitly defined in a type class, based
 on the anti-unification of instance types defined for the symbol in
 the relevant module. Mini-Haskell extends core-Haskell expressions
 (Subsection \ref{sec:core-Haskell}) with class and instance
 declarations, allowing type classes to be optionally declared, and
-modules, which can export and import names and instances (Subsection
-\ref{sec:mini-Haskell}).
+with modules, that can export and import names and instances
+(Subsection \ref{sec:mini-Haskell}).
 
 Figure \ref{fig:mini-Haskell-context-free-syntax} shows the
 context-free syntax of mini-Haskell: expressions, modules and
-programs. An instance can be specified without specifying a type
-class, cf.~second option (after {\tt |}) in Instance Declaration in
-Figure \ref{fig:mini-Haskell-context-free-syntax}.
+programs. An instance can be specified without a type class,
+cf.~second option (after {\tt |}) in Instance Declaration in Figure
+\ref{fig:mini-Haskell-context-free-syntax}.
 
 For simplicity, imported and exported variables and instances must be
 explicitly indicated, e.g.~we do not include notations for exporting
 and importing all variables of a module.
 
-Multi-parameter type classes are supported. In this paper we do not
-consider recursivity, neither in let-bindings nor in instance
-declarations. 
+MPTCs are supported. In this paper we do not consider recursivity,
+neither in let-bindings nor in instance declarations.
 
 \begin{figure} 
 \[ \begin{array}[c]{lll}
@@ -49,9 +48,8 @@ declarations.
 
 A program theory $P$ is a set of axioms of first-order logic,
 generated from class and instance declarations occurring in the
-program, of the form $C \Rightarrow \pi$, where $C$ is a set of simple
-constraints and $\pi$ is a simple constraint (Figure
-\ref{fig:mini-Haskell-context-free-syntax}).
+program, of the form given for quantified constraints (defined in
+Figure \ref{fig:meta}).
 
 Typing contexts are indexed by module names. $\Gamma(M)$ gives a
 function on variable names to types: $\Gamma(M)(x)$ gives the type of
@@ -63,8 +61,7 @@ $x'=x$, otherwise $\Gamma'(M')(x') = \Gamma(M')(x')$. To avoid
 introducing a name for instance definitions, the domain of $\Gamma(M)$
 (for any module $M$) can consist of not only normal variable names but
 also items of the form {\tt \instance\ $C \Rightarrow A\:\tau$} (where
-$C$ is a constraint set $C$, $A$ is a class name, $\tau$ is a simple
-type).
+$C$ is a constraint set, $A$ a class name, $\tau$ a simple type).
 
 An empty module name, denoted by {\tt []}, is used for a module of
 exported names, to control the scope of names in import and export
@@ -180,22 +177,21 @@ constraints from $C'$ that have type variables reachable from $V$:
 
 A constraint set $C'$ can be removed from a constrained type $C,C'
 \Rightarrow \tau$ if and only if overloading for $C'$ has been
-resolved and there exists a single satisfying substitution for
-$C'$. 
+resolved and there exists a single entailing substitution for $C'$
+(cf.~Section \ref{sec:entailment}).
 
 In rule (\APP), the use of $\simplifies{P}$ allows constraints on the
 type of the result to be those that occur in the function type plus
 those that have variables reachable from the set of variables that
 occur in the simple type of the result or in the constraint set on the
-function type (cf.~Definition \ref{def:reachable}).  This allows, for
-example, to eliminate constraints on the type of the following
-expressions, where $o$ is any expression, with a possibly non-empty
-set of constraints on its type: {\tt \flip\ \const\ $o$} (where
-\const\ has type $\forall a, b.\,a \rightarrow b \rightarrow a$ and
-\flip\ has type $\forall a, b, c.\,(a \rightarrow b \rightarrow c)
-\rightarrow b \rightarrow a\rightarrow c$), which should denote an
-identity function, and \fst\ ($e$, $o$), which should have the same
-denotation as $e$.
+function type (cf.~Definition \ref{def:reachable}).  This allows e.g.~to
+eliminate constraints on the type of the following expressions, where
+$o$ is any expression, with a possibly non-empty set of constraints on
+its type: {\tt \flip\ \const\ $o$} (where \const\ has type $\forall a,
+b.\,a \rightarrow b \rightarrow a$ and \flip\ has type $\forall a, b,
+c.\,(a \rightarrow b \rightarrow c) \rightarrow b \rightarrow
+a\rightarrow c$), which should denote an identity function, and
+\fst\ ($e$, $o$), which should have the same denotation as $e$.
 
 We have the following:
 
@@ -368,18 +364,11 @@ The automatically generated class name for an overloaded name can be
 any unique class name, i.e.~any (of course preferably mnemonic) name
 that does not occur as another declared class name. In this paper, we
 use the overloaded name also as the automatically generated class
-name.
-
-Also, we define that automatically generated classes have a single
-parameter, which is the type of the overloaded name. An alternative,
-more similar to what happens for normal, non-automatically generated
-classes, would be to define as parameters of an automatically
-generated type class the sequence of type variables that occur in the
-overloaded name's type. However, this alternative would imply choosing
-an order to write these type variables, which would be necessary for
-instantiating types of instance definitions and types in class
-constraints. Instead, we just specify and instantiate the overloaded
-name's type. 
+name. Also, we define that automatically generated classes have a
+single parameter. The overloaded name type, which is the
+anti-unification of visible instance types of the overloaded name in
+the current module, is used as the initial constraint introduced due
+to the use of the overloaded name. 
 
 The fourth rule is similar to rule (\LET); it defines how the typing
 context is updated upon a declaration of a non-overloaded name.

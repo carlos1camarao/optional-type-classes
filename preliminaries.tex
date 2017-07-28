@@ -9,10 +9,9 @@ usage and the syntax of types are given in Figure~\ref{fig:meta}.
 {\rm Class\ Name}         &\hspace{.1cm} & A         & \\
 {\rm Type\ variable}      &         & a,b & \\
 {\rm Type\ constructor}   &         & T              & \\
-{\rm Simple\ Constraint}  &         & \pi            & ::= A\,\overline{\tau}\\
+{\rm Constraint}          &         & \pi            & ::= A\,\overline{\tau}\\
 {\rm Set\ of\ Simple\ Constraints}  &  & C           & \\
-%{\rm Unquantified Constraint} &    & \psi           & ::= C\Rightarrow \pi\\
-{\rm Constraint}          &         & \theta         & ::= \forall\,\overline{a}.\,C\Rightarrow\pi\\
+{\rm Quantified Constraint} &       & \theta         & ::= \forall\,\overline{a}.\,C\Rightarrow\pi\\
 {\rm Simple\ Type}        &         & \tau,\rho      & ::= a \mid T \mid \tau\:\tau' \\
 {\rm Constrained\ Type}   &         & \delta         & ::= C\Rightarrow \tau\\
 {\rm Type}                &         & \sigma         & ::= \forall\,\overline{a}.\,\delta \\
@@ -28,12 +27,12 @@ $\forall\,\overline{a}.\,C\Rightarrow \tau$ is equivalent to
 $C\Rightarrow \tau$ if $\overline{a}$ is empty and, similarly,
 $C\Rightarrow \tau$ is equivalent to $\tau$ if $C$ is empty.
 
-Notation $\overline{x}^{\,n}$, or simply $\overline{x}$, is used
-throughout this paper to denote the sequence $x_1 \cdots x_n$, or
-$x_1, \ldots, x_n$, or $x_1;\ldots;x_n$, depending on the context
-where it is used, where $n\geq 0$, and $x$'s can be either type
-variables, or mappings, or bindings etc.  When used in a context of a
-set, it denotes $\{x_1,\ldots,x_n\}$.
+Notation $\overline{x}^{\,n}$, or simply $\overline{x}$, is used to
+denote the sequence $x_1 \cdots x_n$, or $x_1, \ldots, x_n$, or
+$x_1;\ldots;x_n$, depending on the context where it is used, where
+$n\geq 0$, and $x$'s can be either type variables, or mappings, or
+bindings etc.  When used in a context of a set, it denotes
+$\{x_1,\ldots,x_n\}$.
 
 The set of type variables occurring in $X$ is denoted by $\tv(X)$,
 where $X$ can be a type, a constraint, sets of types or constraints,
@@ -45,12 +44,10 @@ image of a substitution can be a type expression that is not a type
 (for example a type constructor with an arity that is not zero). Kinds
 are not considered in type expressions, and type expressions which are
 not simple types are not explicitly distinguished from simple types,
-but whenever necessary we distinguish the arity of type
-expressions. 
-
-The identity substitution is denoted by \id. $\phi(\sigma)$
-(or simply $\phi\,\sigma$) represents the capture-free operation of
-substituting $\phi(a)$ for each free occurrence of $a$ in $\sigma$.
+but whenever necessary we distinguish the arity of type expressions.
+The identity substitution is denoted by \id. $\phi(\sigma)$ (or simply
+$\phi\,\sigma$) represents the capture-free operation of substituting
+$\phi(a)$ for each free occurrence of $a$ in $\sigma$.
 
 We overload the substitution application on constraints, constraint
 sets and sets of types. Definition of application on these elements is

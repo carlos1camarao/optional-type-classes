@@ -12,7 +12,7 @@ type of the value that occurs before the dot. For example, instead of:
     \import\ \Button\ (\Button, \reset) \as\ $B$\\
     \import\ \Canvas\ (\Canvas, \reset) \as\ $C$\\ 
     $f\,$::$\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()\\
-    \instance\ $f$ $b$ $c$ = $B$.\reset\ $b$ >> $C$.\reset\ $c$
+    $f$ $b$ $c$ = $B$.\reset\ $b$ >> $C$.\reset\ $c$
 }
 
 TDNR proposes the use of dot notation to enable the definition of $f$
@@ -34,7 +34,7 @@ of $f$ and allows it to be named \reset:
       \instance\ \reset\ ($b$,$c$) = \reset\ $b$ >> \reset\ $c$
   }
 
-The type of \reset, in a module with these overloaded definitions, is:
+The type of \reset\ in module $U$ is:
 \[ \texttt{ \reset\ ($a$ $\rightarrow$ \IO()) => $a$ $\rightarrow$ \IO()} \]
   
 An overloaded curried instance definition:
@@ -45,12 +45,17 @@ An overloaded curried instance definition:
   }
 leads to \reset\ having type:
 {\tt \reset\ ($a$ $\rightarrow$ $b$) $\Rightarrow$ $a \rightarrow b$}, where $a\rightarrow b$ can be
-instantiated to {\tt \Button$\,\rightarrow\,$\IO()}, or {\tt \Canvas$\,\rightarrow\,$\IO()}, or
-to {\tt $\,$\Button\ $\rightarrow$ \Canvas\ $\rightarrow$ \IO()}.
+instantiated to one of the following types:
+\[ \begin{array}{l}
+  \Button\ \rightarrow \,\IO\texttt{()} \\
+  \Canvas\ \rightarrow \,\IO\texttt{()}\\
+  \Button\ \rightarrow \,\Canvas\ \rightarrow \IO\texttt{()}
+\end{array}
+\]
   
-The simplification of type \mbox{$\reset\ (\Button\ \rightarrow \IO())
-  \Rightarrow \IO()$} to {\tt \IO()} uses syntactically equivalence
-between constrained types, when {\tt
-  \reset\ (\Button$\,\rightarrow$\,\IO())} is in the program theory
-(when a resolved constraint is in scope, it can be eliminated).
+%The simplification of type \mbox{$\reset\ (\Button\ \rightarrow \IO())
+%  \Rightarrow \IO()$} to {\tt \IO()} uses syntactically equivalence
+%between constrained types, when {\tt
+%  \reset\ (\Button$\,\rightarrow$\,\IO())} is in the program theory
+%(when a resolved constraint is in scope, it can be eliminated).
 
