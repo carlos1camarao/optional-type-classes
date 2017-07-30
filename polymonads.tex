@@ -1,0 +1,56 @@
+\subsection{Polymonads}
+\label{sec:polymonads}
+
+Polymonads \cite{Polymonadic-programming14,Polymonads-in-Haskell2015},
+a generalization of monads, give the familiar monadic bind combinator
+the more general type:
+\[ \texttt{(>>=) :: \mUm\ $a$ $\rightarrow$ ($a$ $\rightarrow$ \mDois\ $b$)
+  $\rightarrow$ \mTres\ $b$}
+\]
+This allows the composition of computations with three different
+monads, instead of just one. Consider:
+
+\progb{xx\=xx\=xx\=\kill
+  \module\ $P$ (\instance\ \Polymonad\ \mUm\ \mDois\ \mTres) \where\+\\ 
+\class\ (\Monad\ \mUm,\Monad\ \mDois) $\!\Rightarrow\!$ \Morph\ $\!$\mUm\ $\!$\mDois\ $\!$\where\+\\
+  \morph::$\:$\mUm\ $a$ $\rightarrow$ \mDois\ $a$\-\\ 
+\class\ \PolyMonad\ \mUm\ \mDois\ \mTres\ \where\+\\
+  (|>>=|)::$\:$\mUm\ $a$ $\rightarrow$ ($a$ $\rightarrow$ \mDois\ $b$) $\rightarrow$ \mTres\ $b$\-\\ 
+\instance\  (\Morph\ \mUm\ \mTres,\Morph\ \mDois\ \mTres) $\!\Rightarrow\!$ \PolyMonad\ $\!$\mUm\ $\!$\mDois\ $\!$\mTres\ $\!$\where\+\\
+\maa\ |>>=| \fmb\ = \morph\ \maa\ >>= \morph\ $\!$.$\!$ \fmb
+}
+
+A module can use the polymonad instance from module $P$ by defining
+instances of \Morph\ for type constructors that are instances of \mUm,
+\mDois\ and \mTres. It can also import $P$ to export $q$, defined as
+follows, which has a constrained type with a type variable, \mTres, that
+occurs only in the constraints:
+
+\progb{xx\=xx\=\kill
+  \module\ $Q$ ($q$)\+\\
+    \import\ $P$ (\instance\ \PolyMonad\ $a$ $b$ $c$)\\
+    $q$:: \=(\PolyMonad\ \mUm\ \mDois\ \mTres, \PolyMonad\ \mTres\ \mQuatro\ \mCinco) $\Rightarrow$\+\\
+    \mUm\ $a$ $\rightarrow$ ($a$ $\rightarrow$ \mDois\ $b$) $\rightarrow$ ($b$ $\rightarrow$ \mQuatro\ $c$) $\rightarrow$ \mCinco\ $c$\-\\ 
+  $q$ $m$ $f$ $g$ = $m$ |>>=| $f$ |>>=| $g$
+}
+
+Each use of $q$ in a module $U$ for specific ground instances of
+\Monad\ \mUm\ and \Monad\ \mDois, or of specific ground instances of
+\Monad\ \mQuatro\ and \Monad\ \mCinco, will require the existence of a
+single instance of \Monad\ \mTres. However, this single instance can
+be determined since it is the same single instance of
+\Morph\ \mDois\ \mTres (in the first case), or the same single
+instance of \Morph\ \mTres\ \mQuatro\ (in the second case). Further
+investigation is needed, but this seems to avoid the necessity of
+using type checker plugins for implementing polymonads, as reported in
+\cite{Polymonads-in-Haskell2015}.
+
+Uses of polymonads illustrate that occurrences of variables only in
+constraints can occur in practice without implying ambiguity.
+Whenever there is a type variable in a constraint that is unreachable
+from the set of type variables in the simple type, there must exist
+only one instance that entails the constraint where this type variable
+occur (in this particular case, only one instance that entails the
+type constructor variable).
+
+

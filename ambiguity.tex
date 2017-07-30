@@ -4,10 +4,10 @@
 As mentioned in the introduction, Haskell considers ambiguity as a
 property of a type, and does not distinguish it from a trigger
 condition to check overloading resolution: a type
-$\forall\,\overline{a}.\,C \Rightarrow \tau$ is ambiguous if there
-exists a type variable that occurs in the set of constraints ($C$) but
-does not occur in $\tau$.  In the presence of FDs or TFs, ``does not
-occur in $\tau$'' is modified in GHC \cite{GHC} to ``is not uniquely
+$\forall\,\overline{a}.\,C \Rightarrow \tau$ is ambiguous in Haskell
+if there exists a type variable that occurs in the set of constraints
+($C$) but does not occur in $\tau$.  In the presence of FDs or TFs,
+``does not occur in $\tau$'' is modified in GHC to ``is not uniquely
 determined from the set of type variables that occur in $\tau$''. This
 unique determination is such that, for each type variable $a$ that
 occurs in $C$ but not in $\tau$ there must exist a FD $b \mapsto a$

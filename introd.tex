@@ -40,9 +40,8 @@ result (i.e.~overloading resolution in an expression $f\:x$ can be
 based also on the type required by the context in which $f\:x$
 occurs). Also, constants can be overloaded --- for example, literals
 like {\tt 1}, {\tt 2} etc.~can be used to represent fixed and
-arbitrary precision integers as well as fractional numbers.
-
-The possibility of using overloading without requiring overloading
+arbitrary precision integers as well as fractional numbers. The
+possibility of using overloading without requiring overloading
 resolution in each function call makes overloading more
 expressive. Functions with types that differ only on the type of the
 result can be overloaded, for example {\em read\/} functions with
@@ -71,21 +70,22 @@ This implies that overloading resolution needs to be checked only when
 there exist variables in constraints that occur only in the
 constraints, i.e.~do not occur in the simple (unconstrained part of
 the) type. The fact that overloading resolution does not need to be
-checked in every function application is important not only to defer
-overloading resolution but also for compile time efficiency.  In the
-presence of multi-parameter type classes (MPTCs), functional
-dependencies (FDs) \cite{Type-classes-with-FDs-MarkJones00,Jones:2008}
-or type families (TFs) \cite{Chakravarty2005,Schrijvers:2008} are used
-to avoid ``ambiguity''.  With MPTCs, ``do not occur in the simple
-type'' is modified in GHC \cite{GHC}, the prevailing Haskell compiler,
-to ``is not uniquely determined from the set of type variables that
-occur in the simple type''. This unique determination is such that,
-for each type variable $a$ that occurs in the constraints $C$ but not
-in the simple type $\tau$ of a constrained type $C\Rightarrow \tau$,
-there must exist a FD $b \mapsto a$ for some $b$ in $\tau$ (in the
-case of TFs, a similar unique determination is specified). We use $b
-\mapsto a$ for a FD, instead of $b \rightarrow a$, to avoid confusion
-with the notation used to denote functional types.
+checked in every function application is important to defer
+overloading resolution and also for compile time efficiency. As
+explained in Section \ref{sec:ambiguity}, in the presence of
+multi-parameter type classes (MPTCs), functional dependencies (FDs)
+\cite{Type-classes-with-FDs-MarkJones00,Jones:2008} or type families
+(TFs) \cite{Chakravarty2005,Schrijvers:2008} are used to avoid
+``ambiguity''.  With MPTCs, ``do not occur in the simple type'' is
+modified in GHC \cite{GHC}, the prevailing Haskell compiler, to ``is
+not uniquely determined from the set of type variables that occur in
+the simple type''. This unique determination is such that, for each
+type variable $a$ that occurs in the constraints $C$ but not in the
+simple type $\tau$ of a constrained type $C\Rightarrow \tau$, there
+must exist a FD $b \mapsto a$ for some $b$ in $\tau$ (in the case of
+TFs, a similar unique determination is specified; we use $b \mapsto a$
+for a FD, instead of $b \rightarrow a$, to avoid confusion with the
+notation used to denote functional types.)
 
 However, in Haskell the presence of type variables in constraints that
 are not uniquely determined from type variables in the simple type
@@ -93,17 +93,19 @@ characterizes that ``the type is ambiguous'', not that overloading
 resolution needs to be checked.  This guarantees that new instances
 can be introduced in well-typed Haskell programs without ever
 introducing a type error. On the other hand, i) it does not consider
-that the presence of unreachable type variables in constraints from
-the set of type variables in the simple type (Section
-\ref{sec:ambiguity}) may be used to check overloading resolution,
-avoiding the need of using an extra mechanism for dealing with
-ambiguity problems in the presence of MPTCs; and ii) it does not
-distinguish overloading resolution from ambiguity, and thus cannot
-recover an intuitive common sense meaning of ambiguity as existence of
-two or more instances that can be used for an overloaded name in an
-expression, when overloading is resolved; iii) the expressivity of
-overloading obtained together with optional type classes a simple
-support of type directed name resolution (Subsection
+that the presence of type variables in constraints which are
+unreachable from the set of type variables in the simple type may be
+used to check overloading resolution, avoiding the need of using an
+extra mechanism for dealing with ambiguity problems in the presence of
+MPTCs (cf.~Section \ref{sec:ambiguity}); and ii) it does not
+distinguish overloading resolution from ambiguity, missing an
+opportunity to recover an intuitive common sense meaning of ambiguity
+as existence of two or more instances that can be used for an
+overloaded name in an expression, when overloading is resolved; iii)
+furthermore, the expressivity of overloading obtained allows easy
+support of, for example, polymonadic programming (Subsection
+\ref{sec:polymonads}) and, together with optional type classes, type
+directed name resolution (Subsection
 \ref{sec:type-directed-name-resolution}) and overloaded record fields
 (Subsection \ref{sec:overloaded-record-fields}).
 %Further examples are envisaged but are left for further work.
@@ -112,23 +114,27 @@ The paper presents minimalist modifications to Haskell's module system
 that are necessary for overloaded names to have a modular scope, with
 types annotated or not in type classes. Benefits and drawbacks of
 instance modularization are discussed in Section
-\ref{sec:modular-instances}.
+\ref{sec:modular-instances}. Only global instances with a type class
+could be used in conjunction with modular instances without a type
+class, but in this paper we consider that all instances have a modular
+scope.
 
-The mechanism of optional type classes presented allows instance
-declarations of the form $\instance\ x=e$, without explicitly
+The mechanism of optional type classes presented allows declarations
+of overloaded names of the form $\instance\ x=e$, without explicitly
 declaring $x$'s type in a type class.  Its type is determined from the
-anti-unification of visible instance types for $x$. The algorithm
-used for computing the type of $x$ is presented in
-Section~\ref{sec:anti-unif}.
-
-The automatic creation of a type class for $x$ simply uses $x$ also as
-the name of the class. The initial constraint introduced when $x$ is
-used is $x\:\tau$, where $\tau$ is the anti-unification of visible
-instance types of $x$. This was preferred to the use of a single
-parameter type class $x\: a$, or a possibly MPTC $x\:\overline{a}$,
-where $\overline{a}$ is a sequence of parameters that corresponds to
-the sequence of type variables that occur in the the anti-unification
-of visible instance types of $x$, ordered (say) lexicographically.
+anti-unification of visible instance types for $x$. The algorithm used
+for computing the type of $x$ is presented in
+Section~\ref{sec:anti-unif}.  Keywords \instance\ is required if but
+only if there exists another definition of $x$ visible in the defining
+module. The automatic creation of a type class for $x$ simply uses $x$
+also as the name of the class. The initial constraint introduced when
+$x$ is used is $x\:\tau$, where $\tau$ is the anti-unification of
+visible instance types of $x$. This was preferred to the use of a
+single parameter type class $x\: a$, or a possibly MPTC
+$x\:\overline{a}$, where $\overline{a}$ is a sequence of parameters
+that corresponds to the sequence of type variables that occur in the
+the anti-unification of visible instance types of $x$, ordered (say)
+lexicographically.
 
 The proposed approach is formalized in
 Section~\ref{Optional-type-classes}, where a type system is presented

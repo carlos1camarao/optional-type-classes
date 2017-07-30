@@ -198,6 +198,17 @@ unique, up to variable renaming.
 \end{Theorem}
 
 The proofs use straighforward induction on the number and structural
-complexity of elements of $S$.
+complexity of elements of $S$, using lemma \ref{lemma:lcg2}.
+
+\begin{Lemma}
+  \label{lemma:lcg2}
+  For all $\tau_1, \tau_2, \zeta$, we have that
+  $\lcg_2(\tau_1,\tau_2,\zeta)=(\tau, \zeta')$, for some $\tau,\zeta'$
+  such that $\phi_1\tau = \tau_1$, $\phi_2\tau = \tau_2$, and
+  $\phi_1,\phi_2$ are the first and second projections of the inverse
+  of $\zeta'$, that is, $\phi_1(a) = \rho_1$ and $\phi_2(a) = \rho_2$
+  hold if and only if $\zeta'(\rho_1, \rho_2) = a$.
+  
+\end{Lemma}
 
 

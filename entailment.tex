@@ -16,30 +16,18 @@ equivalent to $\pi$ if $C$ is empty):
 
 \begin{itemize}
 
-\item For each class declaration
-  \vspace*{-.5\baselineskip}
-  \prog{class $C$ $\Rightarrow$ \TCC\ $\overline{a}$ where \ldots}
-  \vspace*{-.5\baselineskip}
+\item For each class declaration {\tt {class $C$ $\Rightarrow$ \TCC\ $\overline{a}$ where \ldots}}
 the program theory contains the following formula if $C$ is not empty:
-  \vspace*{-.5\baselineskip}
-    \[ \forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{a}\]
+    $\forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{a}$.
 
-\item For each instance declaration
-  \vspace*{-.5\baselineskip}
-  \prog{instance $C$ $\Rightarrow$ \TCC\ $\overline{t}$ where \ldots}
-  \vspace*{-.5\baselineskip}
+\item For each instance declaration {\tt {instance $C$ $\Rightarrow$ \TCC\ $\overline{t}$ where \ldots}}
 the program theory contains the following formula:
-  \vspace*{-.5\baselineskip}
-               \[ \forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{t} \]
-where $\overline{a} = \tv(\overline{t}) \cup \tv(C)$;
+  $\forall\,\overline{a}.\,C \Rightarrow \TCC\ \overline{t}$, 
+where \linebreak $\overline{a} = \tv(\overline{t}) \cup \tv(C)$;
 if $C$ is empty, then the instance declaration is of the form 
-  \vspace*{-.5\baselineskip}
-  \prog{instance \TCC\ $\overline{t}$ where \ldots}
-  \vspace*{-.5\baselineskip}
+  {\tt {instance \TCC\ $\overline{t}$ where \ldots}}
 and the program theory contains the formula:
-  \vspace*{-.5\baselineskip}
-     \[ \forall\,\overline{a}.\,\TCC\:\: \overline{t} \]
-  \vspace*{-.5\baselineskip}
+  $\forall\,\overline{a}.\,\TCC\:\: \overline{t}$.
 \end{itemize}
 \label{program-theory-def}
 \end{Definition}

@@ -224,7 +224,7 @@ The import relation $\Gamma \vdash_{\Downarrow} \overline{\importC} :
 \Gamma'$ yields a typing context ($\Gamma'$) from a typing context
 ($\Gamma$) and a sequence of import clauses ($\overline{\importC}$).
 It inserts in the scope of the importing module pairs of variable
-names and their types, that occurr in module {\tt []}, the module of
+names and their types, that occur in module {\tt []}, the module of
 exported names. 
 
 Relation $P;\Gamma \vdash_{\Uparrow}^X \overline{\!D}:(P',\Gamma')$ is
@@ -261,6 +261,14 @@ declarations, respectively.  For simplicity, we omit special rules for
 validity of type class and instance declarations (see \cite{GHC}),
 that are not relevant here (for example, that the class hierachy is
 acyclic).
+
+If an instance with constraints is exported, it is not necessary to
+insert the constraints for exporting it. The constraints are checked
+and recovered if necessary when the instance is used.
+
+For example, it is necessary to include {\tt \instance\ \Eq\ [$a$]} in
+an export list of a module that defines:
+  \progb{\instance\ \Eq\ $a$ $\Rightarrow$ \Eq\ [$a$] \where\ \ldots}
 
 \begin{figure}
 \[ \begin{array}{cc}
@@ -360,15 +368,11 @@ from other instance declarations for $x$ that are visible in
 $\Gamma_0$). This rule is based on Theorem
 \ref{theorem:lcg-is-compositional}.
 
-The automatically generated class name for an overloaded name can be
-any unique class name, i.e.~any (of course preferably mnemonic) name
-that does not occur as another declared class name. In this paper, we
-use the overloaded name also as the automatically generated class
-name. Also, we define that automatically generated classes have a
-single parameter. The overloaded name type, which is the
+In this paper, we use the overloaded name also as the automatically
+generated class name. The overloaded name type, which is the
 anti-unification of visible instance types of the overloaded name in
 the current module, is used as the initial constraint introduced due
-to the use of the overloaded name. 
+to the use of the overloaded name.
 
 The fourth rule is similar to rule (\LET); it defines how the typing
 context is updated upon a declaration of a non-overloaded name.
